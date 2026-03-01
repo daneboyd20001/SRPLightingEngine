@@ -1,0 +1,9 @@
+#include "Noise.hlsl"
+RWTexture3D<float3> result;
+
+[numthreads(4, 4, 4)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint3 rand = hash(id.xyz);
+    result[id.xyz] = frac(sin(dot(rand, float3(12.9898, 78.233, 37.719))) * 43758.5453);
+}

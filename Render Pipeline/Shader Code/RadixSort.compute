@@ -1,0 +1,28 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+//Key is mordonCode, TriID
+
+uniform StructuredBuffer<uint2> Key;
+uniform uint stepSize;
+
+[numthreads(64, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    uint idA = stepSize * id.x;
+    uint idB = stepSize * (id.x + 1) - 1;
+    
+    for (uint i = 0; i < stepSize; i++)
+    {
+        uint2 valA = Key[idA];
+        uint2 valB = Key[idB];
+        
+        bool swap = valB.x < valA.x;
+
+        Key[idA] = swap ? valB : valA;
+        Key[idB] = swap ? valA : valB;
+    
+        idA++;
+        idB++;
+    }
+}

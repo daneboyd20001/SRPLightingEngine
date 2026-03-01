@@ -1,0 +1,70 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSLOD0
+#pragma kernel CSLOD1
+#pragma kernel CSLOD2
+#pragma kernel CSLOD3
+#pragma kernel CSLOD4
+#pragma kernel CSLOD5
+#pragma kernel CSLOD6
+
+#include "SDFs.hlsl"
+#include "VoxelGrid.hlsl"
+
+Texture3D src;
+RWTexture3D dst;
+SamplerState srcSampler;
+
+uint4 srcOffset;
+uint4 dstOffset;
+
+uint depth;
+[numthreads(4, 4, 4)]
+void CSBuild(uint3 id : SV_DispatchThreadID, uint3 GTID : SV_GroupThreadID)
+{
+    float3 uvw = id.xyz;
+    uvw /= CHUNK_LENGTH;
+    
+    float3 pos = uvw;
+    pos -= .5;
+    pos *= CHUNK_SPAN;
+    pos *= pow(SCALING_FACTOR, depth);
+    
+    dst[id.xyz].w = SDF(pos);
+    dst[id.xyz].xyz = GetNormal(pos);
+}
+
+[numthreads(4, 4, 4)]
+void CSUpdate(uint3 id : SV_DispatchThreadID, uint3 GTID : SV_GroupThreadID)
+{
+    uint3 srcID = id + srcOffset.xyz;
+    srcID = srcID & (CHUNK_LENGTH - 1);
+    float3 UVW = float3(id) / float3(CHUNK_LENGTH, CHUNK_LENGTH, CHUNK_LENGTH);
+    groupshared float4 value[64] = src.Sample(srcSampler, UVW);
+    
+    //reduce z axis
+    if (GTID.z % 2 == 1)
+    {
+        return;
+    }
+    value[GTID.x + GTID.y * 4 + GTID.z * 16] += value[GTID.x + GTID.y * 4 + (GTID.z + 1) * 16];
+    
+    //reduce y axis
+    if (GTID.y % 2 == 1)
+    {
+        return;
+    }
+    value[GTID.x + GTID.y * 4 + GTID.z * 16] += value[GTID.x + (GTID.y + 1) * 4 + GTID.z * 16];
+    
+    //reduce x axis
+    if (GTID.x % 2 == 1)
+    {
+        return;
+    }
+    value[GTID.x + GTID.y * 4 + GTID.z * 16] += value[(GTID.x + 1) + GTID.y * 4 + GTID.z * 16];
+    
+    uint3 dstID = id / SCALING_FACTOR + 32;
+    dstID += dstOffset.xyz;
+    dstID = dstID & (CHUNK_LENGTH - 1);
+    
+    dstOffset[dstID.x * dstID.y * CHUNK_LENGTH + dstID.z * CHUNK_LENGTH * CHUNK_LENGTH] = value[GTID.x + GTID.y * 4 + GTID.z * 16];
+}

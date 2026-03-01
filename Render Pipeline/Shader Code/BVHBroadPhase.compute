@@ -1,0 +1,371 @@
+//Broad Phase, Narrow Phase
+//Broad Phase:
+    /*
+        Get node AABB, Calculate chunk splits, merge to global splits
+        Find Best Split per node
+        Bin Sort with split position and axis
+        Add child nodes to Queue
+    */
+
+//Narrow Phase
+    /*
+        Dequeue <value> nodes from queue
+        Split node into 64 chunks
+        find AABBs per chunk, add to array
+        calculate best split axis and position in parallel per node
+        
+        bin sort in 2 parallel steps per node
+        add child nodes to queue
+    */
+
+#pragma kernel CSInit
+#pragma kernel CSHistogram
+#pragma kernel CSBinPrefix
+#pragma kernel CSUpSweep
+#pragma kernel CSBinOffset
+#pragma kernel CSDownSweep
+
+#include "Geometry.hlsl"
+
+RWStructuredBuffer<float2x3> sliceAABBs;
+RWStructuredBuffer<uint> slicePrefixs;
+//length: broad node limit
+RWStructuredBuffer<uint> nodePrimativeIndex;
+
+StructuredBuffer<uint> keyBufferIn;
+RWStructuredBuffer<uint> keyBufferOut;
+RWStructuredBuffer<uint> prefixSum;
+
+uint depth;
+//split count = 1024 / node count
+//node count = 4^depth
+//Split the bounds of each node into n different sections
+//Step Through Each Section, and accumulate chunked AABBs
+//Then Merge Sections
+//Dispatch: 1, chunk split, node count
+[numthreads(64, 1, 1)]
+void CSComputeBounds(uint3 id : SV_DispatchThreadID, uint3 GTID : SV_GroupThreadID)
+{
+    groupshared float2x3 nodeAABB;
+    //Does this need to be groupshared?
+    groupshared uint nodeID;
+    uint triStart, triEnd;
+    
+    //Calculating range to step through
+    //Could use a buffer for this instead of calculating per thread
+    if (GTID.x == 0)
+    {
+        nodeID = (1 << (depth * 2) - 1) / 3;
+        nodeID += GTID.x;
+        nodeAABB = float2x3(
+            nodeBufferBad[nodeID >> 2].aabbMins[nodeID % 4],
+            nodeBufferBad[nodeID >> 2].aabbMaxs[nodeID % 4]
+        );
+    }
+    
+    //Data look up, could be optimized with groupshare?
+    triStart = nodeBufferBad[nodeID].primativeStart;
+    triEnd = nodeBufferBad[nodeID].primativeEnd;
+        
+    uint step = (triEnd - triStart) / max(1,(1028 >> (depth * 2))); //Range is assumed to be a multiple of 64
+        
+    triStart += step * id.y;
+    triEnd += step * (id.y + 1);
+    
+    //Initialize Array
+    groupshared uint3 splitMins[256 * 3];
+    groupshared uint3 splitMaxs[256 * 3];
+    groupshared uint splitCounts[256 * 3];
+    
+    splitMins[GTID.x] = 0xffffffff;
+    splitMins[GTID.x + 256] = 0xffffffff;
+    splitMins[GTID.x + 512] = 0xffffffff;
+    splitMaxs[GTID.x] = 0;
+    splitMaxs[GTID.x + 256] = 0;
+    splitMaxs[GTID.x + 512] = 0;
+    
+    GroupMemoryBarrierWithGroupSync();
+    //Avoid memory overhead by stepping sequentially through arrays
+    //Threadcount does not grow with primative count, so runtime is not reduced by processing all chunks in parallel
+    //Additionally, this avoid the worse of prefix sum space and time complexity
+    //Should also scale well to small node sizes
+    while (triStart < triEnd)
+    {
+        float2x3 localAABB = GetAABB(triBuffer[keyBufferIn[id.x]]);
+        float3 localCentroid = GetAABBCentroid(localAABB);
+    
+        uint3 splitID = floor((localCentroid - nodeAABB[0]) / (nodeAABB[1] - nodeAABB[0]) * 256.0f);
+    //atomic minmax, cant vectorize atomics, profile to see how bad it is...
+    //maybe just split by range, or increase bucket size
+    
+    //Potentially optimize by swizling operations according to group thread, reducing concurrent access
+    //No sync opps in loop, potentially reducing concurrent access
+        uint3 uVal = asuint(localAABB[0]);
+        uVal = uVal < (1 << 31) ? uVal | (1 << 31) : ~uVal;
+
+        InterlockedMin(splitMins[splitID.x].x, uVal.x);
+        InterlockedMin(splitMins[splitID.x].y, uVal.y);
+        InterlockedMin(splitMins[splitID.x].z, uVal.z);
+        InterlockedMin(splitMins[splitID.y].x, uVal.x);
+        InterlockedMin(splitMins[splitID.y].y, uVal.y);
+        InterlockedMin(splitMins[splitID.y].z, uVal.z);
+        InterlockedMin(splitMins[splitID.z].x, uVal.x);
+        InterlockedMin(splitMins[splitID.z].y, uVal.y);
+        InterlockedMin(splitMins[splitID.z].z, uVal.z);
+    
+        uVal = asuint(localAABB[1]);
+        uVal = uVal < (1 << 31) ? uVal | (1 << 31) : ~uVal;
+
+        InterlockedMax(splitMaxs[splitID.x].x, uVal.x);
+        InterlockedMax(splitMaxs[splitID.x].y, uVal.y);
+        InterlockedMax(splitMaxs[splitID.z].z, uVal.z);
+        InterlockedMin(splitMaxs[splitID.y].x, uVal.x);
+        InterlockedMin(splitMaxs[splitID.y].y, uVal.y);
+        InterlockedMin(splitMaxs[splitID.y].z, uVal.z);
+        InterlockedMin(splitMaxs[splitID.z].x, uVal.x);
+        InterlockedMin(splitMaxs[splitID.z].y, uVal.y);
+        InterlockedMin(splitMaxs[splitID.z].z, uVal.z);
+        
+        InterlockedAdd(splitCounts[splitID.x], 1);
+        InterlockedAdd(splitCounts[splitID.y], 1);
+        InterlockedAdd(splitCounts[splitID.z], 1);
+        
+        triStart += 64;
+    }
+    
+    GroupMemoryBarrierWithGroupSync();
+    //Array is slice * group * node
+    //writes should start at aabb split count: 256 * axis count: 3 * (array slice + nodeID * array slices per node) 
+    //(1028 >> (depth * 2)
+    uint writeIndex = 256 * 3 * (id.y + id.z * (1028 >> (depth * 2)));
+    for (int i = id.x; i < 256 * 3; i += 64)
+    {
+        sliceAABBs[writeIndex + i] = float2x3(splitMins[i], splitMaxs[i]);
+        slicePrefixs[writeIndex + i] = splitCounts[i];
+    }
+}
+
+//Merges slices from previous dispatch
+//Goes from max depth, down to 1
+//Dispatch: 3 * 4, 2 ^ (depth - step) - 1
+
+//id.x = chunk of slice to process
+//id.y = slice of node to process
+//id.z = node to process
+[numthreads(64, 1, 1)]
+void CSMergeSlices(uint3 id : SV_DispatchThreadID, uint3 GTID : SV_GroupThreadID)
+{
+    const uint chunkSize = 256 * 3;
+    const uint sliceCount = 1 << depth;
+    
+    uint lowIndex = id.x + id.y * chunkSize * 2 + id.z * chunkSize * sliceCount;
+    uint highIndex = lowIndex + chunkSize;
+    float2x3 low = sliceAABBs[lowIndex];
+    float2x3 high = sliceAABBs[highIndex];
+    
+    //can reduce them in place potentially, so that by the end, they are all in chunksize * n places
+    sliceAABBs[lowIndex] = float2x3(min(low[0], high[0]), max(low[1], high[1]));
+    slicePrefixs[lowIndex] += slicePrefixs[highIndex];
+}
+
+//Depth = current step in node building
+//Dispatch: 3, Node Count 
+[numthreads(256, 1, 1)]
+void CSSlicePrefix(uint3 id : SV_DispatchThreadID)
+{
+    const uint chunkSize = 256 * 3;
+    const uint sliceCount = 1 << depth;
+    
+    groupshared uint prefix[256];
+    prefix[id.x] = slicePrefixs[id.x + id.y * chunkSize * 2 * sliceCount];
+    GroupMemoryBarrierWithGroupSync();
+    
+    uint temp;
+    for (uint i = 1; i < 256; i = i << 1)
+    {
+        temp = id.x < 0 ? 0 : prefix[id.x - i];
+        GroupMemoryBarrierWithGroupSync();
+        prefix[id.x] += temp;
+        GroupMemoryBarrierWithGroupSync();
+    }
+    
+    //read them in the array, 1 after the other
+    slicePrefixs[id.x + id.y * chunkSize];
+}
+
+
+
+//brute force calculation of optimal SAH splits
+//Dispatch: 3 (axis count), 1 << (depth - 1) * 2 (node count), 1
+[numthreads(256, 1, 1)]
+void CSFindSplit(uint3 id : SV_DispatchThreadID)
+{
+    groupshared float2x3 aabbs[256];
+    groupshared uint prefixSum[256];
+    aabbs[id.x] = sliceAABBs[id.x + 256 * 3 * id.y];
+    prefixSum[id.x] = slicePrefixs[id.x + 256 * 3 * id.y];
+    GroupMemoryBarrierWithGroupSync();
+    groupshared uint finalsplitCost[256];
+    
+    groupshared float2x3 workingAABB[256];
+    groupshared uint workingSplitCost[256];
+    
+    for (uint i = 1; i < 256; i = i << 1)
+    {
+        float2x3 temp = id.x > 256 - i ? float2x3(sceneMax.xyz,sceneMin.xyz) : aabbs[id.x];
+        GroupMemoryBarrierWithGroupSync();
+        aabbs[id.x - i][0] = min(aabbs[id.x - 1][0], temp[0]);
+        GroupMemoryBarrierWithGroupSync();
+    }
+    
+    finalsplitCost[id.x] = GetSurfaceArea(workingAABB[id.x]) * prefixSum[id.x];
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Initialize keybuffer
+[numthreads(64, 1, 1)]
+void CSInit(uint3 id : SV_DispatchThreadID)
+{
+    //keyBuffer[id.x] = id.x;
+    prefixSum[id.x] = 1;
+}
+
+groupshared uint localCount[64];
+groupshared float2 localRange;
+groupshared uint axis;
+
+//compute local prefix sum, then adds to array
+
+//X is chunk, y is chunk index
+//can optimize this by doing an internal scan then a chunk scan
+[numthreads(256, 1, 1)]
+void CSHistogram(uint3 DTID : SV_DispatchThreadID, uint3 GTID : SV_GroupThreadID)
+{
+    //get node we are currently working on
+    if (GTID.x == 0)
+    {
+        //starting with base node, fix this with queue
+        float2x3 aabb = float2x3(sceneMin.xyz, sceneMax.xyz);
+        
+        localRange.x = min(min(aabb[0].x, aabb[0].y), aabb[0].z);
+        localRange.y = max(max(aabb[1].x, aabb[1].y), aabb[1].z);
+        axis = aabb[1].x - aabb[0].x < aabb[1].y - aabb[0].y ? 0 : 1;
+        axis = aabb[1][axis] - aabb[0][axis] < aabb[1].z - aabb[0].z ? axis : 2;
+    }
+    
+    //prefixSum[GTID.x + 256 * DTID.x] = 0;
+    if (GTID.x < 64)
+    {
+        localCount[GTID.x] = 0;
+    }
+    
+    GroupMemoryBarrierWithGroupSync();
+    
+    Triangle tri = triBuffer[GTID.x + 256 * DTID.x];
+    float t = GetTriCentroid(tri)[axis];
+    t -= localRange.x;
+    t /= (localRange.y - localRange.x);
+    
+    InterlockedAdd(localCount[min(floor(t * 64), 64 - 1)], 1);
+    GroupMemoryBarrierWithGroupSync();
+    
+    if (GTID.x >= 64)
+        return;
+    
+    prefixSum[GTID.x + 64 * DTID.x] = localCount[GTID.x];
+}
+
+//not work efficient, counts local prefix sum bin, all in 1 step
+[numthreads(64, 1, 1)]
+void CSBinPrefix(uint3 id : SV_DispatchThreadID)
+{
+    uint localIndex = id.x % 64;
+    localCount[localIndex] = prefixSum[id.x];
+    for (uint i = 1; i < 64; i = i << 1)
+    {
+        GroupMemoryBarrierWithGroupSync();
+        uint temp = localCount[localIndex];
+        temp += localIndex < i ? 0 : localCount[localIndex - i];
+        GroupMemoryBarrierWithGroupSync();
+        localCount[localIndex] = temp;
+    }
+    prefixSum[id.x] = localCount[localIndex];
+}
+
+//Work Efficient, counts global prefix sum, step by step
+[numthreads(64, 1, 1)]
+void CSUpSweep(uint3 DTID : SV_DispatchThreadID, uint3 GTID : SV_GroupThreadID)
+{
+    uint i = DTID.x * (1 << depth + 1) - 1;
+    uint j = i - (1 << depth);
+    
+    if (i >= triCount)
+    {
+        return;
+    }
+    
+    prefixSum[i + GTID.x] += prefixSum[j + GTID.x];
+}
+
+[numthreads(64, 1, 1)]
+void CSBinOffset(uint3 DTID : SV_DispatchThreadID, uint3 GTID : SV_GroupThreadID)
+{
+    localCount[GTID.x] = prefixSum[GTID.x + triCount >> 2];
+    
+    for (uint i = 1; i < 64; i = i << 1)
+    {
+        GroupMemoryBarrierWithGroupSync();
+        uint temp = localCount[GTID.x];
+        GroupMemoryBarrierWithGroupSync();
+        temp += GTID.x < 64 ? 0 : localCount[GTID.x - i];
+        GroupMemoryBarrierWithGroupSync();
+        localCount[GTID.x] = temp;
+    }
+    
+    //binOffset[GTID.x];
+    prefixSum[GTID.x + (1 << (depth + 1) - 64)] = 0;
+}
+
+[numthreads(64, 1, 1)]
+void CSDownSweep(uint3 DTID : SV_DispatchThreadID, uint3 GTID : SV_GroupThreadID)
+{
+    uint i = DTID.x * (1 << depth - 1) - 1;
+    uint j = i - (1 << depth) + 1;
+    
+    if (i >= triCount)
+    {
+        return;
+    }
+    
+    uint temp = prefixSum[j];
+    prefixSum[j] = prefixSum[i];
+    prefixSum[i] += temp;
+}

@@ -1,0 +1,70 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+//#include "SDFs.hlsl"
+//#include "VoxelGrid.hlsl"
+#include "VoxelGrid.hlsl"
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+uniform float4 ScreenSize;
+uniform float4x4 CamToWorld;
+uniform float4x4 ClipMatrix;
+
+uniform float MinClip;
+uniform float MaxClip;
+uniform float FOV;
+
+static int maxSteps = 400;
+static float minDist = .01;
+static float PI = 3.14159;
+static float3 lightSource = float3(0, sqrt(2), sqrt(2));
+
+[numthreads(8,8,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    //normalized [-1,1]
+    float2 uv = ((float2) id.xy) / ScreenSize.xy * 2.0 - 1;
+    uv.x *= ScreenSize.x / ScreenSize.y;
+    //Sampling a Sphere
+    float3 rayDir = normalize(float3(uv * tan(FOV * 0.5 * PI / 180.0), 1.0));
+    rayDir = mul((float3x3) CamToWorld, rayDir);
+    
+    int i = 0;
+    float dist = 0;
+    float distToScene = 0;
+
+    float3 pos = rayDir * MinClip;
+    for (i = 0; i < maxSteps; i++)
+    {
+        distToScene = max(SampleValue(pos), 0);
+        pos += rayDir * distToScene;
+        dist += distToScene;
+        if (distToScene < minDist)
+        {
+            break;
+        }
+        if (dist > MaxClip)
+        {
+            break;
+        }
+    }
+    
+    float hit = (distToScene < minDist) ? 1.0 : 0.0;
+    float3 normal = SampleNormal(pos.xyz);
+    //float curvature = GetCurvature(pos.xyz);
+    
+    float lambert = max(0, dot(normal, -rayDir));
+    float rimLighting = max(0, 1 - lambert);
+
+    float minnaert = (dot(normal, -rayDir) * (1 + .1 * dot(normal, lightSource)));
+    float3 value = 0;
+    //value += minnaert;
+    value += lambert;
+    
+    
+   
+    //value *= dist;
+    Result[id.xy] = float4(value, 1);
+}
