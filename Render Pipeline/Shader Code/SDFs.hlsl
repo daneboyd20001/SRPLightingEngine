@@ -77,16 +77,120 @@ float DanesSDF(float3 p0)
         p.w *= abs(scale);
     }
     
-    return (2 - (length(p.xyz / p.w))) * .2f;
+    return (2 - (length(p.xyz / p.w)));
 }
-	
+
+float cubeSDF(float4 cube, float3 pos)
+{
+    float3 d = cube.xyz - pos;
+    return max(max(abs(d.x) - cube.w, abs(d.y) - cube.w), abs(d.z) - cube.w);
+}
+
+float SDF1(float3 p)
+{
+    //m = 0; // default material
+
+    float3 mp = fmod(p, 0.1); // periodic tiling
+    mp.y = p.y 
+           + sin(p.x * 2.0 + Time) * 0.25
+           + sin(p.z * 2.5 + Time) * 0.25;
+
+    float PI = 3.14159265;
+
+    // first cube SDF
+    float3 pos1 = float3(
+        mp.x,
+        mp.y + (sin(p.z * PI * 10.0) * sin(p.x * PI * 10.0)) * 0.025,
+        0.05
+    );
+    float s1 = cubeSDF(float4(0.05, 0.05, 0.05, 0.025), pos1);
+
+    // second cube SDF
+    float3 pos2 = float3(
+        0.05,
+        mp.y + (sin(p.x * PI * 10.0) * -sin(p.z * PI * 10.0)) * 0.025,
+        mp.z
+    );
+    float s2 = cubeSDF(float4(0.05, 0.05, 0.05, 0.025), pos2);
+
+    //m = (s1 < s2) ? 0 : 1;
+
+    return min(s1, s2);
+}
+
+float SDF2(float3 p0)
+{
+    p0 /= 10;
+    p0.xyz = frac((p0.xyz - 1.0) * 0.5) * 2.0 - 1.0;
+    
+    float4 p = float4(p0, 1.0);
+    p = abs(p);
+
+    if (p.x < p.z)
+        p.xz = p.zx;
+    if (p.z < p.y)
+        p.zy = p.yz;
+    if (p.y < p.x)
+        p.yx = p.xy;
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (p.x < p.z)
+            p.xz = p.zx;
+        if (p.z < p.y)
+            p.zy = p.yz;
+        if (p.y < p.x)
+            p.yx = p.xy;
+
+        p.xyz = abs(p.xyz);
+        float dotVal = dot(p.xyz, p.xyz);
+        p.xyz *= 1.6 / clamp(dotVal, 0.6, 1.0);
+        p.xyz -= float3(0.7, 1.8, 0.5);
+        p.xyz *= 1.2;
+    }
+
+    float m = 1.5;
+    p.xyz -= clamp(p.xyz, -m, m);
+
+    return (length(p.xyz) / p.w) / 100.0;
+}
+
+float SDF3(float3 p)
+{
+    const float TAUg = atan(1.0) * 8.0;
+
+    for (int i = 0; i < 4; i++)
+    {
+        // p.xy = pmodg(p.xy, 10.)
+        float ang_xy = atan2(p.y, p.x);
+        float seg_xy = TAUg / 10.0;
+        float a_xy = (ang_xy - seg_xy * floor(ang_xy / seg_xy)) - 0.5 * seg_xy;
+        float r_xy = length(p.xy);
+        p.xy = r_xy * float2(sin(a_xy), cos(a_xy));
+
+        p.y -= 2.0;
+
+        // p.yz = pmodg(p.yz, 12.)
+        float ang_yz = atan2(p.z, p.y);
+        float seg_yz = TAUg / 12.0;
+        float a_yz = (ang_yz - seg_yz * floor(ang_yz / seg_yz)) - 0.5 * seg_yz;
+        float r_yz = length(p.yz);
+        p.yz = r_yz * float2(sin(a_yz), cos(a_yz));
+
+        p.z -= 10.0;
+    }
+
+    float3 n = normalize(float3(13.0, 1.0, 7.0));
+    return dot(abs(p), n) - 0.7;
+}
+
 float SDF4(float3 p0)
 {
     p0 /= 6;
     float4 p = float4(p0, 1);
     float3 cVal = float3(1., 1., 1.);
     float scale = 1;
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < 16; i++)
     {
         p.xyz = 2.0 * clamp(p.xyz, -cVal, cVal) - p.xyz;
         p *= max(.1, 2 / dot(p.xyz, p.xyz));
@@ -98,16 +202,17 @@ float SDF4(float3 p0)
     return ((length(p.xyz / p.w)));
 }
   // highly varied domain - take a look around
-float WierdTriangleSDF(float3 p)
+float WierdTriangleSDF(float3 p0)
 {
-    float4 p0 = float4(p, 1.0);
-    for (int i = 0; i < 8; i++)
+    float4 p = float4(p0, 1.0);
+    //p *= rsqrt(abs(p));
+    for (int i = 0; i < 14; i++)
     {
-        p0.xyz = fmod(p.xyz - 1.0, 2.0) - 1.0;
-        p0 *= 1.4 / dot(p.xyz, p.xyz);
+        p.xyz = frac((p.xyz - 1.0) * 0.5) * 2.0 - 1.0;
+        p *= 1.4 / dot(p.xyz, p.xyz);
     }
-        
-    return length(p0.xyz / p0.w) / .25;
+
+    return length(p.xz / p.w) * 0.25;
 }
 
 float TwistySphere(float3 p)
@@ -185,66 +290,29 @@ float SDF5(float3 p, float Time)
     return d;
 }
 
-float SDF6(float3 p)
-{
-    float e;
-    
-    float R = length(p) + .01f;
-    float theta = atan2(p.x, p.y);
-    float phi = asin(p.z / R);
-    
-    p = float3(
-        log(R),
-        theta,
-        phi
-    );
-    
-    e = p.y - 1.5f;
-    for (int S = 1; S < 256; S = S << 1)
-    {
-        e += sqrt(abs(dot(sin(p.xxx * S), cos(p * S)))) / S;
-    }
-    
-    return (Time + e * R) * .1f;
-}
-
 float NoiseSDF(float3 pos)
 {
     float dist = 0;
     
-    float scale = 8;
-    float s = scale;
-    
-    for (int i = 0; i < 4; i++)
+    float s = 1;
+    for (int i = 0; i < 2; i++)
     {
-        scale = s / float(i);
-        dist += valueNoise(pos / s) * s;
-    }
-    dist /= 3;
-    
-    float temp = dist;
-    
-    s = 4;
-    scale = s;
-    for (i = 0; i < 4; i++)
-    {
-        dist += Perlin((pos + 154) / scale) * scale;
-        scale /= 2;
+        dist += Perlin(pos / s) * s;
+        s /= 2;
     }
     
-    return (temp + dist) / 4;
+    return (dist) / 3;
 }
 
 float SDF(float3 p)
 {
-    return SDF6(p);
-
+    return NoiseSDF(p);
 }
 
 
 float3 GetGradient(float3 p)
 {
-    float eps = .01;
+    float eps = .02;
     
     float3 ex = float3(eps, 0, 0);
     float3 ey = float3(0, eps, 0);
@@ -256,12 +324,12 @@ float3 GetGradient(float3 p)
         SDF(p + ez) - SDF(p - ez)
     );
     
-    return diff;
+    return diff / (eps * 2);
 }
 
 float3 GetNormal(float3 p)
 {
-    float eps = .01;
+    float eps = .05;
     
     float3 ex = float3(eps, 0, 0);
     float3 ey = float3(0, eps, 0);
@@ -276,11 +344,67 @@ float3 GetNormal(float3 p)
     return normalize(diff);
 }
 
-float GetCurvature(float3 p)
+//https://backend.orbit.dtu.dk/ws/files/126824972/onb_frisvad_jgt2012_v2.pdf#:~:text=This%20is%20useful%20in%20Monte%20Carlo%20rendering,in%20spherical%20coordinates%20and%20then%20transformed%20to
+float3 GetTangent(float3 p, float theta)
+{
+    float3 normal = GetNormal(p);
+    float3 b1, b2;
+    if (normal.z < -.99999999)
+    {
+        b1 = float3(0, -1, 0);
+        b2 = float3(-1, 0, 0);
+    }
+    else
+    {
+        float a = 1.0f / (1.0f + normal.z);
+        float b = -a * normal.x * normal.y;
+        b1 = float3(1.0f - normal.x * normal.x * a, b, -normal.x);
+        b2 = float3(b, 1.0f - normal.y * normal.y * a, -normal.y);
+    }
+    return b1 * sin(theta) + b2 * cos(theta);
+}
+
+float3x3 GetHessian(float3 p)
 {
     float eps = .01;
-    float3 nx = GetNormal(p + float3(eps, 0, 0)) - GetNormal(p - float3(eps, 0, 0));
-    float3 ny = GetNormal(p + float3(0, eps, 0)) - GetNormal(p - float3(0, eps, 0));
-    float3 nz = GetNormal(p + float3(0, 0, eps)) - GetNormal(p - float3(0, 0, eps));
-    return .5 * (length(nx) + length(ny) + length(nz));
+    float3 ddx = GetGradient(p + float3(eps, 0, 0)) - GetGradient(p - float3(eps, 0, 0)) / (2 * eps);
+    float3 ddy = GetGradient(p + float3(0, eps, 0)) - GetGradient(p - float3(0, eps, 0)) / (2 * eps);
+    float3 ddz = GetGradient(p + float3(0, 0, eps)) - GetGradient(p - float3(0, 0, eps)) / (2 * eps);
+    
+    float3x3 H;
+    H[0] = float3(ddx.x, ddy.x, ddz.x);
+    H[1] = float3(ddx.y, ddy.y, ddz.y);
+    H[2] = float3(ddx.z, ddy.z, ddz.z);
+    return H;
+}
+
+float GetLaplacian(float3 p)
+{
+    float eps = .01;
+    float diff = SDF(p + float3(eps, 0, 0)) + SDF(p - float3(eps, 0, 0)) +
+                 SDF(p + float3(0, eps, 0)) + SDF(p - float3(0, eps, 0)) +
+                 SDF(p + float3(0, 0, eps)) + SDF(p - float3(0, 0, eps));
+    return (diff - SDF(p) * 6) / (eps * eps);
+}
+
+float GetCurvature(float3 p)
+{
+    return GetLaplacian(p);
+}
+
+float3 GetSurfaceEmission(float3 p)
+{
+    float3 emission = 1;
+    
+    //Scale P by local Curvature
+    p = p * 1.0 / (1 + GetCurvature(p));
+    float3 col1 = float3(1, .45, .1) * sin(Time / 11) + float3(.1, .85, 1) * cos(Time / 11);
+    float3 col2 = float3(.1, .1, .9) * sin(Time / 23) + float3(.76, .1, 1) * cos(Time / 23);
+    
+    float t = (Perlin(p) + 1) / 2;
+    col1 *= t;
+    col2 *= (1 - t);
+    //return col1 + col2;
+    return GetGradient(p);
+
 }

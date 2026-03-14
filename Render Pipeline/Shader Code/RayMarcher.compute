@@ -2,12 +2,8 @@
 #pragma kernel CSPrimaryRay
 #pragma kernel CSDirectHit
 
-//#include "SDFs.hlsl"
-//#include "VoxelGrid.hlsl"
 #include "SDFs.hlsl"
-//#include "Noise.hlsl"
 #include "RayHit.hlsl"
-#include "lighting.hlsl"
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
