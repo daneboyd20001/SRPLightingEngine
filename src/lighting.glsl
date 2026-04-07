@@ -10,7 +10,7 @@ vec3 GetNormal(vec3 p) {
     ));
 }
 
-vec3 CalculateLighting(vec3 pos, vec3 rayDir, float dist) {
+vec3 Lighting(vec3 pos, vec3 rayDir, float dist) {
     vec3 normal = GetNormal(pos);
 
     vec3 background = vec3(0.3);
@@ -28,7 +28,7 @@ vec3 CalculateLighting(vec3 pos, vec3 rayDir, float dist) {
             float lambert = dot(normal, -rayDir);
             float rimLighting = 1.0 - lambert;
             float fresnel = pow(1.0 - abs(dot(normal, rayDir)), 4.0);
-            
+ 
             finalLighting *= rimLighting + fresnel;
             break;
         }
@@ -36,7 +36,7 @@ vec3 CalculateLighting(vec3 pos, vec3 rayDir, float dist) {
             finalLighting *= lampStrength/((dist+1)*(dist+1));
 
             float lambert = max(dot(normal, -rayDir), 0.0);
-            
+ 
             finalLighting *= lambert * exp(-dist/lampStrength);
             break;
         }

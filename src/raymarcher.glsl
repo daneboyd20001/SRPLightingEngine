@@ -26,7 +26,7 @@ void main() {
         }
     }
 
-    vec3 col = CalculateLighting(pos, rayDir, dist);
+    vec3 col = Lighting(pos, rayDir, dist);
 
     FragColor = vec4(col, 1.0);
 }
