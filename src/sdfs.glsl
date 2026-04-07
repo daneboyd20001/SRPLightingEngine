@@ -6,11 +6,10 @@ uniform vec3 camRight;
 uniform vec3 camUp;
 uniform int activeSDF;
 uniform int activeLighting;
-uniform float lanternRadius;
+uniform float lampDist;
 uniform sampler2D noiseTex;
 
 const int MAX_STEPS = 400;
-const float MIN_DIST = 0.001;
 const float MAX_CLIP = 100.0;
 const float PI = 3.14159;
 
@@ -23,6 +22,14 @@ float SampleNoise3D(vec3 pos, vec3 normal) {
     float noiseZ = texture(noiseTex, pos.xy * 0.1).r;
 
     return noiseX * blendWeights.x + noiseY * blendWeights.y + noiseZ * blendWeights.z;
+}
+
+float SampleNoise3D(vec3 pos) {
+    float noiseX = texture(noiseTex, pos.yz * 0.1).r;
+    float noiseY = texture(noiseTex, pos.xz * 0.1).r;
+    float noiseZ = texture(noiseTex, pos.xy * 0.1).r;
+
+    return (noiseX + noiseY + noiseZ) * .3333333;
 }
 
 float SphereSDF(vec3 p) { return length(p) - 1.0; }
@@ -151,6 +158,31 @@ float SDF6(vec3 p) {
     return (time + e * R) * 0.1;
 }
 
+
+float NoiseSDF(vec3 p) {
+  float dist = 0.0;
+    
+    float scale1 = 1.0;
+    for (int i = 1; i <= 4; i++) { 
+        float currentScale = scale1 / float(i);
+        dist += SampleNoise3D(p / currentScale) * currentScale;
+    }
+    dist /= 3.0;
+    
+    float temp = dist;
+    dist = 0.0;
+    
+    float scale2 = 1.0;
+    
+    for (int i = 0; i < 4; i++) {
+        dist += SampleNoise3D((p + 154.0) / scale2) * scale2;
+        scale2 /= 2.0;
+    }
+    
+    return (temp + dist) / 4.0;
+}
+
+
 float map(vec3 p) {
     switch (activeSDF) {
         case 0: return GyroidTorus(p);
@@ -164,6 +196,7 @@ float map(vec3 p) {
         case 8: return SDF5(p, time);
         case 9: return SDF6(p);
         case 10: return AABB(p);
+        case 11: return NoiseSDF(p);
         default: return GyroidTorus(p);
     }
 }

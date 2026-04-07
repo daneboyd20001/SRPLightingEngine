@@ -22,15 +22,16 @@ int main() {
 
   rlImGuiSetup(true);
 
-  const char *sdfNames[] = {
-      "Gyroid Torus",   "Sphere",        "Plane",     "Cross",
-      "Weird Triangle", "Twisty Sphere", "Danes SDF", "SDF 4",
-      "SDF 5",          "SDF 6",         "AABB"};
-  int sdfCount = 11;
+  const char *sdfNames[] = {"Gyroid Torus", "Sphere",         "Plane",
+                            "Cross",        "Weird Triangle", "Twisty Sphere",
+                            "Danes SDF",    "SDF 4",          "SDF 5",
+                            "SDF 6",        "AABB",           "NoiseSDF"};
+  int sdfCount = 12;
   int currentSDFIndex = 0;
 
-  const char *lightingNames[] = {"Oren-Nayar", "Lambertian"};
-  int lightingCount = 2;
+  const char *lightingNames[] = {"Flat", "Rim-Lighting", "Lambertian", "Fog",
+                                 "Anti-Fog"};
+  int lightingCount = 5;
   int currentLightingIndex = 0;
 
   std::string sdfPath = "../src/sdfs.glsl";
@@ -51,15 +52,23 @@ int main() {
   int upLoc = GetShaderLocation(sdfShader, "camUp");
   int activeSDFLoc = GetShaderLocation(sdfShader, "activeSDF");
   int activeLightingLoc = GetShaderLocation(sdfShader, "activeLighting");
-  int lanternRadiusLoc = GetShaderLocation(sdfShader, "lanternRadius");
+  int lampDistLoc = GetShaderLocation(sdfShader, "lampDist");
+  int minDistanceLoc = GetShaderLocation(sdfShader, "MIN_DIST");
+  int fovLoc = GetShaderLocation(sdfShader, "fov");
+  int scalarDistLoc = GetShaderLocation(sdfShader, "scalarDist");
+  int lampStrengthLoc = GetShaderLocation(sdfShader, "lampStrength");
 
   int noiseTexLoc = GetShaderLocation(sdfShader, "noiseTex");
 
-  float lanternRadius = 25.0f;
+  float lampDist = 25.0f;
+  float minDist = 0.001f;
+  float fov = 0.75f;
+  float scalarDist = 1.0f;
+  float lampStrength = 100.0f;
 
   Image noiseImg = GenImagePerlinNoise(512, 512, 0, 0, 4.0f);
   Texture2D noiseTex = LoadTextureFromImage(noiseImg);
-  UnloadImage(noiseImg);
+  // UnloadImage(noiseImg);
 
   Vector3 camPos = {0.0f, 0.0f, -5.0f};
   float yaw = PI / 2.0f;
@@ -97,9 +106,13 @@ int main() {
         rightLoc = GetShaderLocation(sdfShader, "camRight");
         upLoc = GetShaderLocation(sdfShader, "camUp");
         activeSDFLoc = GetShaderLocation(sdfShader, "activeSDF");
-        lanternRadiusLoc = GetShaderLocation(sdfShader, "lanternRadius");
+        lampDistLoc = GetShaderLocation(sdfShader, "lampDist");
         activeLightingLoc = GetShaderLocation(sdfShader, "activeLighting");
+        minDistanceLoc = GetShaderLocation(sdfShader, "MIN_DIST");
+        fovLoc = GetShaderLocation(sdfShader, "fov");
+        scalarDistLoc = GetShaderLocation(sdfShader, "scalarDist");
         noiseTexLoc = GetShaderLocation(sdfShader, "noiseTex");
+        lampStrengthLoc = GetShaderLocation(sdfShader, "lampStrength");
       }
       sdfModTime = currentSdfModTime;
       lightingModTime = currentLightingModTime;
@@ -137,10 +150,6 @@ int main() {
         camPos = Vector3Add(camPos, Vector3Scale(right, speed));
       if (IsKeyDown(KEY_A))
         camPos = Vector3Subtract(camPos, Vector3Scale(right, speed));
-      if (IsKeyDown(KEY_E))
-        camPos = Vector3Add(camPos, Vector3Scale(up, speed));
-      if (IsKeyDown(KEY_Q))
-        camPos = Vector3Subtract(camPos, Vector3Scale(up, speed));
       if (IsKeyDown(KEY_SPACE))
         camPos = Vector3Add(camPos, Vector3Scale(up, speed));
       if (IsKeyDown(KEY_C))
@@ -158,10 +167,14 @@ int main() {
     SetShaderValue(sdfShader, upLoc, &up, SHADER_UNIFORM_VEC3);
     SetShaderValue(sdfShader, activeSDFLoc, &currentSDFIndex,
                    SHADER_UNIFORM_INT);
-    SetShaderValue(sdfShader, lanternRadiusLoc, &lanternRadius,
-                   SHADER_UNIFORM_FLOAT);
+    SetShaderValue(sdfShader, lampDistLoc, &lampDist, SHADER_UNIFORM_FLOAT);
     SetShaderValue(sdfShader, activeLightingLoc, &currentLightingIndex,
                    SHADER_UNIFORM_INT);
+    SetShaderValue(sdfShader, minDistanceLoc, &minDist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(sdfShader, fovLoc, &fov, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(sdfShader, scalarDistLoc, &scalarDist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(sdfShader, lampStrengthLoc, &lampStrength,
+                   SHADER_UNIFORM_FLOAT);
 
     SetShaderValueTexture(sdfShader, noiseTexLoc, noiseTex);
 
@@ -176,8 +189,19 @@ int main() {
     DrawText(TextFormat("Frametime: %f", GetFrameTime()), 10, 30, 20,
              DARKGREEN);
 
+    /*
+     *
+     */
+
     rlImGuiBegin();
     ImGui::Begin("Controls");
+
+    ImGui::SetNextItemWidth(150.0f);
+    if (ImGui::Button("Reset camera")) {
+      camPos = {0.0f, 0.0f, -5.0f};
+      yaw = PI / 2.0f;
+      pitch = 0.0f;
+    }
 
     ImGui::SetNextItemWidth(150.0f);
     if (ImGui::BeginCombo("Active Shape", sdfNames[currentSDFIndex])) {
@@ -214,7 +238,19 @@ int main() {
     }
 
     ImGui::SetNextItemWidth(150.0f);
-    ImGui::SliderFloat("Light Distance", &lanternRadius, 0.0f, 200.0f);
+    ImGui::SliderFloat("Scalar Distance", &scalarDist, 0.1f, 1.0f);
+
+    ImGui::SetNextItemWidth(150.0f);
+    ImGui::SliderFloat("Min Distance", &minDist, 0.0001f, 0.1f);
+
+    ImGui::SetNextItemWidth(150.0f);
+    ImGui::SliderFloat("Lamp Distance", &lampDist, 0.0f, 200.0f);
+
+    ImGui::SetNextItemWidth(150.0f);
+    ImGui::SliderFloat("Lamp Strength", &lampStrength, 0.1f, 1000.0f);
+
+    ImGui::SetNextItemWidth(150.0f);
+    ImGui::SliderFloat("FOV", &fov, 0.1f, 2.0f);
 
     ImGui::End();
     rlImGuiEnd();
