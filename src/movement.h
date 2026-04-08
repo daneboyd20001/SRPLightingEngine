@@ -12,6 +12,7 @@ struct player {
   Quaternion rotation;
 
   float speed = 2.0f;
+  float sens = 0.002f;
   float fov = 1.570f;
   float lampStr = 200.0f;
   float lampDist = 25.0f;

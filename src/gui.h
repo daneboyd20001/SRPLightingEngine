@@ -11,3 +11,4 @@ void minDistSlider(float &minDist);
 void lampDistSlider(player &cam);
 void lampStrSlider(player &cam);
 void fovSlider(player &cam);
+void sensSlider(player &cam);

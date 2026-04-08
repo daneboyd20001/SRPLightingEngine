@@ -26,12 +26,13 @@ int main() {
   /*
    * This entire section is for the drop down menus in the gui.
    * */
-  const char *sdfNames[] = {"Gyroid Torus", "Sphere",         "Plane",
-                            "Cross",        "Weird Triangle", "Twisty Sphere",
-                            "Danes SDF",    "SDF 4",          "SDF 5",
-                            "SDF 6",        "AABB",           "NoiseSDF", "hunterSDF"};
+  const char *sdfNames[] = {
+      "Gyroid Torus",   "Sphere",        "Plane",     "Cross",
+      "Weird Triangle", "Twisty Sphere", "Danes SDF", "SDF 1",
+      "SDF 2",          "SDF 3",         "SDF 4",     "SDF 5",
+      "SDF 6",          "AABB",          "NoiseSDF",  "hunterSDF"};
   int sdfCount = sizeof(sdfNames) / sizeof(sdfNames[0]);
-  int currentSDF = 0;
+  int currentSDF = 8;
 
   const char *lightingNames[] = {"Flat", "Rim-Lighting", "Lambertian", "Fog",
                                  "Anti-Fog"};
@@ -55,7 +56,8 @@ int main() {
 
   int noiseTexLoc = GetShaderLocation(sh.sdfShader, "noiseTex");
 
-  cameraInitialize(cam, 0.0f, 0.0f, -5.0f); // Initializes the camera at the center of the scene.
+  cameraInitialize(cam, 0.0f, 0.0f,
+                   -5.0f); // Initializes the camera at the center of the scene.
 
   Image noiseImg = GenImagePerlinNoise(512, 512, 0, 0, 4.0f);
   Texture2D noiseTex = LoadTextureFromImage(noiseImg);
@@ -81,7 +83,6 @@ int main() {
     cameraMouse(cam);
     cameraMove(cam);
 
-
     // This is where the shader is being applied to our canvas.
     BeginShaderMode(sh.sdfShader);
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), WHITE);
@@ -97,7 +98,7 @@ int main() {
      * SDFs, and other things.
      */
     rlImGuiBegin();
-    ImGui::SetNextWindowPos({70,75}, ImGuiCond_Once);
+    ImGui::SetNextWindowPos({70, 75}, ImGuiCond_Once);
     ImGui::Begin("Controls");
 
     sdfSelection(sdfNames, currentSDF, sdfCount);
@@ -107,11 +108,12 @@ int main() {
 
     ImGui::End();
 
-    ImGui::SetNextWindowPos({70,225}, ImGuiCond_Once);
+    ImGui::SetNextWindowPos({70, 225}, ImGuiCond_Once);
     ImGui::Begin("Camera Controls");
 
     resetButton(cam);
     fovSlider(cam);
+    sensSlider(cam);
     lampDistSlider(cam);
     lampStrSlider(cam);
 

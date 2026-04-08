@@ -20,10 +20,14 @@ void cameraMouse(player &cam) {
   if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     Vector2 mouseDelta = GetMouseDelta();
 
-    Quaternion yaw = QuaternionFromAxisAngle({0.0f, 1.0f, 0.0f}, mouseDelta.x * 0.002f);
-    Quaternion pitch = QuaternionFromAxisAngle({1.0f, 0.0f, 0.0f}, mouseDelta.y * 0.002f);
+    Quaternion yaw =
+        QuaternionFromAxisAngle({0.0f, 1.0f, 0.0f}, mouseDelta.x * cam.sens);
+    Quaternion pitch =
+        QuaternionFromAxisAngle({1.0f, 0.0f, 0.0f}, mouseDelta.y * cam.sens);
 
-    cam.rotation = QuaternionMultiply(yaw, cam.rotation); // Flip this to get spaceship effect. But, roll gets weird because of it.
+    cam.rotation = QuaternionMultiply(
+        yaw, cam.rotation); // Flip this to get spaceship effect. But, roll gets
+                            // weird because of it.
     cam.rotation = QuaternionMultiply(cam.rotation, pitch);
 
     cam.rotation = QuaternionNormalize(cam.rotation);

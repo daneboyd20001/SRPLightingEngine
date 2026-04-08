@@ -68,3 +68,8 @@ void fovSlider(player &cam) {
   ImGui::SetNextItemWidth(150.0f);
   ImGui::SliderFloat("FOV", &cam.fov, 0.1f, 2.0f);
 }
+
+void sensSlider(player &cam) {
+  ImGui::SetNextItemWidth(150.0f);
+  ImGui::SliderFloat("Sensitivity", &cam.sens, 0.0001f, 0.01f);
+}
