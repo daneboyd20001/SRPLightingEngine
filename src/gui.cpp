@@ -1,10 +1,10 @@
-#include "ImGui.h"
+#include "gui.h"
 #include "imgui.h"
 
 void resetButton(player &cam) {
   ImGui::SetNextItemWidth(150.0f);
   if (ImGui::Button("Reset camera")) {
-    cameraInitialize(cam, 0.0f, 0.0f, -5.0f, 2.0f, 0.0f);
+    cameraInitialize(cam, 0.0f, 0.0f, -5.0f);
   }
 }
 

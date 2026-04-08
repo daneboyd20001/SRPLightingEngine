@@ -1,11 +1,14 @@
 #include "movement.h"
 #include "raymath.h"
 
-void cameraInitialize(player &cam, float x, float y, float z, float yawIn,
-                      float pitchIn) {
+void cameraInitialize(player &cam, float x, float y, float z) {
   cam.camPos = {x, y, z};
-  cam.yaw = PI / yawIn;
-  cam.pitch = pitchIn;
+
+  cam.rotation = QuaternionIdentity();
+
+  cam.forward = {0.0f, 0.0f, 1.0f};
+  cam.up = {0.0f, 1.0f, 0.0f};
+  cam.right = {1.0f, 0.0f, 0.0f};
 }
 
 void cameraMouse(player &cam) {
@@ -16,23 +19,26 @@ void cameraMouse(player &cam) {
 
   if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     Vector2 mouseDelta = GetMouseDelta();
-    cam.yaw += mouseDelta.x * 0.002f;
-    cam.pitch -= mouseDelta.y * 0.002f;
-    cam.pitch = Clamp(cam.pitch, -1.5f, 1.5f);
+
+    Quaternion yaw = QuaternionFromAxisAngle({0.0f, 1.0f, 0.0f}, mouseDelta.x * 0.002f);
+    Quaternion pitch = QuaternionFromAxisAngle({1.0f, 0.0f, 0.0f}, mouseDelta.y * 0.002f);
+
+    cam.rotation = QuaternionMultiply(yaw, cam.rotation); // Flip this to get spaceship effect. But, roll gets weird because of it.
+    cam.rotation = QuaternionMultiply(cam.rotation, pitch);
+
+    cam.rotation = QuaternionNormalize(cam.rotation);
   }
 }
 
 Vector3 cameraMove(player &cam) {
-  cam.forward = {cosf(cam.pitch) * cosf(cam.yaw), sinf(cam.pitch),
-                 cosf(cam.pitch) * sinf(cam.yaw)};
-  cam.right =
-      Vector3Normalize(Vector3CrossProduct(cam.forward, {0.0f, 1.0f, 0.0f}));
-  cam.up = Vector3CrossProduct(cam.right, cam.forward);
+  cam.forward = Vector3RotateByQuaternion({0.0f, 0.0f, 1.0f}, cam.rotation);
+  cam.right = Vector3RotateByQuaternion({1.0f, 0.0f, 0.0f}, cam.rotation);
+  cam.up = Vector3RotateByQuaternion({0.0f, 1.0f, 0.0f}, cam.rotation);
 
   if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
     cam.speed = 5.0f * GetFrameTime();
     if (IsKeyDown(KEY_LEFT_SHIFT))
-      cam.speed *= 2.5f;
+      cam.speed *= 3.5f;
 
     if (IsKeyDown(KEY_W))
       cam.camPos = Vector3Add(cam.camPos, Vector3Scale(cam.forward, cam.speed));

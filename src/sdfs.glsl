@@ -88,7 +88,7 @@ float WierdTriangleSDF(vec3 p)
         p0.xyz = mod(p.xyz - 1.0, 2.0) - 1.0;
         p0 *= 1.4 / dot(p.xyz, p.xyz);
     }
-        
+
     return length(p0.xyz / p0.w) / .25;
 }
 
@@ -109,7 +109,7 @@ float SDF4(vec3 p0) {
 float SDF5(vec3 p, float time) {
     vec2 xy = p.xy;
     vec2 xz = p.xz;
-    
+
     float angleOffset = time * 0.2;
     float scaleBase = 0.95;
     float timeSin = sin(time / 1000.0) * 0.1; 
@@ -128,12 +128,12 @@ float SDF5(vec3 p, float time) {
                   xy.x * sXY + xy.y * cXY);
         xz = vec2(xz.x * cXZ - xz.y * sXZ,
                   xz.x * sXZ + xz.y * cXZ);
-                  
+
         xy = abs(xy) - 0.1;
 
         xy += 0.05 * sin(vec2(xy.y, xy.x) * 5.0 + t);
         xz += 0.03 * sin(vec2(xz.y, xz.x) * 7.0 + 1.3 * time + float(i));
-        
+ 
         float s = scaleBase + 0.1 * sin(t);
         xy *= s;
         xz *= s;
@@ -149,39 +149,43 @@ float SDF6(vec3 p) {
     float phi = asin(p.z / R);
     p = vec3(log(R), theta, phi);
     e = p.y - 1.5;
-    
+
     for (int S = 1; S < 256; S = S << 1) {
         float fS = float(S);
         e += sqrt(abs(dot(sin(p.xxx * fS), cos(p * fS)))) / fS;
     }
-    
+
     return (time + e * R) * 0.1;
 }
 
-
 float NoiseSDF(vec3 p) {
   float dist = 0.0;
-    
+
     float scale1 = 1.0;
     for (int i = 1; i <= 4; i++) { 
         float currentScale = scale1 / float(i);
         dist += SampleNoise3D(p / currentScale) * currentScale;
     }
     dist /= 3.0;
-    
+ 
     float temp = dist;
     dist = 0.0;
-    
+
     float scale2 = 1.0;
-    
+ 
     for (int i = 0; i < 4; i++) {
         dist += SampleNoise3D((p + 154.0) / scale2) * scale2;
         scale2 /= 2.0;
     }
-    
+
     return (temp + dist) / 4.0;
 }
 
+float hunterSDF(vec3 p, float time) {
+  float r1 = abs(sin(time)) + 1;
+  float r2 = abs(sin(time)) + 1;
+  return min(length(p + vec3(3.0,0.0,0.0)) - r1, length(p - vec3(0.0,0.0,0.0)) - r2);
+}
 
 float map(vec3 p) {
     switch (activeSDF) {
@@ -197,6 +201,7 @@ float map(vec3 p) {
         case 9: return SDF6(p);
         case 10: return AABB(p);
         case 11: return NoiseSDF(p);
+        case 12: return hunterSDF(p, time);
         default: return GyroidTorus(p);
     }
 }
