@@ -29,7 +29,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/shaderLoad.cpp
     src/movement.cpp
-    src/ImGui.cpp
+    src/gui.cpp
     ${imgui_SOURCE_DIR}/imgui.cpp
     ${imgui_SOURCE_DIR}/imgui_draw.cpp
     ${imgui_SOURCE_DIR}/imgui_tables.cpp

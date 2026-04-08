@@ -20,7 +20,7 @@ void main() {
         pos += rayDir * distToScene;
         dist += max(distToScene, 0.0);
         
-        if (abs(distToScene) < MIN_DIST || dist > MAX_CLIP) {
+        if (abs(distToScene) < max(MIN_DIST, MIN_DIST * dist) || dist > MAX_CLIP) {
             steps = i;
             break;
         }
