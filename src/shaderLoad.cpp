@@ -20,7 +20,7 @@ void load(shader &sh) {
   sh.activeSDFLoc = GetShaderLocation(sh.sdfShader, "activeSDF");
   sh.activeLightingLoc = GetShaderLocation(sh.sdfShader, "activeLighting");
   sh.lampDistLoc = GetShaderLocation(sh.sdfShader, "lampDist");
-  sh.minDistLoc = GetShaderLocation(sh.sdfShader, "MIN_DIST");
+  sh.minDistLoc = GetShaderLocation(sh.sdfShader, "minDist");
   sh.fovLoc = GetShaderLocation(sh.sdfShader, "fov");
   sh.scalarDistLoc = GetShaderLocation(sh.sdfShader, "scalarDist");
   sh.lampStrLoc = GetShaderLocation(sh.sdfShader, "lampStrength");
@@ -55,7 +55,7 @@ void hotReload(long sdfModTime, long lightingModTime, long mainModTime,
       sh.activeSDFLoc = GetShaderLocation(sh.sdfShader, "activeSDF");
       sh.lampDistLoc = GetShaderLocation(sh.sdfShader, "lampDist");
       sh.activeLightingLoc = GetShaderLocation(sh.sdfShader, "activeLighting");
-      sh.minDistLoc = GetShaderLocation(sh.sdfShader, "MIN_DIST");
+      sh.minDistLoc = GetShaderLocation(sh.sdfShader, "minDist");
       sh.fovLoc = GetShaderLocation(sh.sdfShader, "fov");
       sh.scalarDistLoc = GetShaderLocation(sh.sdfShader, "scalarDist");
       sh.lampStrLoc = GetShaderLocation(sh.sdfShader, "lampStrength");

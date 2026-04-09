@@ -1,7 +1,6 @@
 CMakeFiles/SDF_Engine.dir/src/movement.cpp.o: \
- /home/hunter/SRPLightingEngine/src/movement.cpp \
- /usr/include/stdc-predef.h /home/hunter/SRPLightingEngine/src/movement.h \
- /usr/include/raylib.h \
+ /home/hunter/SRPEngine/src/movement.cpp /usr/include/stdc-predef.h \
+ /home/hunter/SRPEngine/src/movement.h /usr/include/raylib.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
  /usr/include/raymath.h /usr/include/c++/15.2.1/math.h \
  /usr/include/c++/15.2.1/cmath \

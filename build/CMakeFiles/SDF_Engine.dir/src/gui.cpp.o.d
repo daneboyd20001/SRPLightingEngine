@@ -1,10 +1,10 @@
 CMakeFiles/SDF_Engine.dir/src/gui.cpp.o: \
- /home/hunter/SRPLightingEngine/src/gui.cpp /usr/include/stdc-predef.h \
- /home/hunter/SRPLightingEngine/src/gui.h \
- /home/hunter/SRPLightingEngine/src/movement.h /usr/include/raylib.h \
+ /home/hunter/SRPEngine/src/gui.cpp /usr/include/stdc-predef.h \
+ /home/hunter/SRPEngine/src/gui.h /home/hunter/SRPEngine/src/movement.h \
+ /usr/include/raylib.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
- /home/hunter/SRPLightingEngine/build/_deps/imgui-src/imgui.h \
- /home/hunter/SRPLightingEngine/build/_deps/imgui-src/imconfig.h \
+ /home/hunter/SRPEngine/build/_deps/imgui-src/imgui.h \
+ /home/hunter/SRPEngine/build/_deps/imgui-src/imconfig.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/float.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
  /usr/include/string.h /usr/include/bits/libc-header-start.h \

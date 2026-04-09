@@ -53,10 +53,10 @@ RM = /usr/sbin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild
+CMAKE_SOURCE_DIR = /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild
+CMAKE_BINARY_DIR = /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild
 
 # Utility rule file for rlimgui-populate.
 
@@ -77,60 +77,60 @@ CMakeFiles/rlimgui-populate-complete: rlimgui-populate-prefix/src/rlimgui-popula
 CMakeFiles/rlimgui-populate-complete: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-build
 CMakeFiles/rlimgui-populate-complete: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-install
 CMakeFiles/rlimgui-populate-complete: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-test
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Completed 'rlimgui-populate'"
-	/usr/sbin/cmake -E make_directory /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles
-	/usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles/rlimgui-populate-complete
-	/usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-done
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Completed 'rlimgui-populate'"
+	/usr/sbin/cmake -E make_directory /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles
+	/usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles/rlimgui-populate-complete
+	/usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-done
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update:
 .PHONY : rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-build: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-configure
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "No build step for 'rlimgui-populate'"
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E echo_append
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "No build step for 'rlimgui-populate'"
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E echo_append
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-build
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-configure: rlimgui-populate-prefix/tmp/rlimgui-populate-cfgcmd.txt
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-configure: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-patch
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "No configure step for 'rlimgui-populate'"
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E echo_append
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-configure
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "No configure step for 'rlimgui-populate'"
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E echo_append
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-configure
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-download: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-gitinfo.txt
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-download: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-mkdir
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Performing download step (git clone) for 'rlimgui-populate'"
-	cd /home/hunter/SRPLightingEngine/build/_deps && /usr/sbin/cmake -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE -P /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/tmp/rlimgui-populate-gitclone.cmake
-	cd /home/hunter/SRPLightingEngine/build/_deps && /usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-download
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Performing download step (git clone) for 'rlimgui-populate'"
+	cd /home/hunter/SRPEngine/build/_deps && /usr/sbin/cmake -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE -P /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/tmp/rlimgui-populate-gitclone.cmake
+	cd /home/hunter/SRPEngine/build/_deps && /usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-download
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-install: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "No install step for 'rlimgui-populate'"
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E echo_append
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-install
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "No install step for 'rlimgui-populate'"
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E echo_append
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-install
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-mkdir:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Creating directories for 'rlimgui-populate'"
-	/usr/sbin/cmake -Dcfgdir= -P /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/tmp/rlimgui-populate-mkdirs.cmake
-	/usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-mkdir
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Creating directories for 'rlimgui-populate'"
+	/usr/sbin/cmake -Dcfgdir= -P /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/tmp/rlimgui-populate-mkdirs.cmake
+	/usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-mkdir
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-patch: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-patch-info.txt
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-patch: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "No patch step for 'rlimgui-populate'"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "No patch step for 'rlimgui-populate'"
 	/usr/sbin/cmake -E echo_append
-	/usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-patch
+	/usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-patch
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update:
 .PHONY : rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-test: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-install
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "No test step for 'rlimgui-populate'"
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E echo_append
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E touch /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-test
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "No test step for 'rlimgui-populate'"
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E echo_append
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-build && /usr/sbin/cmake -E touch /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-test
 
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update: rlimgui-populate-prefix/tmp/rlimgui-populate-gitupdate.cmake
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update-info.txt
 rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-update: rlimgui-populate-prefix/src/rlimgui-populate-stamp/rlimgui-populate-download
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Performing update step for 'rlimgui-populate'"
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-src && /usr/sbin/cmake -Dcan_fetch=YES -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE -P /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/tmp/rlimgui-populate-gitupdate.cmake
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Performing update step for 'rlimgui-populate'"
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-src && /usr/sbin/cmake -Dcan_fetch=YES -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE -P /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/rlimgui-populate-prefix/tmp/rlimgui-populate-gitupdate.cmake
 
 CMakeFiles/rlimgui-populate.dir/codegen:
 .PHONY : CMakeFiles/rlimgui-populate.dir/codegen
@@ -157,6 +157,6 @@ CMakeFiles/rlimgui-populate.dir/clean:
 .PHONY : CMakeFiles/rlimgui-populate.dir/clean
 
 CMakeFiles/rlimgui-populate.dir/depend:
-	cd /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild /home/hunter/SRPLightingEngine/build/_deps/rlimgui-subbuild/CMakeFiles/rlimgui-populate.dir/DependInfo.cmake "--color=$(COLOR)" rlimgui-populate
+	cd /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild /home/hunter/SRPEngine/build/_deps/rlimgui-subbuild/CMakeFiles/rlimgui-populate.dir/DependInfo.cmake "--color=$(COLOR)" rlimgui-populate
 .PHONY : CMakeFiles/rlimgui-populate.dir/depend
 

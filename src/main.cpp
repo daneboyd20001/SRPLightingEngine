@@ -11,7 +11,7 @@
 #include "shaderLoad.h"
 
 int main() {
-  InitWindow(1920, 1080, "SDF Engine");
+  InitWindow(1280, 720, "SDF Engine");
   SetTargetFPS(200);
 
   rlImGuiSetup(true);
@@ -34,8 +34,8 @@ int main() {
   int sdfCount = sizeof(sdfNames) / sizeof(sdfNames[0]);
   int currentSDF = 8;
 
-  const char *lightingNames[] = {"Flat", "Rim-Lighting", "Lambertian", "Fog",
-                                 "Anti-Fog"};
+  const char *lightingNames[] = {"Flat", "Rim-Lighting", "Lambertian",
+                                 "Fog",  "Anti-Fog",     "Dane Lighting"};
   int lightingCount = sizeof(lightingNames) / sizeof(lightingNames[0]);
   int currentLight = 2;
 

@@ -1,8 +1,7 @@
 CMakeFiles/SDF_Engine.dir/src/shaderLoad.cpp.o: \
- /home/hunter/SRPLightingEngine/src/shaderLoad.cpp \
- /usr/include/stdc-predef.h \
- /home/hunter/SRPLightingEngine/src/shaderLoad.h \
- /home/hunter/SRPLightingEngine/src/movement.h /usr/include/raylib.h \
+ /home/hunter/SRPEngine/src/shaderLoad.cpp /usr/include/stdc-predef.h \
+ /home/hunter/SRPEngine/src/shaderLoad.h \
+ /home/hunter/SRPEngine/src/movement.h /usr/include/raylib.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
  /usr/include/rlgl.h /usr/include/c++/15.2.1/string \
  /usr/include/c++/15.2.1/bits/requires_hosted.h \

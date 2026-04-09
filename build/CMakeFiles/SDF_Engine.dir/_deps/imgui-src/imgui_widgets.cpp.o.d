@@ -1,8 +1,8 @@
 CMakeFiles/SDF_Engine.dir/_deps/imgui-src/imgui_widgets.cpp.o: \
- /home/hunter/SRPLightingEngine/build/_deps/imgui-src/imgui_widgets.cpp \
+ /home/hunter/SRPEngine/build/_deps/imgui-src/imgui_widgets.cpp \
  /usr/include/stdc-predef.h \
- /home/hunter/SRPLightingEngine/build/_deps/imgui-src/imgui.h \
- /home/hunter/SRPLightingEngine/build/_deps/imgui-src/imconfig.h \
+ /home/hunter/SRPEngine/build/_deps/imgui-src/imgui.h \
+ /home/hunter/SRPEngine/build/_deps/imgui-src/imconfig.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/float.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
@@ -13,7 +13,7 @@ CMakeFiles/SDF_Engine.dir/_deps/imgui-src/imgui_widgets.cpp.o: \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
  /usr/include/bits/types/locale_t.h /usr/include/bits/types/__locale_t.h \
  /usr/include/strings.h /usr/include/assert.h \
- /home/hunter/SRPLightingEngine/build/_deps/imgui-src/imgui_internal.h \
+ /home/hunter/SRPEngine/build/_deps/imgui-src/imgui_internal.h \
  /usr/include/stdio.h /usr/include/bits/types.h \
  /usr/include/bits/typesizes.h /usr/include/bits/time64.h \
  /usr/include/bits/types/__fpos_t.h /usr/include/bits/types/__mbstate_t.h \
@@ -206,4 +206,4 @@ CMakeFiles/SDF_Engine.dir/_deps/imgui-src/imgui_widgets.cpp.o: \
  /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h \
  /usr/include/bits/stdint-uintn.h /usr/include/bits/stdint-least.h \
- /home/hunter/SRPLightingEngine/build/_deps/imgui-src/imstb_textedit.h
+ /home/hunter/SRPEngine/build/_deps/imgui-src/imstb_textedit.h

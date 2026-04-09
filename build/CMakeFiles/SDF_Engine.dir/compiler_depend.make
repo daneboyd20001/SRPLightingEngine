@@ -1153,11 +1153,11 @@ CMakeFiles/SDF_Engine.dir/_deps/rlimgui-src/rlImGui.cpp.o: _deps/rlimgui-src/rlI
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h
 
-CMakeFiles/SDF_Engine.dir/src/gui.cpp.o: /home/hunter/SRPLightingEngine/src/gui.cpp \
+CMakeFiles/SDF_Engine.dir/src/gui.cpp.o: /home/hunter/SRPEngine/src/gui.cpp \
   _deps/imgui-src/imconfig.h \
   _deps/imgui-src/imgui.h \
-  /home/hunter/SRPLightingEngine/src/gui.h \
-  /home/hunter/SRPLightingEngine/src/movement.h \
+  /home/hunter/SRPEngine/src/gui.h \
+  /home/hunter/SRPEngine/src/movement.h \
   /usr/include/assert.h \
   /usr/include/bits/libc-header-start.h \
   /usr/include/bits/long-double.h \
@@ -1178,14 +1178,14 @@ CMakeFiles/SDF_Engine.dir/src/gui.cpp.o: /home/hunter/SRPLightingEngine/src/gui.
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
 
-CMakeFiles/SDF_Engine.dir/src/main.cpp.o: /home/hunter/SRPLightingEngine/src/main.cpp \
+CMakeFiles/SDF_Engine.dir/src/main.cpp.o: /home/hunter/SRPEngine/src/main.cpp \
   _deps/imgui-src/imconfig.h \
   _deps/imgui-src/imgui.h \
   _deps/rlimgui-src/extras/IconsFontAwesome6.h \
   _deps/rlimgui-src/rlImGui.h \
-  /home/hunter/SRPLightingEngine/src/gui.h \
-  /home/hunter/SRPLightingEngine/src/movement.h \
-  /home/hunter/SRPLightingEngine/src/shaderLoad.h \
+  /home/hunter/SRPEngine/src/gui.h \
+  /home/hunter/SRPEngine/src/movement.h \
+  /home/hunter/SRPEngine/src/shaderLoad.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \
@@ -1333,8 +1333,8 @@ CMakeFiles/SDF_Engine.dir/src/main.cpp.o: /home/hunter/SRPLightingEngine/src/mai
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
 
-CMakeFiles/SDF_Engine.dir/src/movement.cpp.o: /home/hunter/SRPLightingEngine/src/movement.cpp \
-  /home/hunter/SRPLightingEngine/src/movement.h \
+CMakeFiles/SDF_Engine.dir/src/movement.cpp.o: /home/hunter/SRPEngine/src/movement.cpp \
+  /home/hunter/SRPEngine/src/movement.h \
   /usr/include/alloca.h \
   /usr/include/bits/atomic_wide_counter.h \
   /usr/include/bits/byteswap.h \
@@ -1439,9 +1439,9 @@ CMakeFiles/SDF_Engine.dir/src/movement.cpp.o: /home/hunter/SRPLightingEngine/src
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
   /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h
 
-CMakeFiles/SDF_Engine.dir/src/shaderLoad.cpp.o: /home/hunter/SRPLightingEngine/src/shaderLoad.cpp \
-  /home/hunter/SRPLightingEngine/src/movement.h \
-  /home/hunter/SRPLightingEngine/src/shaderLoad.h \
+CMakeFiles/SDF_Engine.dir/src/shaderLoad.cpp.o: /home/hunter/SRPEngine/src/shaderLoad.cpp \
+  /home/hunter/SRPEngine/src/movement.h \
+  /home/hunter/SRPEngine/src/shaderLoad.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -1763,6 +1763,8 @@ CMakeFiles/SDF_Engine.dir/src/main.cpp.o:
 
 /usr/include/bits/types/struct_tm.h:
 
+/usr/include/bits/timex.h:
+
 /usr/include/bits/setjmp.h:
 
 /usr/include/asm/types.h:
@@ -1779,13 +1781,11 @@ CMakeFiles/SDF_Engine.dir/src/main.cpp.o:
 
 /usr/include/asm-generic/bitsperlong.h:
 
-/home/hunter/SRPLightingEngine/src/shaderLoad.cpp:
-
 /usr/include/c++/15.2.1/bits/cxxabi_init_exception.h:
 
 /usr/include/raymath.h:
 
-/home/hunter/SRPLightingEngine/src/movement.cpp:
+/home/hunter/SRPEngine/src/movement.cpp:
 
 /usr/lib/libstdc++.so:
 
@@ -1853,15 +1853,13 @@ CMakeFiles/SDF_Engine.dir/src/main.cpp.o:
 
 /usr/include/asm-generic/errno-base.h:
 
-/home/hunter/SRPLightingEngine/src/shaderLoad.h:
+/home/hunter/SRPEngine/src/main.cpp:
 
-/home/hunter/SRPLightingEngine/src/main.cpp:
-
-/usr/include/bits/timex.h:
-
-/home/hunter/SRPLightingEngine/src/movement.h:
+/home/hunter/SRPEngine/src/gui.h:
 
 /usr/include/c++/15.2.1/cstdint:
+
+/home/hunter/SRPEngine/src/movement.h:
 
 _deps/rlimgui-src/imgui_impl_raylib.h:
 
@@ -2009,6 +2007,8 @@ _deps/imgui-src/imgui_draw.cpp:
 
 /usr/include/bits/unistd_ext.h:
 
+/home/hunter/SRPEngine/src/shaderLoad.h:
+
 /usr/include/c++/15.2.1/tr1/exp_integral.tcc:
 
 /usr/include/c++/15.2.1/bits/string_view.tcc:
@@ -2034,8 +2034,6 @@ _deps/imgui-src/imgui_draw.cpp:
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
 
 /usr/include/bits/types/__fpos64_t.h:
-
-/home/hunter/SRPLightingEngine/src/gui.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512vp2intersectintrin.h:
 
@@ -2267,6 +2265,8 @@ _deps/imgui-src/imconfig.h:
 
 /usr/include/bits/sigcontext.h:
 
+/home/hunter/SRPEngine/src/gui.cpp:
+
 /usr/include/bits/types/__mbstate_t.h:
 
 /usr/include/bits/stdio_lim.h:
@@ -2459,6 +2459,8 @@ CMakeFiles/SDF_Engine.dir/src/shaderLoad.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2convertintrin.h:
 
+/home/hunter/SRPEngine/src/shaderLoad.cpp:
+
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx10_2satcvtintrin.h:
 
 CMakeFiles/SDF_Engine.dir/src/movement.cpp.o:
@@ -2528,8 +2530,6 @@ CMakeFiles/SDF_Engine.dir/src/movement.cpp.o:
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/cetintrin.h:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/bmi2intrin.h:
-
-/home/hunter/SRPLightingEngine/src/gui.cpp:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/avx512ifmavlintrin.h:
 
