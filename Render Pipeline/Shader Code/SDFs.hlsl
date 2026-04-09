@@ -121,7 +121,7 @@ float SDF1(float3 p)
 float SDF2(float3 p0)
 {
     p0 /= 10;
-    p0.xyz = frac((p0.xyz - 1.0) * 0.5) * 2.0 - 1.0;
+    //p0.xyz = frac((p0.xyz - 1.0) * 0.5) * 2.0 - 1.0;
     
     float4 p = float4(p0, 1.0);
     p = abs(p);
@@ -132,7 +132,7 @@ float SDF2(float3 p0)
         p.zy = p.yz;
     if (p.y < p.x)
         p.yx = p.xy;
-
+    
     for (int i = 0; i < 10; i++)
     {
         if (p.x < p.z)
@@ -144,7 +144,7 @@ float SDF2(float3 p0)
 
         p.xyz = abs(p.xyz);
         float dotVal = dot(p.xyz, p.xyz);
-        p.xyz *= 1.6 / clamp(dotVal, 0.6, 1.0);
+        p.xyz *= 1.6 / clamp(dotVal, .5, 1);
         p.xyz -= float3(0.7, 1.8, 0.5);
         p.xyz *= 1.2;
     }
@@ -152,7 +152,7 @@ float SDF2(float3 p0)
     float m = 1.5;
     p.xyz -= clamp(p.xyz, -m, m);
 
-    return (length(p.xyz) / p.w) / 100.0;
+    return (length(p.xyz) / p.w) / 200.0;
 }
 
 float SDF3(float3 p)
@@ -212,7 +212,7 @@ float WierdTriangleSDF(float3 p0)
         p *= 1.4 / dot(p.xyz, p.xyz);
     }
 
-    return length(p.xz / p.w) * 0.25;
+    return length(p.xz / p.w);
 }
 
 float TwistySphere(float3 p)
@@ -237,7 +237,6 @@ float2x2 rotMatrix(float r)
 
 float SDF5(float3 p, float Time)
 {
-    
     float2 xy, xz;
     xy = p.xy;
     xz = p.xz;
@@ -306,7 +305,7 @@ float NoiseSDF(float3 pos)
 
 float SDF(float3 p)
 {
-    return NoiseSDF(p);
+    return SDF2(p);
 }
 
 
@@ -397,7 +396,7 @@ float3 GetSurfaceEmission(float3 p)
     float3 emission = 1;
     
     //Scale P by local Curvature
-    p = p * 1.0 / (1 + GetCurvature(p));
+    //p = p * 1.0 / (1 + GetCurvature(p));
     float3 col1 = float3(1, .45, .1) * sin(Time / 11) + float3(.1, .85, 1) * cos(Time / 11);
     float3 col2 = float3(.1, .1, .9) * sin(Time / 23) + float3(.76, .1, 1) * cos(Time / 23);
     
@@ -405,6 +404,5 @@ float3 GetSurfaceEmission(float3 p)
     col1 *= t;
     col2 *= (1 - t);
     //return col1 + col2;
-    return GetGradient(p);
-
+    return 1;
 }

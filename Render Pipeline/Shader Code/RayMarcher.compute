@@ -1,6 +1,7 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSPrimaryRay
 #pragma kernel CSDirectHit
+#pragma kernel CSAmbientOcclusion
 
 #include "SDFs.hlsl"
 #include "RayHit.hlsl"
@@ -16,8 +17,10 @@ uniform float MinClip;
 uniform float MaxClip;
 uniform float FOV_Tan;
 
-static int maxSteps = 400;
-static float minDist = .001;
+uniform float SDFScale;
+
+uniform int maxSteps = 400;
+uniform float minDist = .001;
 static float PI = 3.14159;
 
 static float3 lightSource = float3(sin(Time), cos(Time), 0);
@@ -38,22 +41,18 @@ void CSPrimaryRay(uint3 id : SV_DispatchThreadID)
     
     //for cone tracing, optimization
     //Cone size should be how large an area the pixel covers
-    float pixelAngle = .001;
+    float pixelAngle = .0005;
     
     float3 pos = CamToWorld._14_24_34 + rayDir * MinClip;
     for (i = 0; i < maxSteps; i++)
     {
         distToScene = SDF(pos);
-        //Calculate correction term
-        //float cor = 3 / (dot(rayDir, GetGradient(pos)) + 2);
-        //distToScene = cor < 1 ? distToScene : distToScene / cor;
-        
-        pos += rayDir * distToScene;
+        pos += rayDir * distToScene * SDFScale;
         dist += max(distToScene, 0);
         
         //Optimization
         //Test, use ABS to better converge for fractal geometries
-        if (abs(distToScene) < max(pixelAngle * dist, pixelAngle))
+        if (abs(distToScene) < max(minDist * dist, minDist))
             break;
         if (dist > MaxClip)
             break;
@@ -63,7 +62,6 @@ void CSPrimaryRay(uint3 id : SV_DispatchThreadID)
     hitData.posDist = float4(pos, dist);
     hitBufferRW[id.x + id.y * ScreenSize.x] = hitData;
 }
-
 
 [numthreads(8, 8, 1)]
 void CSDirectHit(uint3 id : SV_DispatchThreadID)
@@ -78,66 +76,47 @@ void CSDirectHit(uint3 id : SV_DispatchThreadID)
     float3 pos = hitBuffer[id.x + ScreenSize.x * id.y].posDist.xyz;
     float3 normal = GetNormal(pos);
     
-    float3 emission = 0;
-    emission = GetSurfaceEmission(pos + GetTangent(pos, Time / 7));
+    float3 emission = 1;
+    emission = GetSurfaceEmission(pos);
     
-    
-    float c0 = MaxClip / 4;
-    float c1 = MaxClip / 4; //exponential scalar
+    float c0 = 2;
+    float c1 = 1;
     float spread = (c0 * c0) / ((hit.posDist.w + c0) * (hit.posDist.w + c0));
     float absorption = exp2(-hit.posDist.w / c1);
     
-    emission *= spread * absorption;
-    
-    //emission = lerp(emission, float3(.1, .1, .1), 1 - absorption);
-    
-    float sigma = .5;
-    float sigma2 = sigma * sigma;
-    
-    float NdotL = max(dot(normal, lightSource), 0.0);
-    float NdotV = max(dot(normal, -rayDir), 0.0);
-    
-    float3 Lperp = normalize(lightSource - normal * NdotL);
-    float3 Vperp = normalize(-rayDir - normal * NdotV);
-    float cosPhiDiff = saturate(dot(Lperp, Vperp));
-    
-    float A = 1.0 - 0.5 * (sigma2 / (sigma2 + 0.33));
-    float B = 0.45 * (sigma2 / (sigma2 + 0.09));
-    
-    float3 diffuse = emission * (NdotL * A + B * cosPhiDiff * max(NdotL, NdotV));
-    
-    float lambert = dot(normal, -rayDir);
-    float rimLighting = 1 - lambert;
-    float fresnel = pow(1 - abs(dot(normal, rayDir)), 4.0);
-    
-    
-    emission *= (diffuse + rimLighting + fresnel);
-    emission = lerp(rimLighting, emission, absorption);
+    emission *= spread;
     
     Result[id.xy] = float4(emission, 1);
 }
 
-[numthreads(8, 8, 1)]
+[numthreads(16, 16, 1)]
 void CSAmbientOcclusion(uint3 id : SV_DispatchThreadID)
 {
     rayHit hit = hitBuffer[id.x + ScreenSize.x * id.y];
+    float3 normal = GetNormal(hit.posDist.xyz);
+    
+    float occlusion = 0.0;
+    float scale = 1;
+    float step = .05;
+    
+    float t = 0;
+    float3 offset = hit.posDist.xyz;
+    float3 grad = normal * step;
+    offset += grad;
+
+    for (int i = 1; i < 10; i++)
+    {
+        t = step * i;
+        float d = SDF(offset);
+        occlusion += (t - d) * scale;
+        if (occlusion > 1.0)
+            break;
+        scale *= .5;
+        offset += grad;
+    }
+    occlusion = saturate(1 - occlusion);
+    
+    float3 emission = Result[id.xy].xyz;
+    emission *= occlusion;
+    Result[id.xy] = float4(emission, 1);
 }
-
-/*
-
-    emission.x = matrixNoise(hit.posDist.xyz);
-    emission.y = matrixNoise(hit.posDist.xyz - 654);
-    emission.z = matrixNoise(hit.posDist.xyz + 123);
-    
-    
-    //float sqrDist = 20 / hit.posDist.w / hit.posDist.w;
-    float linDist = max(2 - hit.posDist.w, .5);
-    linDist = pow(linDist, 4);
-    emission *= linDist;
-    
-    float3 purp = float3(.1, 0, .1);
-    purp *= sin(hit.posDist.w) + 1;
-    purp *= 10 / (hit.posDist.w + 5);
-    emission += purp;
-    
-*/

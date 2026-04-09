@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1603c69c5f5c90448d4da08504ad5cf, type: 3}
+  m_Name: RenderPipeline
+  m_EditorClassIdentifier: 
+  RayMarch: {fileID: 7200000, guid: 2dc90529322d6384b860accc01a4b637, type: 3}
+  GenerateNoise: {fileID: 7200000, guid: cca9c8badc16a9043875884e4fdb1ea9, type: 3}
+  SDFScale: 0.61
+  minDist: 2000
+  maxStepCount: 600
+  useAmbientOcclusion: 1
