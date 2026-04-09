@@ -12,28 +12,23 @@ void main()
     float dist = 0;
     float distToScene = 0;
 
-    //for cone tracing, optimization
-    //Cone size should be how large an area the pixel covers
-    float pixelAngle = .001;
-
     vec3 pos = camPos + rayDir * MIN_DIST;
     for (i = 0; i < MAX_STEPS; i++)
     {
         distToScene = SDF(pos);
-        //Calculate correction term
-        //float cor = 3 / (dot(rayDir, GetGradient(pos)) + 2);
-        //distToScene = cor < 1 ? distToScene : distToScene / cor;
 
         pos += rayDir * distToScene;
         dist += max(distToScene, 0);
 
-        //Optimization
-        //Test, use ABS to better converge for fractal geometries
-        if (abs(distToScene) < max(pixelAngle * dist, pixelAngle))
+        if (abs(distToScene) < max(MIN_DIST * dist, MIN_DIST))
             break;
-        if (dist > 200)
+        if (abs(dist) > 200){
+            dist = 100000;
             break;
+        }
     }
+    dist = abs(dist);
+
 
     rayHit hitData;
     hitData.posDist = vec4(pos, dist);

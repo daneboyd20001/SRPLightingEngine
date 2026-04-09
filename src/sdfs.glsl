@@ -11,7 +11,7 @@ uniform sampler2D noiseTex;
 uniform float lampStrength;
 uniform float fov;
 
-const int MAX_STEPS = 400;
+const int MAX_STEPS = 800;
 const float MIN_DIST = 0.001;
 const float PI = 3.14159;
 const int SDF_Frac1 = 2;
