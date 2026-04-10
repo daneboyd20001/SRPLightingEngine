@@ -79,20 +79,19 @@ mat3 RNGMatrix(in vec3 pos)
     419.77, 521.33, 607.11);
     mat2x3 rand;
     rand[0] = primeMat * pos;
-          rand[1] = primeMat * pos + 752;
+    rand[1] = primeMat * pos + 752;
 
     rand = sin(rand);
     rand *= 564.53;
-    rand = fract(rand);
-    rand = rand * 2 - 1;
+    rand = fract(rand * 564.53) * 2 - 1;
 
     return mat3(rand[0].x, rand[0].y, rand[0].z,
         rand[0].y, rand[1].x, rand[1].y,
         rand[0].z, rand[1].y, rand[1].z);
 }
-*/
 
-/*
+
+
 float matrixNoise(vec3 pos)
 {
     vec3 f = fract(pos); // frac = fract.
@@ -114,8 +113,9 @@ float matrixNoise(vec3 pos)
                 //creates a random symetrical matrix
                 m = RNGMatrix(i + vec3(x, y, z));
                 //dots our local positition value with a matrix transformed
-local position dots[x + y * 2 + z * 4] = dot(pos - i - vec3(x,y,z), m * pos - i
-- vec3(x, y, z));
+                vec3 localPos = pos - i - vec3(x, y, z);
+
+                dots[x + y * 2 + z * 4] = dot(localPos, m * localPos);
             }
         }
     }
@@ -133,3 +133,4 @@ local position dots[x + y * 2 + z * 4] = dot(pos - i - vec3(x,y,z), m * pos - i
     return dots[0];
 }
 */
+

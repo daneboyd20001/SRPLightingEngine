@@ -11,7 +11,7 @@
 #include "shaderLoad.h"
 
 int main() {
-  InitWindow(1280, 720, "SDF Engine");
+  InitWindow(1920, 1080, "SDF Engine");
   SetTargetFPS(200);
 
   rlImGuiSetup(true);
@@ -32,12 +32,12 @@ int main() {
       "SDF 2",          "SDF 3",         "SDF 4",     "SDF 5",
       "SDF 6",          "AABB",          "NoiseSDF",  "hunterSDF"};
   int sdfCount = sizeof(sdfNames) / sizeof(sdfNames[0]);
-  int currentSDF = 8;
+  int currentSDF = 15;
 
   const char *lightingNames[] = {"Flat", "Rim-Lighting", "Lambertian",
                                  "Fog",  "Anti-Fog",     "Dane Lighting"};
   int lightingCount = sizeof(lightingNames) / sizeof(lightingNames[0]);
-  int currentLight = 2;
+  int currentLight = 5;
 
   // ------------------------------------------------------- //
 
@@ -98,7 +98,7 @@ int main() {
      * SDFs, and other things.
      */
     rlImGuiBegin();
-    ImGui::SetNextWindowPos({70, 75}, ImGuiCond_Once);
+    ImGui::SetNextWindowPos({70, 50}, ImGuiCond_Once);
     ImGui::Begin("Controls");
 
     sdfSelection(sdfNames, currentSDF, sdfCount);
@@ -108,13 +108,12 @@ int main() {
 
     ImGui::End();
 
-    ImGui::SetNextWindowPos({70, 225}, ImGuiCond_Once);
+    ImGui::SetNextWindowPos({70, 250}, ImGuiCond_Once);
     ImGui::Begin("Camera Controls");
 
     resetButton(cam);
     fovSlider(cam);
     sensSlider(cam);
-    lampDistSlider(cam);
     lampStrSlider(cam);
 
     ImGui::End();

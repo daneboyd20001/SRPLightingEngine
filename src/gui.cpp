@@ -54,11 +54,6 @@ void minDistSlider(float &minDist) {
   ImGui::SliderFloat("Min Distance", &minDist, 0.0001f, 0.1f);
 }
 
-void lampDistSlider(player &cam) {
-  ImGui::SetNextItemWidth(150.0f);
-  ImGui::SliderFloat("Lamp Distance", &cam.lampDist, 0.0f, 200.0f);
-}
-
 void lampStrSlider(player &cam) {
   ImGui::SetNextItemWidth(150.0f);
   ImGui::SliderFloat("Lamp Strength", &cam.lampStr, 0.1f, 1000.0f);

@@ -16,10 +16,11 @@
   - [] Temporal AA
   - [] Soft Shadows
 
-## SDFs
+## Rendering
 
-- [x] Hit Buffer
-- [] SDF Performance
+- [] Wavefront Rendering
+  - [] Hit Buffer
+  - [] SDF Performance
 
 ## Lighting
 

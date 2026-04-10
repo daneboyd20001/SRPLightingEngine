@@ -394,11 +394,16 @@ float NoiseSDF(vec3 p) {
 }
 
 float hunterSDF(vec3 p, float time) {
-  float r1 = abs(sin(time)) + 1;
-  float r2 = abs(cos(time)) + 1;
 
-  return min(length(p + vec3(3.0, 0.0, 0.0)) - r1,
-             length(p - vec3(0.0, 0.0, 0.0)) - r2);
+  float r1 = sin(time) + 2;
+  float r2 = cos(time) + 2;
+
+  vec3 r1pos = vec3(3.0,0.0,0.0);
+  vec3 r2pos = vec3(-3.0,0.0,0.0);
+
+  vec3 lerp = r1pos * (1 - time) + r2pos * time;
+
+  return min(length(p + r1pos) - r1, length(p + r2pos) - r2);
 }
 
 float SDF(vec3 p) {
