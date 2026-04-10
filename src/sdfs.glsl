@@ -35,6 +35,10 @@ struct SDFObj {
   vec2 param;
 };
 
+vec3 slerp(vec3 p1, vec3 p2, float t) {
+  return cos((1 - t) * PI / 2) * p1 + sin(t * PI / 2) * p2;
+}
+
 float fade(float t) {
   // return t;
   // return t * t * (3 - 2 * t);
@@ -393,17 +397,28 @@ float NoiseSDF(vec3 p) {
   return (temp + dist) / 4;
 }
 
-float hunterSDF(vec3 p, float time) {
+float orbitSDF(vec3 p, float time) {
 
-  float r1 = sin(time) + 2;
-  float r2 = cos(time) + 2;
+  float r1 = 1;
+  float r2 = 1;
 
-  vec3 r1pos = vec3(3.0,0.0,0.0);
-  vec3 r2pos = vec3(-3.0,0.0,0.0);
+  float t = time - 0.8 * cos(time); // Warps the time as the derivative (1 - sin(time)), which is the speed, equals 0 (at 3pi/2).
+                                    // Multiply cos by some constant between 0 and 1 so it doesn't fully stop once it hits 3pi/2.
 
-  vec3 lerp = r1pos * (1 - time) + r2pos * time;
+  vec3 orbit1 = vec3(6 * cos(t), -4.5 + 10 * sin(t), 3 * sin(t)); // x = h + acos(x), y = k + bsin(y), z = c(sin or cos)z.
+  vec3 orbit2 = vec3(5 * cos(t), -2.5 + 10 * sin(t), 4 * cos(t));
 
-  return min(length(p + r1pos) - r1, length(p + r2pos) - r2);
+  float centerObj = length(p) - r2;
+  float obj1 = length(p - orbit1) - r1;
+  float obj2 = length(p - orbit2) - r1;
+
+  return min(centerObj, min(obj1, obj2));
+}
+
+float hunterSDF(vec3 p)
+{
+  float r = 2 - cos(p.x) + cos(p.y) + cos(p.z);
+  return r;
 }
 
 float SDF(vec3 p) {
@@ -439,7 +454,9 @@ float SDF(vec3 p) {
   case 14:
     return NoiseSDF(p);
   case 15:
-    return hunterSDF(p, time);
+    return orbitSDF(p, time);
+  case 16:
+    return hunterSDF(p);
   default:
     return SDF2(p);
   }

@@ -54,10 +54,6 @@ void main() {
 
 */
 
-vec3 slerp(vec3 p1, vec3 p2, float t) {
-  return cos((1 - t) * 3.14159 / 2) * p1 + sin(t * 3.14159 / 2) * p2;
-}
-
 vec3 RNGVec(in vec3 pos) {
   vec3 hashx = vec3(971.23, 231.67, 753.91);
   vec3 hashy = vec3(421.38, 882.19, 1193.57);

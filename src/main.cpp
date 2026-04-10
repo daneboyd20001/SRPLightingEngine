@@ -27,12 +27,12 @@ int main() {
    * This entire section is for the drop down menus in the gui.
    * */
   const char *sdfNames[] = {
-      "Gyroid Torus",   "Sphere",        "Plane",     "Cross",
-      "Weird Triangle", "Twisty Sphere", "Danes SDF", "SDF 1",
-      "SDF 2",          "SDF 3",         "SDF 4",     "SDF 5",
-      "SDF 6",          "AABB",          "NoiseSDF",  "hunterSDF"};
+      "Gyroid Torus",  "Sphere",    "Plane", "Cross", "Weird Triangle",
+      "Twisty Sphere", "Danes SDF", "SDF 1", "SDF 2", "SDF 3",
+      "SDF 4",         "SDF 5",     "SDF 6", "AABB",  "NoiseSDF",
+      "orbitSDF",      "hunterSDF"};
   int sdfCount = sizeof(sdfNames) / sizeof(sdfNames[0]);
-  int currentSDF = 15;
+  int currentSDF = 16;
 
   const char *lightingNames[] = {"Flat", "Rim-Lighting", "Lambertian",
                                  "Fog",  "Anti-Fog",     "Dane Lighting"};
