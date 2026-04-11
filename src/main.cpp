@@ -32,7 +32,7 @@ int main() {
       "SDF 4",         "SDF 5",     "SDF 6", "AABB",  "NoiseSDF",
       "orbitSDF",      "hunterSDF"};
   int sdfCount = sizeof(sdfNames) / sizeof(sdfNames[0]);
-  int currentSDF = 16;
+  int currentSDF = 15;
 
   const char *lightingNames[] = {"Flat", "Rim-Lighting", "Lambertian",
                                  "Fog",  "Anti-Fog",     "Dane Lighting"};

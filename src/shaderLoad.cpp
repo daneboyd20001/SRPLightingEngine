@@ -68,8 +68,8 @@ void hotReload(long sdfModTime, long lightingModTime, long mainModTime,
 
 void setShader(shader &sh, player &cam, float minDist, float scalarDist,
                int currentSDF, int currentLight) {
-  float time = GetTime();
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  float time = GetTime();
 
   SetShaderValue(sh.sdfShader, sh.resolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);

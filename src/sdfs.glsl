@@ -139,19 +139,6 @@ float Perlin(vec3 pos) {
   return nxyz;
 }
 
-float SampleNoise3D(vec3 pos, vec3 normal) {
-  vec3 blendWeights = abs(normal);
-  blendWeights =
-      blendWeights / (blendWeights.x + blendWeights.y + blendWeights.z);
-
-  float noiseX = texture(noiseTex, pos.yz * 0.1).r;
-  float noiseY = texture(noiseTex, pos.xz * 0.1).r;
-  float noiseZ = texture(noiseTex, pos.xy * 0.1).r;
-
-  return noiseX * blendWeights.x + noiseY * blendWeights.y +
-         noiseZ * blendWeights.z;
-}
-
 float SampleNoise3D(vec3 pos) {
   float noiseX = texture(noiseTex, pos.yz * 0.1).r;
   float noiseY = texture(noiseTex, pos.xz * 0.1).r;
@@ -399,24 +386,32 @@ float NoiseSDF(vec3 p) {
 
 float orbitSDF(vec3 p, float time) {
 
+  float e =
+      0.3; // Eccentricity, between -1 and 1, describes how elliptical it is.
+  float a1 = 10; // Orbit size.
+  float a2 = 13;
+
+  float tilt = (11 * PI) / 6; // Radians
+
   float r1 = 1;
-  float r2 = 1;
+  float r2 = 0.3;
+  float r3 = 0.5;
 
-  float t = time - 0.8 * cos(time); // Warps the time as the derivative (1 - sin(time)), which is the speed, equals 0 (at 3pi/2).
-                                    // Multiply cos by some constant between 0 and 1 so it doesn't fully stop once it hits 3pi/2.
+  // float t = time - 0.8 * cos(time);
+  float t1 = (a1 * (1 - e * e)) / (1 + e * cos(time));
+  float t2 = (a2 * (1 - e * e)) / (1 + e * cos(time));
 
-  vec3 orbit1 = vec3(6 * cos(t), -4.5 + 10 * sin(t), 3 * sin(t)); // x = h + acos(x), y = k + bsin(y), z = c(sin or cos)z.
-  vec3 orbit2 = vec3(5 * cos(t), -2.5 + 10 * sin(t), 4 * cos(t));
+  vec3 orbitr1 = vec3(t1 * cos(time), t1 * sin(time), t1 * cos(time));
+  vec3 orbitr2 = vec3(t2 * cos(time), t2 * sin(time), t2 * cos(time) * tilt);
 
-  float centerObj = length(p) - r2;
-  float obj1 = length(p - orbit1) - r1;
-  float obj2 = length(p - orbit2) - r1;
+  float centerObj = length(p) - r1;
+  float obj1 = length(p - orbitr1) - r2;
+  float obj2 = length(p - orbitr2) - r3;
 
   return min(centerObj, min(obj1, obj2));
 }
 
-float hunterSDF(vec3 p)
-{
+float hunterSDF(vec3 p) {
   float r = 2 - cos(p.x) + cos(p.y) + cos(p.z);
   return r;
 }
