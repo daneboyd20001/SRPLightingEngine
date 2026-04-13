@@ -14,10 +14,7 @@ make
 ```
 
 ## Resources Used
-<<<<<<< HEAD
 
-=======
->>>>>>> 2d3681c03cb5164dfdf8d9172b6bad5de39d0844
 - [Jon Baker, Graphics Programming](https://jbaker.graphics/writings/DEC.html)
 - [SDF Video by CGMatter](https://youtu.be/LyQWZRfWotQ?si=HSjPU0lEMqqIOmIZ)
 - [Ray Marching Video by Sebastian lague](https://youtu.be/Cp5WWtMoeKg?si=322S5yfTT3A6bwqZ)
