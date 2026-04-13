@@ -1,6 +1,17 @@
 # SRPLightingEngine
-A completely custom lighting engine with compute shaders.
 
+A Raylib game engine project for research into SDFs, raymarchers, and lighting models.
+
+## Build Instructions
+
+This project uses CMake. To compile and build, create a directory named build in the root of the project, navigate into it, and execute the following commands:
+
+```
+cd build
+cmake ..
+make
+./SDF_Engine
+```
 
 ## Resources Used
 - [Jon Baker, Graphics Programming] (https://jbaker.graphics/writings/DEC.html)
