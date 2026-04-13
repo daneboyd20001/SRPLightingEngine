@@ -5,6 +5,7 @@
 
 #include "SDFs.hlsl"
 #include "RayHit.hlsl"
+#include "Lighting.hlsl"
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
@@ -17,7 +18,7 @@ uniform float MinClip;
 uniform float MaxClip;
 uniform float FOV_Tan;
 
-uniform float SDFScale;
+uniform float quality;
 
 uniform int maxSteps = 400;
 uniform float minDist = .001;
@@ -41,18 +42,19 @@ void CSPrimaryRay(uint3 id : SV_DispatchThreadID)
     
     //for cone tracing, optimization
     //Cone size should be how large an area the pixel covers
-    float pixelAngle = .0005;
+    float cutoff = .001;
     
     float3 pos = CamToWorld._14_24_34 + rayDir * MinClip;
+    
     for (i = 0; i < maxSteps; i++)
     {
         distToScene = SDF(pos);
-        pos += rayDir * distToScene * SDFScale;
+        pos += rayDir * distToScene * quality;
         dist += max(distToScene, 0);
         
         //Optimization
         //Test, use ABS to better converge for fractal geometries
-        if (abs(distToScene) < max(minDist * dist, minDist))
+        if (abs(distToScene) < max(cutoff * dist, cutoff))
             break;
         if (dist > MaxClip)
             break;
@@ -77,14 +79,14 @@ void CSDirectHit(uint3 id : SV_DispatchThreadID)
     float3 normal = GetNormal(pos);
     
     float3 emission = 1;
-    emission = GetSurfaceEmission(pos);
+    emission = GetSurfaceEmission(pos, normal);
     
-    float c0 = 2;
-    float c1 = 1;
+    float c0 = 20;
+    float c1 = 50;
     float spread = (c0 * c0) / ((hit.posDist.w + c0) * (hit.posDist.w + c0));
     float absorption = exp2(-hit.posDist.w / c1);
     
-    emission *= spread;
+    emission *= absorption;
     
     Result[id.xy] = float4(emission, 1);
 }

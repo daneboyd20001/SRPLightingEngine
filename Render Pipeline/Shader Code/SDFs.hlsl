@@ -1,3 +1,5 @@
+#ifndef SDFs
+#define SDFs
 
 #include "Noise.hlsl"
 struct SDFObj
@@ -121,8 +123,7 @@ float SDF1(float3 p)
 float SDF2(float3 p0)
 {
     p0 /= 10;
-    //p0.xyz = frac((p0.xyz - 1.0) * 0.5) * 2.0 - 1.0;
-    
+    p0.xyz = frac((p0.xyz - 1.0) * 0.5) * 2.0 - 1.0;
     float4 p = float4(p0, 1.0);
     p = abs(p);
 
@@ -294,7 +295,7 @@ float NoiseSDF(float3 pos)
     float dist = 0;
     
     float s = 1;
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 4; i++)
     {
         dist += Perlin(pos / s) * s;
         s /= 2;
@@ -305,7 +306,7 @@ float NoiseSDF(float3 pos)
 
 float SDF(float3 p)
 {
-    return SDF2(p);
+    return NoiseSDF(p);
 }
 
 
@@ -390,19 +391,4 @@ float GetCurvature(float3 p)
 {
     return GetLaplacian(p);
 }
-
-float3 GetSurfaceEmission(float3 p)
-{
-    float3 emission = 1;
-    
-    //Scale P by local Curvature
-    //p = p * 1.0 / (1 + GetCurvature(p));
-    float3 col1 = float3(1, .45, .1) * sin(Time / 11) + float3(.1, .85, 1) * cos(Time / 11);
-    float3 col2 = float3(.1, .1, .9) * sin(Time / 23) + float3(.76, .1, 1) * cos(Time / 23);
-    
-    float t = (Perlin(p) + 1) / 2;
-    col1 *= t;
-    col2 *= (1 - t);
-    //return col1 + col2;
-    return 1;
-}
+#endif

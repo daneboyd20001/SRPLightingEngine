@@ -56,6 +56,7 @@ static const uint randU[256] =
 };
 */
 
+
 Texture3D<float4> NoiseTexture;
 SamplerState noiseSampler;
 

@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 public class CustomRenderPipeline : RenderPipeline
 {
     public CustomRenderPipelineAsset asset;
+    public RenderSettings settings;
     public RenderTexture rayResult;
 
     public ComputeBuffer hitBuffer;
@@ -26,14 +27,6 @@ public class CustomRenderPipeline : RenderPipeline
     {
         CommandBuffer cmd = CommandBufferPool.Get("SceneData");
 
-        //SetGeometryData(cmd);
-        //ConstructBVH(cmd);
-        //context.ExecuteCommandBuffer(cmd);
-        CommandBufferPool.Release(cmd);
-
-        cmd = CommandBufferPool.Get("Debug");
-        //DebugStuff2(cmd);
-        //context.ExecuteCommandBuffer(cmd);
         CommandBufferPool.Release(cmd);
 
         for (int i = 0; i < cameras.Count; i++)
@@ -74,16 +67,18 @@ public class CustomRenderPipeline : RenderPipeline
     void RenderSDFRaymarch(CommandBuffer cmd)
     {
         int kernel = asset.RayMarch.FindKernel("CSPrimaryRay");
-        cmd.SetComputeFloatParam(asset.RayMarch,"SDFScale", asset.SDFScale);
-        cmd.SetComputeFloatParam(asset.RayMarch, "minDist", 1 / asset.minDist);
-        cmd.SetComputeFloatParam(asset.RayMarch, "maxSteps", asset.maxStepCount);
+        cmd.SetComputeFloatParam(asset.RayMarch,"quality", 1 / settings.RaymarchQuality);
+        cmd.SetComputeFloatParam(asset.RayMarch, "maxSteps", settings.MaximumStepCount);
         cmd.DispatchCompute(asset.RayMarch, kernel, Screen.width / 8, Screen.height / 8, 1);
 
         kernel = asset.RayMarch.FindKernel("CSDirectHit");
+        cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col1", settings.xAxisColor);
+        cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col2", settings.yAxisColor);
+        cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col3", settings.zAxisColor);
         cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Result", rayResult);
         cmd.DispatchCompute(asset.RayMarch, kernel, Screen.width / 8, Screen.height / 8, 1);
 
-        if (asset.useAmbientOcclusion)
+        if (settings.UseAmbientOcclusion)
         {
             kernel = asset.RayMarch.FindKernel("CSAmbientOcclusion");
             cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Result", rayResult);

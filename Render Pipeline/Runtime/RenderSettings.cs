@@ -5,10 +5,13 @@ using UnityEngine;
 [CreateAssetMenu]
 public class RenderSettings : ScriptableObject
 {
-    public enum RenderType
-    {
-        DanesSDF, SmoothNoise, FractalNoise
-    }
+    [Header("Performance Settings")]
+    public float RaymarchQuality;
+    public int MaximumStepCount;
 
-    public List<RenderPass> OrderedPasses;
+    [Header("Render Features")]
+    public bool UseAmbientOcclusion;
+
+    [Header("Texture")]
+    public Texture xAxisColor, yAxisColor, zAxisColor;
 }

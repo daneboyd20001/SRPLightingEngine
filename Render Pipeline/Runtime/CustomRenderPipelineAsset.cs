@@ -9,13 +9,7 @@ public class CustomRenderPipelineAsset : RenderPipelineAsset<CustomRenderPipelin
     [Header("Noise Rendering")]
     public ComputeShader GenerateNoise;
 
-    [Header("Rendering Settings")]
-    public float SDFScale;
-    public float minDist;
-    public int maxStepCount;
-
-    [Header("Lighting Settings")]
-    public bool useAmbientOcclusion;
+    public RenderSettings settings;
 
     protected override RenderPipeline CreatePipeline()
     {
@@ -25,6 +19,7 @@ public class CustomRenderPipelineAsset : RenderPipelineAsset<CustomRenderPipelin
 
         var pipeline = new CustomRenderPipeline();
         pipeline.asset = this;
+        pipeline.settings = settings;
         pipeline.Init();
         return pipeline;
     }

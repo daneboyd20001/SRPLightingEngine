@@ -14,7 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RayMarch: {fileID: 7200000, guid: 2dc90529322d6384b860accc01a4b637, type: 3}
   GenerateNoise: {fileID: 7200000, guid: cca9c8badc16a9043875884e4fdb1ea9, type: 3}
-  SDFScale: 0.61
-  minDist: 2000
-  maxStepCount: 600
-  useAmbientOcclusion: 1
+  settings: {fileID: 11400000, guid: 8c11b88ef79deea4b98e0064fba4e0ec, type: 2}
