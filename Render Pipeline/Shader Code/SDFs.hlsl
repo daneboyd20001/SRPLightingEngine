@@ -294,14 +294,14 @@ float NoiseSDF(float3 pos)
 {
     float dist = 0;
     
-    float s = 1;
+    float s = 16;
     for (int i = 0; i < 4; i++)
     {
         dist += Perlin(pos / s) * s;
         s /= 2;
     }
     
-    return (dist) / 3;
+    return (dist) / 2;
 }
 
 float SDF(float3 p)
