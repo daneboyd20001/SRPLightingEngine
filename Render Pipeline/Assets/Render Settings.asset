@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cf6f80a573eeb648a8e194a0b3537b7, type: 3}
   m_Name: Render Settings
   m_EditorClassIdentifier: Assembly-CSharp::RenderSettings
-  RaymarchQuality: 7.83
-  MaximumStepCount: 361
+  RaymarchQuality: 7.58
+  MaximumStepCount: 510
   UseAmbientOcclusion: 1
-  colorTexture: {fileID: 2800000, guid: 16ebaeeb7518a62408cd882dda9ff28f, type: 3}
+  xAxisColor: {fileID: 2800000, guid: 4b1d8ddea4058934f97708541820a63a, type: 3}
+  yAxisColor: {fileID: 2800000, guid: 8d89aa73e7a8ffa449bc080309db1c3c, type: 3}
+  zAxisColor: {fileID: 2800000, guid: 3d6b73a58204cae438ef6e17e07de51f, type: 3}

@@ -79,10 +79,12 @@ void CSDirectHit(uint3 id : SV_DispatchThreadID)
     float3 normal = GetNormal(pos);
     
     float3 emission = 1;
-    emission = GetSurfaceEmission(pos, normal);
+    emission = GetSurfaceEmission(pos);
+    emission += 1;
+    emission /= 2;
     
     float c0 = 20;
-    float c1 = 50;
+    float c1 = 10;
     float spread = (c0 * c0) / ((hit.posDist.w + c0) * (hit.posDist.w + c0));
     float absorption = exp2(-hit.posDist.w / c1);
     

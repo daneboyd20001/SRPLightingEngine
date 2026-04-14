@@ -236,7 +236,7 @@ float2x2 rotMatrix(float r)
     return float2x2(cos(r), sin(r), -sin(r), cos(r));
 }
 
-float SDF5(float3 p, float Time)
+float SDF5(float3 p)
 {
     float2 xy, xz;
     xy = p.xy;
@@ -306,7 +306,7 @@ float NoiseSDF(float3 pos)
 
 float SDF(float3 p)
 {
-    return NoiseSDF(p);
+    return GyroidTorus(p);
 }
 
 
@@ -329,7 +329,7 @@ float3 GetGradient(float3 p)
 
 float3 GetNormal(float3 p)
 {
-    float eps = .05;
+    float eps = .02;
     
     float3 ex = float3(eps, 0, 0);
     float3 ey = float3(0, eps, 0);
@@ -366,7 +366,7 @@ float3 GetTangent(float3 p, float theta)
 
 float3x3 GetHessian(float3 p)
 {
-    float eps = .01;
+    float eps = .02;
     float3 ddx = GetGradient(p + float3(eps, 0, 0)) - GetGradient(p - float3(eps, 0, 0)) / (2 * eps);
     float3 ddy = GetGradient(p + float3(0, eps, 0)) - GetGradient(p - float3(0, eps, 0)) / (2 * eps);
     float3 ddz = GetGradient(p + float3(0, 0, eps)) - GetGradient(p - float3(0, 0, eps)) / (2 * eps);
@@ -380,15 +380,29 @@ float3x3 GetHessian(float3 p)
 
 float GetLaplacian(float3 p)
 {
-    float eps = .01;
+    float eps = .02;
     float diff = SDF(p + float3(eps, 0, 0)) + SDF(p - float3(eps, 0, 0)) +
                  SDF(p + float3(0, eps, 0)) + SDF(p - float3(0, eps, 0)) +
                  SDF(p + float3(0, 0, eps)) + SDF(p - float3(0, 0, eps));
     return (diff - SDF(p) * 6) / (eps * eps);
 }
 
-float GetCurvature(float3 p)
+//Divergence of normal
+float GetMeanCurvature(float3 p)
 {
-    return GetLaplacian(p);
+    return GetLaplacian(p) / 2;
+}
+float GetGaussianCurvature(float3 p)
+{
+    float3x3 hess = GetHessian(p);
+    float3 grad = GetGradient(p);
+    float4x4 mat = float4x4(hess[0][0], hess[0][1], hess[0][2], grad.x,
+                            hess[1][0], hess[1][1], hess[1][2], grad.y,
+                            hess[2][0], hess[2][1], hess[2][2], grad.z,
+                            grad.x, grad.y, grad.z, 0);
+    //Formula needs len^4
+    float len = dot(grad, grad);
+    len *= len;
+    return -determinant(mat) / len;
 }
 #endif
