@@ -57,8 +57,27 @@ static const uint randU[256] =
 */
 
 
-Texture3D<float4> NoiseTexture;
-SamplerState noiseSampler;
+Texture2D<float4> NoiseTex;
+SamplerState sampler_NoiseTex;
+
+float SampleNoise(float3 p)
+{
+    //Shouldnt be correlated, all samples are from different layers
+    float3 xAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.yz, 0).x;
+    float3 yAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.zx, 0).y;
+    float3 zAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.xy, 0).z;
+    return xAxis + yAxis + zAxis / 3;
+}
+
+float3 SampleColor(float3 p)
+{
+    //Might be correlated, must check
+    float3 xAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.yz, 0).xyz;
+    float3 yAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.zx, 0).yzx;
+    float3 zAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.xy, 0).zxy;
+    return xAxis + yAxis + zAxis / 3;
+}
+
 
 float3 slerp(float3 p1, float3 p2, float t)
 {
@@ -123,8 +142,6 @@ float3x3 RNGMatrix(in float3 pos)
 
 float fade(float t)
 {
-    //return t;
-    //return t * t * (3 - 2 * t);
     return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
@@ -164,14 +181,14 @@ float Perlin(float3 pos)
 
     float3 u = float3(fade(f.x), fade(f.y), fade(f.z));
     
-    float3 g000 = RNGNorm(i + float3(0, 0, 0));
-    float3 g100 = RNGNorm(i + float3(1, 0, 0));
-    float3 g010 = RNGNorm(i + float3(0, 1, 0));
-    float3 g110 = RNGNorm(i + float3(1, 1, 0));
-    float3 g001 = RNGNorm(i + float3(0, 0, 1));
-    float3 g101 = RNGNorm(i + float3(1, 0, 1));
-    float3 g011 = RNGNorm(i + float3(0, 1, 1));
-    float3 g111 = RNGNorm(i + float3(1, 1, 1));
+    float3 g000 = RNGVec(i + float3(0, 0, 0));
+    float3 g100 = RNGVec(i + float3(1, 0, 0));
+    float3 g010 = RNGVec(i + float3(0, 1, 0));
+    float3 g110 = RNGVec(i + float3(1, 1, 0));
+    float3 g001 = RNGVec(i + float3(0, 0, 1));
+    float3 g101 = RNGVec(i + float3(1, 0, 1));
+    float3 g011 = RNGVec(i + float3(0, 1, 1));
+    float3 g111 = RNGVec(i + float3(1, 1, 1));
     
     float3 p000 = f - float3(0, 0, 0);
     float3 p100 = f - float3(1, 0, 0);
@@ -203,6 +220,7 @@ float Perlin(float3 pos)
 
     return nxyz;
 }
+
 
 float matrixNoise(float3 pos)
 {

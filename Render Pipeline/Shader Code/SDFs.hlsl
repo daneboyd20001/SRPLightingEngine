@@ -79,7 +79,7 @@ float DanesSDF(float3 p0)
         p.w *= abs(scale);
     }
     
-    return (2 - (length(p.xyz / p.w)));
+    return (1 - (length(p.xyz / p.w)));
 }
 
 float cubeSDF(float4 cube, float3 pos)
@@ -122,7 +122,7 @@ float SDF1(float3 p)
 
 float SDF2(float3 p0)
 {
-    p0 /= 10;
+    p0 /= 11;
     p0.xyz = frac((p0.xyz - 1.0) * 0.5) * 2.0 - 1.0;
     float4 p = float4(p0, 1.0);
     p = abs(p);
@@ -145,7 +145,7 @@ float SDF2(float3 p0)
 
         p.xyz = abs(p.xyz);
         float dotVal = dot(p.xyz, p.xyz);
-        p.xyz *= 1.6 / clamp(dotVal, .5, 1);
+        p.xyz *= 1.6 / clamp(dotVal, .1, 1);
         p.xyz -= float3(0.7, 1.8, 0.5);
         p.xyz *= 1.2;
     }
@@ -202,18 +202,18 @@ float SDF4(float3 p0)
     
     return ((length(p.xyz / p.w)));
 }
-  // highly varied domain - take a look around
+
 float WierdTriangleSDF(float3 p0)
 {
     float4 p = float4(p0, 1.0);
-    //p *= rsqrt(abs(p));
+    //p = sqrt(p);
     for (int i = 0; i < 14; i++)
     {
         p.xyz = frac((p.xyz - 1.0) * 0.5) * 2.0 - 1.0;
         p *= 1.4 / dot(p.xyz, p.xyz);
     }
 
-    return length(p.xz / p.w);
+    return length(p.xyz / p.w);
 }
 
 float TwistySphere(float3 p)
@@ -290,6 +290,25 @@ float SDF5(float3 p)
     return d;
 }
 
+float SDF6(float3 p)
+{
+    p = p.xzy;
+    float3 cSize = float3(1., 1., 1.3);
+    float scale = 1.;
+    for (int i = 0; i < 12; i++)
+    {
+        p = 2.0 * clamp(p, -cSize, cSize) - p;
+        float r2 = dot(p, p + sin(p.z * .3));
+        float k = max((2.) / (r2), .027);
+        p *= k;
+        scale *= k;
+    }
+    float l = length(p.xy);
+    float rxy = l - 4.0;
+    float n = l * p.z;
+    rxy = max(rxy, -(n) / 4.);
+    return (rxy) / abs(scale);
+}
 float NoiseSDF(float3 pos)
 {
     float dist = 0;
@@ -297,16 +316,16 @@ float NoiseSDF(float3 pos)
     float s = 16;
     for (int i = 0; i < 4; i++)
     {
-        dist += Perlin(pos / s) * s;
+        dist += SampleNoise(pos / s) * s;
         s /= 2;
     }
     
-    return (dist) / 2;
+    return (dist);
 }
 
 float SDF(float3 p)
 {
-    return GyroidTorus(p);
+    return DanesSDF(p);
 }
 
 
@@ -390,7 +409,7 @@ float GetLaplacian(float3 p)
 //Divergence of normal
 float GetMeanCurvature(float3 p)
 {
-    return GetLaplacian(p) / 2;
+    return -GetLaplacian(p) / (2 * length(GetGradient(p)));
 }
 float GetGaussianCurvature(float3 p)
 {

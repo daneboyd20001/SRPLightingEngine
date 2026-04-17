@@ -42,14 +42,14 @@ void CSPrimaryRay(uint3 id : SV_DispatchThreadID)
     
     //for cone tracing, optimization
     //Cone size should be how large an area the pixel covers
-    float cutoff = .001;
+    float cutoff = .001 * quality;
     
     float3 pos = CamToWorld._14_24_34 + rayDir * MinClip;
     
     for (i = 0; i < maxSteps; i++)
     {
-        distToScene = SDF(pos);
-        pos += rayDir * distToScene * quality;
+        distToScene = SDF(pos) * quality;
+        pos += rayDir * distToScene;
         dist += max(distToScene, 0);
         
         //Optimization
@@ -80,15 +80,14 @@ void CSDirectHit(uint3 id : SV_DispatchThreadID)
     
     float3 emission = 1;
     emission = GetSurfaceEmission(pos);
-    emission += 1;
-    emission /= 2;
     
-    float c0 = 20;
-    float c1 = 10;
+    float c0 = 4;
+    float c1 = 64;
     float spread = (c0 * c0) / ((hit.posDist.w + c0) * (hit.posDist.w + c0));
     float absorption = exp2(-hit.posDist.w / c1);
+    float fog = 1 - exp2(-hit.posDist.w / c1);
     
-    emission *= absorption;
+    emission *= spread;
     
     Result[id.xy] = float4(emission, 1);
 }

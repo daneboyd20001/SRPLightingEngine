@@ -21,12 +21,22 @@ public class CustomRenderPipeline : RenderPipeline
         rayResult.Create();
 
         hitBuffer = new ComputeBuffer(Screen.width * Screen.height, 16);
+
+        NoiseTexture = new RenderTexture(4096, 4096, 0);
+        NoiseTexture.wrapMode = TextureWrapMode.Repeat;
+        NoiseTexture.enableRandomWrite = true;
+        NoiseTexture.Create();
+
+        CommandBuffer cmd = CommandBufferPool.Get("Initialization");
+        int kernel = asset.GenerateNoise.FindKernel("CSMain");
+        cmd.SetComputeTextureParam(asset.GenerateNoise, kernel, "Result", NoiseTexture);
+        cmd.DispatchCompute(asset.GenerateNoise, kernel, 512, 512, 1);
+        Graphics.ExecuteCommandBuffer(cmd);
     }
 
     protected override void Render(ScriptableRenderContext context, List<Camera> cameras)
     {
         CommandBuffer cmd = CommandBufferPool.Get("SceneData");
-
         CommandBufferPool.Release(cmd);
 
         for (int i = 0; i < cameras.Count; i++)
@@ -34,6 +44,7 @@ public class CustomRenderPipeline : RenderPipeline
             cmd = CommandBufferPool.Get("CameraData");
             cmd.SetGlobalBuffer("hitBuffer", hitBuffer);
             cmd.SetGlobalBuffer("hitBufferRW", hitBuffer);
+            cmd.SetGlobalTexture("NoiseTex", NoiseTexture);
             SetCamData(cmd, cameras[i]);
 
             RenderSDFRaymarch(cmd);

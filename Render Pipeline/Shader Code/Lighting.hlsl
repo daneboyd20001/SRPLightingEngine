@@ -16,7 +16,14 @@ SamplerState sampler_Col1, sampler_Col2, sampler_Col3;
 float3 GetSurfaceEmission(float3 p)
 {
     //return GetGaussianCurvature(p);
-    return GetMeanCurvature(p);
+    //return (10 + GetMeanCurvature(p)) / 2;
+    
+    return SampleColor(p);
+    
+    float3 xAxis = Col1.SampleLevel(sampler_Col1, p.yz, 0);
+    float3 yAxis = Col2.SampleLevel(sampler_Col2, p.zx, 0);
+    float3 zAxis = Col3.SampleLevel(sampler_Col3, p.xy, 0);
+    return xAxis + yAxis + zAxis / 3;
 }
 
 float3 GetSurfaceEmission(float3 p, float3 n)
