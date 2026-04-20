@@ -26,7 +26,7 @@ float SphereSDF(in float3 p)
 }
 float PlaneSDF(in float3 p)
 {
-    return length(p.xy) - 1;
+    return p.z - 1;
 }
 float AABB(float3 p)
 {
@@ -325,7 +325,7 @@ float NoiseSDF(float3 pos)
 
 float SDF(float3 p)
 {
-    return DanesSDF(p);
+    return PlaneSDF(p);
 }
 
 

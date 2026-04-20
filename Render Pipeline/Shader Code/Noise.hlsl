@@ -126,9 +126,10 @@ float3x3 RNGMatrix(in float3 pos)
     17.23, 53.87, 101.41,
     197.19, 263.56, 347.92,
     419.77, 521.33, 607.11);
+    
     float2x3 rand;
     rand[0] = mul(primeMat, pos);
-	rand[1] = mul(primeMat, pos + 752);
+    rand[1] = mul(primeMat, pos + 752);
 	
     rand = sin(rand);
     rand *= 564.53;
@@ -138,6 +139,15 @@ float3x3 RNGMatrix(in float3 pos)
     return float3x3(rand._11_21_22,
 					rand._21_12_23,
 					rand._22_23_13);
+    
+    float3x3 ret;
+    ret[0] = RNGNorm(pos);
+    pos = mul(primeMat, pos);
+    ret[1] = RNGNorm(pos);
+    pos = mul(primeMat, pos);
+    ret[2] = RNGNorm(pos);
+    
+	return ret;
 }
 
 float fade(float t)
@@ -181,14 +191,14 @@ float Perlin(float3 pos)
 
     float3 u = float3(fade(f.x), fade(f.y), fade(f.z));
     
-    float3 g000 = RNGVec(i + float3(0, 0, 0));
-    float3 g100 = RNGVec(i + float3(1, 0, 0));
-    float3 g010 = RNGVec(i + float3(0, 1, 0));
-    float3 g110 = RNGVec(i + float3(1, 1, 0));
-    float3 g001 = RNGVec(i + float3(0, 0, 1));
-    float3 g101 = RNGVec(i + float3(1, 0, 1));
-    float3 g011 = RNGVec(i + float3(0, 1, 1));
-    float3 g111 = RNGVec(i + float3(1, 1, 1));
+    float3 g000 = RNGNorm(i + float3(0, 0, 0));
+    float3 g100 = RNGNorm(i + float3(1, 0, 0));
+    float3 g010 = RNGNorm(i + float3(0, 1, 0));
+    float3 g110 = RNGNorm(i + float3(1, 1, 0));
+    float3 g001 = RNGNorm(i + float3(0, 0, 1));
+    float3 g101 = RNGNorm(i + float3(1, 0, 1));
+    float3 g011 = RNGNorm(i + float3(0, 1, 1));
+    float3 g111 = RNGNorm(i + float3(1, 1, 1));
     
     float3 p000 = f - float3(0, 0, 0);
     float3 p100 = f - float3(1, 0, 0);
@@ -231,8 +241,9 @@ float matrixNoise(float3 pos)
 	
     float3 u = f * f * f * (f * (f * 6 - 15) + 10);
     //float3 u = f * f * (3.0 - 2.0 * f);
-    
+    //float3 u = f;
     float3x3 m;
+    float3 n;
 	
     for (int x = 0; x < 2; x++)
     {	
@@ -240,11 +251,9 @@ float matrixNoise(float3 pos)
         {
             for (int z = 0; z < 2; z++)
             {
-                //creates a random symetrical matrix
                 m = RNGMatrix(i + float3(x, y, z));
-                //dots our local positition value with a matrix transformed local position
-                dots[x + y * 2 + z * 4] = dot(pos - i - float3(x,y,z), 
-                                              mul(m, pos - i - float3(x, y, z)));
+                n = RNGNorm(i + float3(x, y, z));
+                dots[x + y * 2 + z * 4] = dot(n, mul(m, pos - i - float3(x, y, z)));
             }
         }
     }

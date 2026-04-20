@@ -87,7 +87,7 @@ void CSDirectHit(uint3 id : SV_DispatchThreadID)
     float absorption = exp2(-hit.posDist.w / c1);
     float fog = 1 - exp2(-hit.posDist.w / c1);
     
-    emission *= spread;
+    //emission *= spread;
     
     Result[id.xy] = float4(emission, 1);
 }
