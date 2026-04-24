@@ -78,13 +78,6 @@ float3 SampleColor(float3 p)
     return xAxis + yAxis + zAxis / 3;
 }
 
-
-float3 slerp(float3 p1, float3 p2, float t)
-{
-    return cos((1 - t) * 3.14159 / 2) * p1 + sin(t * 3.14159 / 2) * p2;
-
-}
-
 float RNGF(in float3 pos)
 {
     float3 hash = float3(1993.7, 127.89, 77.41);
@@ -135,10 +128,11 @@ float3x3 RNGMatrix(in float3 pos)
     rand *= 564.53;
     rand = frac(rand);
     rand = rand * 2 - 1;
-	
-    return float3x3(rand._11_21_22,
+    float3x3 mat = float3x3(rand._11_21_22,
 					rand._21_12_23,
 					rand._22_23_13);
+	
+    return mat;
     
     float3x3 ret;
     ret[0] = RNGNorm(pos);

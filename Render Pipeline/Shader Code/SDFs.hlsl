@@ -46,7 +46,7 @@ float Cross(float3 p)
 
 float GyroidTorus(float3 p)
 {
-    float tileSize = 40;
+    float tileSize = 10;
     
     // Repeat space in all directions
     p = fmod(p + 40, tileSize) - 0.5 * tileSize;
@@ -313,19 +313,41 @@ float NoiseSDF(float3 pos)
 {
     float dist = 0;
     
-    float s = 16;
-    for (int i = 0; i < 4; i++)
+    float s = 2;
+    float3 hashx = float3(971.23, 231.67, 753.91);
+    float3 hashy = float3(421.38, 882.19, 1193.57);
+    for (int i = 0; i < 3; i++)
     {
-        dist += SampleNoise(pos / s) * s;
+        dist += matrixNoise(pos / s + hashx) * s;
+        hashx += hashy;
         s /= 2;
     }
     
-    return (dist);
+    return (dist) * 2;
+}
+
+float expSDF(float3 pos)
+{
+    float r = length(pos);
+    float theta = atan2(pos.y , pos.x);
+    float phi = acos(pos.z / r);
+    
+    //Spherical Encoding
+    float3 p = float3(log2(r), theta, phi);
+    float e = theta - 1.5;
+    
+    for (int i = 1; i < 256; i = i << 1)
+    {
+        e += sqrt(abs(dot(sin(p.xxx * i), cos(p * i)))) / i;
+    }
+    
+    return (Time + e * r);
+
 }
 
 float SDF(float3 p)
 {
-    return PlaneSDF(p);
+    return expSDF(p);
 }
 
 
