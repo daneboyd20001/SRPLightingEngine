@@ -103,6 +103,12 @@ float RNGF(in float3 pos)
     return frac(sin(ret) * 314159.865);
 }
 
+float RNGF(uint seed)
+{
+    seed = Hash(seed);
+    return frac(sin(UintToFloat(seed)) * 314159.865);
+}
+
 float3 RNGVec(in float3 pos)
 {
     float3 hashx = float3(971.23, 231.67, 753.91);
