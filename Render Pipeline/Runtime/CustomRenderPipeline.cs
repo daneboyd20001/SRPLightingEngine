@@ -28,7 +28,7 @@ public class CustomRenderPipeline : RenderPipeline
         depthTexture.format = RenderTextureFormat.ARGBFloat;
         depthTexture.Create();
 
-        hitBuffer = new ComputeBuffer(Screen.width * Screen.height, 16);
+        hitBuffer = new ComputeBuffer(Screen.width * Screen.height, 32);
 
         NoiseTexture = new RenderTexture(4096, 4096, 0);
         NoiseTexture.wrapMode = TextureWrapMode.Repeat;
@@ -95,18 +95,23 @@ public class CustomRenderPipeline : RenderPipeline
         cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col1", settings.xAxisColor);
         cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col2", settings.yAxisColor);
         cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col3", settings.zAxisColor);
-        cmd.SetComputeTextureParam(asset.RayMarch, kernel, "colorTexture", colorTexture);
         cmd.DispatchCompute(asset.RayMarch, kernel, Screen.width / 8, Screen.height / 8, 1);
 
         if (settings.UseAmbientOcclusion)
         {
             kernel = asset.RayMarch.FindKernel("CSAmbientOcclusion");
-            cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Result", colorTexture);
             uint x, y, z;
             asset.RayMarch.GetKernelThreadGroupSizes(kernel, out x, out y, out z);
             cmd.DispatchCompute(asset.RayMarch, kernel, (int)(Screen.width / y), (int)(Screen.height / y), 1);
         }
-
+        if (settings.UseDiffuseBounces)
+        {
+            kernel = asset.RayMarch.FindKernel("CSDiffuseRay");
+            cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col1", settings.xAxisColor);
+            cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col2", settings.yAxisColor);
+            cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col3", settings.zAxisColor);
+            cmd.DispatchCompute(asset.RayMarch, kernel, Screen.width / 8, Screen.height / 8, 1);
+        }
         cmd.Blit(colorTexture, BuiltinRenderTextureType.CameraTarget, new Vector2(1f, 1f), Vector2.zero);
     }
 

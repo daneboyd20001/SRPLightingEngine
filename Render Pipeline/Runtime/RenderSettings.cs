@@ -11,6 +11,7 @@ public class RenderSettings : ScriptableObject
 
     [Header("Render Features")]
     public bool UseAmbientOcclusion;
+    public bool UseDiffuseBounces;
 
     [Header("Texture")]
     public Texture xAxisColor, yAxisColor, zAxisColor;

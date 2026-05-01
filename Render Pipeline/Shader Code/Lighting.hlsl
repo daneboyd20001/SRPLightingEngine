@@ -16,12 +16,12 @@ static float3 lightSource = float3(sin(Time), cos(Time), 0);
 
 float3 GetSurfaceEmission(float3 p)
 {
-    return GetGaussianCurvature(p);
+    return matrixNoise(p);
 }
 
 float3 GetSurfaceEmission(float3 p, float3 n)
 {
-    return GetGaussianCurvature(p);
+    return matrixNoise(p);
 }
 
 float3 GetSurfaceColor(float3 p)
@@ -46,7 +46,7 @@ float3 GetSurfaceColor(float3 p, float3 n)
 
 float3 CalculateLighting(float3 pos, float3 dir, float3 normal, float dist)
 {
-    float3 emission = 1;
+    float3 emission = saturate(GetSurfaceEmission(pos)) * GetSurfaceColor(pos, normal);
     //emission = GetSurfaceEmission(pos, normal);
     
     float c0 = 1;
@@ -55,6 +55,6 @@ float3 CalculateLighting(float3 pos, float3 dir, float3 normal, float dist)
     //float absorption = exp2(-dist / c1);
     //float fog = 1 - exp2(-dist / c1);
     
-    emission *= spread;
+    //emission *= spread;
     return emission;
 }
