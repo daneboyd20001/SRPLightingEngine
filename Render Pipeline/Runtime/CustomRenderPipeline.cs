@@ -8,7 +8,9 @@ public class CustomRenderPipeline : RenderPipeline
 {
     public CustomRenderPipelineAsset asset;
     public RenderSettings settings;
-    public RenderTexture rayResult;
+    public RenderTexture colorTexture;
+    public RenderTexture depthTexture;
+    public RenderTexture normalTexture;
 
     public ComputeBuffer hitBuffer;
     public RenderTexture NoiseTexture;
@@ -16,9 +18,15 @@ public class CustomRenderPipeline : RenderPipeline
     float camMinClip, camMaxClip, FOV;
     public void Init()
     {
-        rayResult = new RenderTexture(Screen.width, Screen.height, 0);
-        rayResult.enableRandomWrite = true;
-        rayResult.Create();
+        colorTexture = new RenderTexture(Screen.width, Screen.height, 0);
+        colorTexture.format = RenderTextureFormat.ARGBFloat;
+        colorTexture.enableRandomWrite = true;
+        colorTexture.Create();
+
+        depthTexture = new RenderTexture(Screen.width, Screen.height, 0);
+        depthTexture.enableRandomWrite = true;
+        depthTexture.format = RenderTextureFormat.ARGBFloat;
+        depthTexture.Create();
 
         hitBuffer = new ComputeBuffer(Screen.width * Screen.height, 16);
 
@@ -67,11 +75,15 @@ public class CustomRenderPipeline : RenderPipeline
         cmd.SetGlobalMatrix("CamToWorld", cam.cameraToWorldMatrix);
         cmd.SetGlobalMatrix("ClipMatrix", cam.projectionMatrix);
 
-        cmd.SetGlobalVector("ScreenSize", new Vector4(Screen.width, Screen.height, (float)Screen.width / (float)Screen.height, (float)Screen.height / (float)Screen.width));
+        cmd.SetGlobalVector("ScreenSize", new Vector4(Screen.width, Screen.height, 1 / (float)Screen.width, 1 / (float)Screen.height));
         cmd.SetGlobalFloat("Time", Time.time);
         cmd.SetGlobalFloat("FOV_Tan", Mathf.Tan(FOV * .5f * 3.14159f / 180f));
         cmd.SetGlobalFloat("MinClip", camMinClip);
         cmd.SetGlobalFloat("MaxClip", camMaxClip);
+
+        cmd.SetGlobalTexture("colorTex", colorTexture);
+        cmd.SetGlobalTexture("depthTex", depthTexture);
+
 
         cmd.ClearRenderTarget(true, true, Color.black);
     }
@@ -80,32 +92,29 @@ public class CustomRenderPipeline : RenderPipeline
         int kernel = asset.RayMarch.FindKernel("CSPrimaryRay");
         cmd.SetComputeFloatParam(asset.RayMarch,"quality", 1 / settings.RaymarchQuality);
         cmd.SetComputeFloatParam(asset.RayMarch, "maxSteps", settings.MaximumStepCount);
-        cmd.DispatchCompute(asset.RayMarch, kernel, Screen.width / 8, Screen.height / 8, 1);
-
-        kernel = asset.RayMarch.FindKernel("CSDirectHit");
         cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col1", settings.xAxisColor);
         cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col2", settings.yAxisColor);
         cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col3", settings.zAxisColor);
-        cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Result", rayResult);
+        cmd.SetComputeTextureParam(asset.RayMarch, kernel, "colorTexture", colorTexture);
         cmd.DispatchCompute(asset.RayMarch, kernel, Screen.width / 8, Screen.height / 8, 1);
 
         if (settings.UseAmbientOcclusion)
         {
             kernel = asset.RayMarch.FindKernel("CSAmbientOcclusion");
-            cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Result", rayResult);
+            cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Result", colorTexture);
             uint x, y, z;
             asset.RayMarch.GetKernelThreadGroupSizes(kernel, out x, out y, out z);
             cmd.DispatchCompute(asset.RayMarch, kernel, (int)(Screen.width / y), (int)(Screen.height / y), 1);
         }
 
-        cmd.Blit(rayResult, BuiltinRenderTextureType.CameraTarget, new Vector2(1f, 1f), Vector2.zero);
+        cmd.Blit(colorTexture, BuiltinRenderTextureType.CameraTarget, new Vector2(1f, 1f), Vector2.zero);
     }
 
     protected override void Dispose(bool disposing)
     {
         Debug.Log("Disposing render pipeline");
         base.Dispose(disposing);
-        rayResult.DiscardContents();
+        colorTexture.DiscardContents();
         hitBuffer.Dispose();
     }
 }

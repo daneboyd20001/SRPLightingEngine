@@ -1,7 +1,7 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSPrimaryRay
-#pragma kernel CSDirectHit
 #pragma kernel CSAmbientOcclusion
+#pragma kernel CSDiffuseRay
 
 #include "SDFs.hlsl"
 #include "RayHit.hlsl"
@@ -9,7 +9,8 @@
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
-RWTexture2D<float4> Result;
+RWTexture2D<float4> colorTex;
+RWTexture2D<float4> depthTex;
 
 uniform float4 ScreenSize;
 uniform float4x4 CamToWorld;
@@ -25,95 +26,63 @@ uniform int secMaxSteps = 50;
 
 static float PI = 3.14159;
 
-static float3 lightSource = float3(sin(Time), cos(Time), 0);
+float3 GetViewDir(int2 id)
+{
+    //normalized [-1,1]
+    float2 uv = ((float2) id.xy) * ScreenSize.zw * 2.0 - 1;
+    uv.x *= ScreenSize.x * ScreenSize.w;
+    //Sampling a Sphere
+    float3 rayDir = normalize(float3(uv * FOV_Tan, 1.0));
+    return mul((float3x3) CamToWorld, rayDir);
+}
 
 [numthreads(8,8,1)]
 void CSPrimaryRay(uint3 id : SV_DispatchThreadID)
 {
-    //normalized [-1,1]
-    float2 uv = ((float2) id.xy) / ScreenSize.xy * 2.0 - 1;
-    uv.x *= ScreenSize.z;
-    //Sampling a Sphere
-    float3 rayDir = normalize(float3(uv * FOV_Tan, 1.0));
-    rayDir = mul((float3x3) CamToWorld, rayDir);
-    
-    int i = 0;
-    float dist = 0;
-    float distToScene = 0;
-    
-    //for cone tracing, optimization
-    //Cone size should be how large an area the pixel covers
+    float3 rayDir = GetViewDir(id.xy);
+    float3 camPos = CamToWorld._14_24_34;
+
+    //Cone tracing, how large is pixel relative to screen
     float cutoff = .001 * quality;
-    
-    float3 pos = CamToWorld._14_24_34 + rayDir * MinClip;;
-    //This maintains stability when inside surfaces
-    if (sign(SDF(pos)) == -1)
-    {
-        rayHit hitData;
-        hitData.posDist = float4(pos, dist);
-        hitBufferRW[id.x + id.y * ScreenSize.x] = hitData;
-        return;
-    }
-    rayDir *= sign(SDF(pos));
-    
-    for (i = 0; i < maxSteps; i++)
+    float dist = MinClip, distToScene;
+    float3 pos = camPos + rayDir * dist;
+    for (int i = 0; i < maxSteps; i++)
     {
         distToScene = SDF(pos) * quality;
-        pos += rayDir * distToScene;
-        dist += max(distToScene, 0);
+        dist += distToScene;
+        //This should converge slightly better
+        pos = rayDir * dist + camPos;
         
-        //Optimization
-        //Test, use ABS to better converge for fractal geometries
+        //use ABS to better converge for fractal geometries
         if (abs(distToScene) < max(cutoff * dist, cutoff))
             break;
         if (dist > MaxClip)
             break;
     }
     
-    rayHit hitData;
-    hitData.posDist = float4(pos, dist);
-    hitBufferRW[id.x + id.y * ScreenSize.x] = hitData;
-}
-
-[numthreads(8, 8, 1)]
-void CSDirectHit(uint3 id : SV_DispatchThreadID)
-{
-    float2 uv = ((float2) id.xy) / ScreenSize.xy * 2.0 - 1;
-    uv.x *= ScreenSize.z;
-    //Sampling a Sphere
-    float3 rayDir = normalize(float3(uv * FOV_Tan, 1.0));
-    rayDir = mul((float3x3) CamToWorld, rayDir);
-    
-    rayHit hit = hitBuffer[id.x + ScreenSize.x * id.y];
-    float3 pos = hitBuffer[id.x + ScreenSize.x * id.y].posDist.xyz;
     float3 normal = GetNormal(pos);
-    
-    float3 emission = 1;
-    emission = GetSurfaceEmission(pos, normal);
-    
-    float c0 =  16;
-    float c1 = 16;
-    float spread = (c0 * c0) / ((hit.posDist.w + c0) * (hit.posDist.w + c0));
-    float absorption = exp2(-hit.posDist.w / c1);
-    float fog = 1 - exp2(-hit.posDist.w / c1);
-    
-    emission *= spread * absorption;
-    
-    Result[id.xy] = float4(emission, 1);
+    depthTex[id.xy] = float4(normal, dist);
+    colorTex[id.xy] = float4(CalculateLighting(pos, rayDir, normal, dist), 1.0);
+    rayHit hit;
+    hit.depth = dist;
+    hit.normal = normal;
+    hit.pixelID = id.x + id.y * ScreenSize.x;
+    hit.position = pos;
+    hitBufferRW[id.x + ScreenSize.x * id.y] = hit;
 }
 
 [numthreads(16, 16, 1)]
 void CSAmbientOcclusion(uint3 id : SV_DispatchThreadID)
 {
-    rayHit hit = hitBuffer[id.x + ScreenSize.x * id.y];
-    float3 normal = GetNormal(hit.posDist.xyz);
+    float3 pos = depthTex[id.xy].a * GetViewDir(id.xy);
+    float3 normal = depthTex[id.xy].rgb;
     
     float occlusion = 0.0;
     float scale = 2;
     float step = .05;
     
     float t = 0;
-    float3 offset = hit.posDist.xyz;
+    float3 offset = pos;
     float3 grad = normal * step;
     offset += grad;
 
@@ -129,32 +98,44 @@ void CSAmbientOcclusion(uint3 id : SV_DispatchThreadID)
     }
     occlusion = saturate(1 - occlusion);
     
-    float3 emission = Result[id.xy].xyz;
+    float3 emission = colorTex[id.xy].xyz;
     emission *= occlusion;
-    Result[id.xy] = float4(emission, 1);
+    colorTex[id.xy] = float4(emission, 1);
 }
-/*
+
+
+//Diffuse only need 1 bounce
 [numthreads(8, 8, 1)]
-void CSSecondaryRay(uint3 id : SV_DispatchThreadID)
+void CSDiffuseRay(uint3 id : SV_DispatchThreadID)
 {
-    float3 pos = 
-    //Get a random direction, 
-    for (i = 0; i < maxSteps; i++)
-    {
-        distToScene = SDF(pos) * quality;
-        pos += rayDir * distToScene;
-        dist += max(distToScene, 0);
-        
-        //Optimization
-        //Test, use ABS to better converge for fractal geometries
-        if (abs(distToScene) < max(cutoff * dist, cutoff))
-            break;
-        if (dist > MaxClip)
-            break;
-    }
+    rayHit hit = hitBuffer[id.x + ScreenSize.x * id.y];
+    if (hit.pixelID == -1)
+        return;
     
-    rayHit hitData;
-    hitData.posDist = float4(pos, dist);
-    hitBufferRW[id.x + id.y * ScreenSize.x] = hitData;
+    float3 origin = hit.position;
+    float3x3 basis = GetBasis(origin);
+    float3 color = GetSurfaceColor(origin);
+    //Basically Copy Paste
+    for (int z = 0; z < 16; z++)
+    {
+        float3 rayDir = RNGCosHemisphere(id.x + id.y * 4096 + id.z * 4096 * 4096);
+        rayDir = mul(basis, rayDir);
+        
+        float cutoff = .001;
+        float dist = 0, distToScene = 0;
+        float3 pos = origin + rayDir; //Start far from the SDF, so you dont get stuck in it
+        for (int i = 0; i < 20; i++) //40 is enough to converge for most scenes
+        {
+            distToScene = SDF(pos);
+            pos = origin + rayDir * dist;
+            dist += distToScene;
+        
+            if (abs(distToScene) < max(cutoff * dist, cutoff))
+                break;
+            if (dist > MaxClip)
+                break;
+        }
+        
+        colorTex[id.xy] = float4(CalculateLighting(pos, rayDir, GetNormal(pos), dist), 1.0);
+    }
 }
-*/

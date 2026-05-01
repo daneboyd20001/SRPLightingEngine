@@ -347,7 +347,7 @@ float expSDF(float3 pos)
 
 float SDF(float3 p)
 {
-    return expSDF(p);
+    return DanesSDF(p);
 }
 
 
@@ -445,5 +445,14 @@ float GetGaussianCurvature(float3 p)
     float len = dot(grad, grad);
     len *= len;
     return -determinant(mat) / len;
+}
+
+float3x3 GetBasis(float3 pos)
+{
+    float3 N = GetNormal(pos);
+    float3 H = abs(N.z) < .99 ? float3(0, 0, 1) : float3(1, 0, 0);
+    float3 T = normalize(cross(H, N));
+    float3 B = cross(N, T);
+    return float3x3(T, B, N);
 }
 #endif

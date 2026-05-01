@@ -1,6 +1,9 @@
 struct rayHit
 {
-    float4 posDist;
+    float3 normal;
+    int pixelID;
+    float3 position;
+    float depth;
 };
 
 RWStructuredBuffer<rayHit> hitBufferRW;

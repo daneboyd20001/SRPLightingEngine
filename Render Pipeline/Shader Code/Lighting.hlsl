@@ -11,29 +11,50 @@ StructuredBuffer<Light> lightBuffer;
 Texture2D<float3> Col1, Col2, Col3;
 SamplerState sampler_Col1, sampler_Col2, sampler_Col3;
 
+static float3 lightSource = float3(sin(Time), cos(Time), 0);
 
-//SMoothramp function 2^4 * x^2 * (x-1)^2
+
 float3 GetSurfaceEmission(float3 p)
 {
-    //return GetGaussianCurvature(p);
-    //return (10 + GetMeanCurvature(p)) / 2;
-    //return (matrixNoise(p));
-    //return SampleColor(p);
-    
+    return GetGaussianCurvature(p);
+}
+
+float3 GetSurfaceEmission(float3 p, float3 n)
+{
+    return GetGaussianCurvature(p);
+}
+
+float3 GetSurfaceColor(float3 p)
+{
     float3 xAxis = Col1.SampleLevel(sampler_Col1, p.yz, 0);
     float3 yAxis = Col2.SampleLevel(sampler_Col2, p.zx, 0);
     float3 zAxis = Col3.SampleLevel(sampler_Col3, p.xy, 0);
     return xAxis + yAxis + zAxis / 3;
 }
 
-float3 GetSurfaceEmission(float3 p, float3 n)
+float3 GetSurfaceColor(float3 p, float3 n)
 {
-    //return GetGaussianCurvature(p);
     p /= 2;
-    n = abs(n);
-    //n /= n.x + n.y + n.z; //I hate normalizing a normal
+    n = n * n;
+    n /= n.x + n.y + n.z; //I hate normalizing a normal
     float3 xAxis = Col1.SampleLevel(sampler_Col1, p.yz, 0) * n.x;
     float3 yAxis = Col2.SampleLevel(sampler_Col2, p.zx, 0) * n.y;
     float3 zAxis = Col3.SampleLevel(sampler_Col3, p.xy, 0) * n.z;
     return (xAxis + yAxis + zAxis);
+}
+
+
+float3 CalculateLighting(float3 pos, float3 dir, float3 normal, float dist)
+{
+    float3 emission = 1;
+    //emission = GetSurfaceEmission(pos, normal);
+    
+    float c0 = 1;
+    //float c1 = 16;
+    float spread = (c0 * c0) / ((dist + c0) * (dist + c0));
+    //float absorption = exp2(-dist / c1);
+    //float fog = 1 - exp2(-dist / c1);
+    
+    emission *= spread;
+    return emission;
 }

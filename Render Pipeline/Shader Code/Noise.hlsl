@@ -60,13 +60,31 @@ static const uint randU[256] =
 Texture2D<float4> NoiseTex;
 SamplerState sampler_NoiseTex;
 
-float SampleNoise(float3 p)
+uint Hash(uint x)
+{
+    x ^= x >> 16;
+    x *= 0x7feb352d;
+    x ^= x >> 15;
+    x *= 0x846ca68b;
+    x ^= x >> 16;
+    return x;
+}
+
+float UintToFloat(uint v)
+{
+    //Mantissa is 24 bits
+    return (v >> 8) * (1.0 / 16777216.0);
+}
+
+float3 SampleNoise(float3 p)
 {
     //Shouldnt be correlated, all samples are from different layers
     float3 xAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.yz, 0).x;
     float3 yAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.zx, 0).y;
     float3 zAxis = NoiseTex.SampleLevel(sampler_NoiseTex, p.xy, 0).z;
-    return xAxis + yAxis + zAxis / 3;
+    float3 ret = xAxis + yAxis + zAxis;
+    ret *= .3333333333;
+    return ret;
 }
 
 float3 SampleColor(float3 p)
@@ -113,6 +131,33 @@ float3 RNGNorm(in float3 pos)
     return float3(r * cos(theta), r * sin(theta), v);
 }
 
+float3 RNGHemisphere(uint seed)
+{
+    uint hash = Hash(seed);
+    //Made this up, might be bad
+    float u = UintToFloat(hash);
+    float v = UintToFloat(Hash(hash));
+    
+    float r = sqrt(1.0 - u * u);
+    float theta = 2.0 * 3.14159 * v;
+    
+    return float3(r * sin(theta), r * cos(theta), u);
+}
+
+float3 RNGCosHemisphere(uint seed)
+{
+    uint hash = Hash(seed);
+    //Made this up, might be bad
+    float u = UintToFloat(hash);
+    float v = UintToFloat(Hash(hash));
+    
+    float r = sqrt(u);
+    float theta = 2.0 * 3.14159 * v;
+    
+    return float3(r * sin(theta), r * cos(theta), sqrt(1 - u));
+}
+
+
 float3x3 RNGMatrix(in float3 pos)
 {
     float3x3 primeMat = float3x3(
@@ -156,14 +201,14 @@ float valueNoise(float3 pos)
 
     float3 u = float3(fade(f.x), fade(f.y), fade(f.z));
     
-    float g000 = RNGNorm(i + float3(0, 0, 0));
-    float g100 = RNGNorm(i + float3(1, 0, 0));
-    float g010 = RNGNorm(i + float3(0, 1, 0));
-    float g110 = RNGNorm(i + float3(1, 1, 0));
-    float g001 = RNGNorm(i + float3(0, 0, 1));
-    float g101 = RNGNorm(i + float3(1, 0, 1));
-    float g011 = RNGNorm(i + float3(0, 1, 1));
-    float g111 = RNGNorm(i + float3(1, 1, 1));
+    float g000 = RNGF(i + float3(0, 0, 0));
+    float g100 = RNGF(i + float3(1, 0, 0));
+    float g010 = RNGF(i + float3(0, 1, 0));
+    float g110 = RNGF(i + float3(1, 1, 0));
+    float g001 = RNGF(i + float3(0, 0, 1));
+    float g101 = RNGF(i + float3(1, 0, 1));
+    float g011 = RNGF(i + float3(0, 1, 1));
+    float g111 = RNGF(i + float3(1, 1, 1));
     
     float nx00 = lerp(g000, g100, u.x);
     float nx10 = lerp(g010, g110, u.x);
