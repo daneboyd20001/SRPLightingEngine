@@ -74,7 +74,7 @@ void CSPrimaryRay(uint3 id : SV_DispatchThreadID)
 [numthreads(16, 16, 1)]
 void CSAmbientOcclusion(uint3 id : SV_DispatchThreadID)
 {
-    float3 pos = depthTex[id.xy].a * GetViewDir(id.xy);
+    float3 pos = depthTex[id.xy].a * GetViewDir(id.xy) + CamToWorld._14_24_34;
     float3 normal = depthTex[id.xy].rgb;
     
     float occlusion = 0.0;
@@ -99,6 +99,7 @@ void CSAmbientOcclusion(uint3 id : SV_DispatchThreadID)
     occlusion = saturate(1 - occlusion);
     
     float3 emission = colorTex[id.xy].xyz;
+    
     emission *= occlusion;
     colorTex[id.xy] = float4(emission, 1);
 }
