@@ -4,7 +4,7 @@
 # compile C with /usr/sbin/cc
 C_DEFINES = -DGRAPHICS_API_OPENGL_43 -DPLATFORM_DESKTOP
 
-C_INCLUDES = -I/home/hunter/SRPEngine/build/_deps/raylib-src/src -isystem /home/hunter/SRPEngine/build/_deps/raylib-src/src/external/glfw/include
+C_INCLUDES = -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src -isystem /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/include
 
 C_FLAGS = -fno-strict-aliasing -Werror=implicit-function-declaration -Werror=pointer-arith  -std=gnu99
 

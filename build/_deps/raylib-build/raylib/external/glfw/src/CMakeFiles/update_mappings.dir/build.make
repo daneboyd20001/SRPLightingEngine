@@ -53,10 +53,10 @@ RM = /usr/sbin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/hunter/SRPEngine
+CMAKE_SOURCE_DIR = /home/hunter/Documents/Research-Project/SRPEngine
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/hunter/SRPEngine/build
+CMAKE_BINARY_DIR = /home/hunter/Documents/Research-Project/SRPEngine/build
 
 # Utility rule file for update_mappings.
 
@@ -67,8 +67,8 @@ include _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.d
 include _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/progress.make
 
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Updating gamepad mappings from upstream repository"
-	cd /home/hunter/SRPEngine/build/_deps/raylib-src/src/external/glfw/src && /usr/sbin/cmake -P /home/hunter/SRPEngine/build/_deps/raylib-src/src/external/glfw/CMake/GenerateMappings.cmake mappings.h.in mappings.h
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Updating gamepad mappings from upstream repository"
+	cd /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/src && /usr/sbin/cmake -P /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/CMake/GenerateMappings.cmake mappings.h.in mappings.h
 
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen:
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen
@@ -82,10 +82,10 @@ _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build
 
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/clean:
-	cd /home/hunter/SRPEngine/build/_deps/raylib-build/raylib/external/glfw/src && $(CMAKE_COMMAND) -P CMakeFiles/update_mappings.dir/cmake_clean.cmake
+	cd /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-build/raylib/external/glfw/src && $(CMAKE_COMMAND) -P CMakeFiles/update_mappings.dir/cmake_clean.cmake
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/clean
 
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/depend:
-	cd /home/hunter/SRPEngine/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/hunter/SRPEngine /home/hunter/SRPEngine/build/_deps/raylib-src/src/external/glfw/src /home/hunter/SRPEngine/build /home/hunter/SRPEngine/build/_deps/raylib-build/raylib/external/glfw/src /home/hunter/SRPEngine/build/_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/DependInfo.cmake "--color=$(COLOR)" update_mappings
+	cd /home/hunter/Documents/Research-Project/SRPEngine/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/hunter/Documents/Research-Project/SRPEngine /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/src /home/hunter/Documents/Research-Project/SRPEngine/build /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-build/raylib/external/glfw/src /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/DependInfo.cmake "--color=$(COLOR)" update_mappings
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/depend
 

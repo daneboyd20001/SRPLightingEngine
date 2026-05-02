@@ -4,7 +4,7 @@
 # compile CXX with /usr/sbin/c++
 CXX_DEFINES = -DGRAPHICS_API_OPENGL_43 -DPLATFORM_DESKTOP
 
-CXX_INCLUDES = -I/home/hunter/SRPEngine/include -I/home/hunter/SRPEngine/build/_deps/imgui-src -I/home/hunter/SRPEngine/build/_deps/rlimgui-src -I/home/hunter/SRPEngine/build/_deps/raylib-src/src -I/home/hunter/SRPEngine/build/_deps/raylib-src/src/external/glfw/include
+CXX_INCLUDES = -I/home/hunter/Documents/Research-Project/SRPEngine/include -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/imgui-src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/rlimgui-src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/include
 
 CXX_FLAGS = -std=gnu++17
 

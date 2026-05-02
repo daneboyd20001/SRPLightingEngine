@@ -54,10 +54,10 @@ RM = /usr/sbin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/hunter/SRPEngine
+CMAKE_SOURCE_DIR = /home/hunter/Documents/Research-Project/SRPEngine
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/hunter/SRPEngine/build
+CMAKE_BINARY_DIR = /home/hunter/Documents/Research-Project/SRPEngine/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -170,14 +170,14 @@ CMakeFiles/sdfengine.dir/all: _deps/raylib-build/raylib/CMakeFiles/raylib.dir/al
 CMakeFiles/sdfengine.dir/all: _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=32,33,34,35,36,37,38,39,40,41 "Built target sdfengine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=32,33,34,35,36,37,38,39,40,41 "Built target sdfengine"
 .PHONY : CMakeFiles/sdfengine.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/sdfengine.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 41
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 41
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/sdfengine.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 0
 .PHONY : CMakeFiles/sdfengine.dir/rule
 
 # Convenience name for target.
@@ -187,7 +187,7 @@ sdfengine: CMakeFiles/sdfengine.dir/rule
 # codegen rule for target.
 CMakeFiles/sdfengine.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=32,33,34,35,36,37,38,39,40,41 "Finished codegen for target sdfengine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=32,33,34,35,36,37,38,39,40,41 "Finished codegen for target sdfengine"
 .PHONY : CMakeFiles/sdfengine.dir/codegen
 
 # clean rule for target.
@@ -202,14 +202,14 @@ CMakeFiles/sdfengine.dir/clean:
 _deps/raylib-build/CMakeFiles/uninstall.dir/all:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/CMakeFiles/uninstall.dir/build.make _deps/raylib-build/CMakeFiles/uninstall.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/CMakeFiles/uninstall.dir/build.make _deps/raylib-build/CMakeFiles/uninstall.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num= "Built target uninstall"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num= "Built target uninstall"
 .PHONY : _deps/raylib-build/CMakeFiles/uninstall.dir/all
 
 # Build rule for subdir invocation for target.
 _deps/raylib-build/CMakeFiles/uninstall.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 _deps/raylib-build/CMakeFiles/uninstall.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 0
 .PHONY : _deps/raylib-build/CMakeFiles/uninstall.dir/rule
 
 # Convenience name for target.
@@ -219,7 +219,7 @@ uninstall: _deps/raylib-build/CMakeFiles/uninstall.dir/rule
 # codegen rule for target.
 _deps/raylib-build/CMakeFiles/uninstall.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/CMakeFiles/uninstall.dir/build.make _deps/raylib-build/CMakeFiles/uninstall.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num= "Finished codegen for target uninstall"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num= "Finished codegen for target uninstall"
 .PHONY : _deps/raylib-build/CMakeFiles/uninstall.dir/codegen
 
 # clean rule for target.
@@ -234,14 +234,14 @@ _deps/raylib-build/CMakeFiles/uninstall.dir/clean:
 _deps/raylib-build/raylib/CMakeFiles/raylib.dir/all: _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/all
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/CMakeFiles/raylib.dir/build.make _deps/raylib-build/raylib/CMakeFiles/raylib.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/CMakeFiles/raylib.dir/build.make _deps/raylib-build/raylib/CMakeFiles/raylib.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=24,25,26,27,28,29,30,31 "Built target raylib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=24,25,26,27,28,29,30,31 "Built target raylib"
 .PHONY : _deps/raylib-build/raylib/CMakeFiles/raylib.dir/all
 
 # Build rule for subdir invocation for target.
 _deps/raylib-build/raylib/CMakeFiles/raylib.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 31
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 31
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 _deps/raylib-build/raylib/CMakeFiles/raylib.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 0
 .PHONY : _deps/raylib-build/raylib/CMakeFiles/raylib.dir/rule
 
 # Convenience name for target.
@@ -251,7 +251,7 @@ raylib: _deps/raylib-build/raylib/CMakeFiles/raylib.dir/rule
 # codegen rule for target.
 _deps/raylib-build/raylib/CMakeFiles/raylib.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/CMakeFiles/raylib.dir/build.make _deps/raylib-build/raylib/CMakeFiles/raylib.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=24,25,26,27,28,29,30,31 "Finished codegen for target raylib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=24,25,26,27,28,29,30,31 "Finished codegen for target raylib"
 .PHONY : _deps/raylib-build/raylib/CMakeFiles/raylib.dir/codegen
 
 # clean rule for target.
@@ -266,14 +266,14 @@ _deps/raylib-build/raylib/CMakeFiles/raylib.dir/clean:
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/all:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 "Built target glfw"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 "Built target glfw"
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/all
 
 # Build rule for subdir invocation for target.
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 23
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 23
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 0
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/rule
 
 # Convenience name for target.
@@ -283,7 +283,7 @@ glfw: _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/rule
 # codegen rule for target.
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 "Finished codegen for target glfw"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 "Finished codegen for target glfw"
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/codegen
 
 # clean rule for target.
@@ -298,14 +298,14 @@ _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/clean:
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/all:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=42 "Built target update_mappings"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=42 "Built target update_mappings"
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/all
 
 # Build rule for subdir invocation for target.
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/SRPEngine/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 0
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/rule
 
 # Convenience name for target.
@@ -315,7 +315,7 @@ update_mappings: _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_m
 # codegen rule for target.
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/SRPEngine/build/CMakeFiles --progress-num=42 "Finished codegen for target update_mappings"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=42 "Finished codegen for target update_mappings"
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen
 
 # clean rule for target.
