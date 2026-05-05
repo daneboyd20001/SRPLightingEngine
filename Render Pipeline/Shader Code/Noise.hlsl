@@ -142,12 +142,12 @@ float3 RNGHemisphere(uint seed)
     uint hash = Hash(seed);
     //Made this up, might be bad
     float u = UintToFloat(hash);
-    float v = UintToFloat(Hash(hash));
+    float v = UintToFloat(Hash(hash + 541233));
     
     float r = sqrt(1.0 - u * u);
     float theta = 2.0 * 3.14159 * v;
     
-    return float3(r * sin(theta), r * cos(theta), u);
+    return float3(r * cos(theta), r * sin(theta), u);
 }
 
 float3 RNGCosHemisphere(uint seed)

@@ -203,6 +203,7 @@ float SDF4(float3 p0)
     return ((length(p.xyz / p.w)));
 }
 
+
 float WierdTriangleSDF(float3 p0)
 {
     float4 p = float4(p0, 1.0);
@@ -309,16 +310,30 @@ float SDF6(float3 p)
     rxy = max(rxy, -(n) / 4.);
     return (rxy) / abs(scale);
 }
+
+	
+
+float SDF7(float3 p)
+{
+    float s = 2.;
+    float e = 0.;
+    float3 q = float3(3, 3, .0);
+    for (int i = 0; i++ < 7; p = q - abs(p - q * .4))
+        s *= e = 15. / min(dot(p, p), 15.),
+      p = abs(p) * e - 2.;
+    return (length(p.xz) - .5) / s;
+}
+
 float NoiseSDF(float3 pos)
 {
     float dist = 0;
     
-    float s = 2;
+    float s = 1;
     float3 hashx = float3(971.23, 231.67, 753.91);
     float3 hashy = float3(421.38, 882.19, 1193.57);
     for (int i = 0; i < 3; i++)
     {
-        dist += matrixNoise(pos / s + hashx) * s;
+        dist += Perlin(pos / s + hashx) * s;
         hashx += hashy;
         s /= 2;
     }
@@ -347,7 +362,7 @@ float expSDF(float3 pos)
 
 float SDF(float3 p)
 {
-    return SDF4(p);
+    return DanesSDF(p);
 }
 
 
@@ -450,7 +465,7 @@ float GetGaussianCurvature(float3 p)
 float3x3 GetBasis(float3 normal)
 {
     float3 N = normal;
-    float3 H = abs(N.z) < .9 ? float3(0, 0, 1) : float3(1, 0, 0);
+    float3 H = (abs(N.z) < .9) ? float3(0, 0, 1) : float3(1, 0, 0);
     float3 T = normalize(cross(H, N));
     float3 B = cross(N, T);
     return float3x3(T, B, N);

@@ -97,13 +97,6 @@ public class CustomRenderPipeline : RenderPipeline
         cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col3", settings.zAxisColor);
         cmd.DispatchCompute(asset.RayMarch, kernel, Screen.width / 8, Screen.height / 8, 1);
 
-        if (settings.UseAmbientOcclusion)
-        {
-            kernel = asset.RayMarch.FindKernel("CSAmbientOcclusion");
-            uint x, y, z;
-            asset.RayMarch.GetKernelThreadGroupSizes(kernel, out x, out y, out z);
-            cmd.DispatchCompute(asset.RayMarch, kernel, (int)(Screen.width / y), (int)(Screen.height / y), 1);
-        }
         if (settings.UseDiffuseBounces)
         {
             kernel = asset.RayMarch.FindKernel("CSDiffuseRay");
@@ -111,6 +104,14 @@ public class CustomRenderPipeline : RenderPipeline
             cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col2", settings.yAxisColor);
             cmd.SetComputeTextureParam(asset.RayMarch, kernel, "Col3", settings.zAxisColor);
             cmd.DispatchCompute(asset.RayMarch, kernel, Screen.width / 8, Screen.height / 8, 1);
+        }
+
+        if (settings.UseAmbientOcclusion)
+        {
+            kernel = asset.RayMarch.FindKernel("CSAmbientOcclusion");
+            uint x, y, z;
+            asset.RayMarch.GetKernelThreadGroupSizes(kernel, out x, out y, out z);
+            cmd.DispatchCompute(asset.RayMarch, kernel, (int)(Screen.width / y), (int)(Screen.height / y), 1);
         }
         cmd.Blit(colorTexture, BuiltinRenderTextureType.CameraTarget, new Vector2(1f, 1f), Vector2.zero);
     }

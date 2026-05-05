@@ -13,27 +13,16 @@ SamplerState sampler_Col1, sampler_Col2, sampler_Col3;
 
 static float3 lightSource = float3(sin(Time), cos(Time), 0);
 
-
-float3 GetSurfaceEmission(float3 p)
-{
-    return matrixNoise(p);
-}
-
 float3 GetSurfaceEmission(float3 p, float3 n)
 {
-    return matrixNoise(p);
-}
+    float t = 1;
+    return ((SDF(p + n * t) - SDF(p)) / t);
 
-float3 GetSurfaceColor(float3 p)
-{
-    float3 xAxis = Col1.SampleLevel(sampler_Col1, p.yz, 0);
-    float3 yAxis = Col2.SampleLevel(sampler_Col2, p.zx, 0);
-    float3 zAxis = Col3.SampleLevel(sampler_Col3, p.xy, 0);
-    return xAxis + yAxis + zAxis / 3;
 }
 
 float3 GetSurfaceColor(float3 p, float3 n)
 {
+    /*
     p /= 2;
     n = n * n;
     n /= n.x + n.y + n.z; //I hate normalizing a normal
@@ -41,20 +30,23 @@ float3 GetSurfaceColor(float3 p, float3 n)
     float3 yAxis = Col2.SampleLevel(sampler_Col2, p.zx, 0) * n.y;
     float3 zAxis = Col3.SampleLevel(sampler_Col3, p.xy, 0) * n.z;
     return (xAxis + yAxis + zAxis);
+    */
+    
+    float t = 1;
+    return ((SDF(p + n * t) - SDF(p)) / t);
 }
 
 
 float3 CalculateLighting(float3 pos, float3 dir, float3 normal, float dist)
 {
-    float3 emission = saturate(GetSurfaceEmission(pos)) * GetSurfaceColor(pos, normal);
+    float3 emission = saturate(GetSurfaceEmission(pos, normal));
     //emission = GetSurfaceEmission(pos, normal);
     
-    float c0 = 1;
-    //float c1 = 16;
-    float spread = (c0 * c0) / ((dist + c0) * (dist + c0));
-    //float absorption = exp2(-dist / c1);
-    //float fog = 1 - exp2(-dist / c1);
+    float c1 = 16;
+    float absorption = exp2(-dist / c1);
+    float spread = 1 / ((dist + 1) * (dist + 1));
     
-    //emission *= spread;
+    //emission *= absorption;
+    emission *= spread;
     return emission;
 }
