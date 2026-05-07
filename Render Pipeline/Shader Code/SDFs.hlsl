@@ -79,7 +79,7 @@ float DanesSDF(float3 p0)
         p.w *= abs(scale);
     }
     
-    return (1 - (length(p.xyz / p.w)));
+    return (.75 - (length(p.xyz / p.w))) / 5.0;
 }
 
 float cubeSDF(float4 cube, float3 pos)
@@ -226,7 +226,7 @@ float TwistySphere(float3 p)
     float3 q = float3(c * p.x - s * p.z, p.y, s * p.x + c * p.z);
 
     // wavy radius
-    float r = length(q) - (1.0 + 0.3 * sin(5.0 * q.x) * sin(5.0 * q.y) * sin(5.0 * q.z));
+    float r = length(q) - (5.0 + 0.4 * sin(5.0 * q.x) * sin(5.0 * q.y) * sin(5.0 * q.z));
 
     return r;
 }
@@ -368,7 +368,7 @@ float SDF(float3 p)
 
 float3 GetGradient(float3 p)
 {
-    float eps = .02;
+    float eps = .01;
     
     float3 ex = float3(eps, 0, 0);
     float3 ey = float3(0, eps, 0);
@@ -385,7 +385,7 @@ float3 GetGradient(float3 p)
 
 float3 GetNormal(float3 p)
 {
-    float eps = .02;
+    float eps = .01;
     
     float3 ex = float3(eps, 0, 0);
     float3 ey = float3(0, eps, 0);
@@ -465,7 +465,7 @@ float GetGaussianCurvature(float3 p)
 float3x3 GetBasis(float3 normal)
 {
     float3 N = normal;
-    float3 H = (abs(N.z) < .9) ? float3(0, 0, 1) : float3(1, 0, 0);
+    float3 H = (abs(N.z) < .999) ? float3(0, 0, 1) : float3(1, 0, 0);
     float3 T = normalize(cross(H, N));
     float3 B = cross(N, T);
     return float3x3(T, B, N);

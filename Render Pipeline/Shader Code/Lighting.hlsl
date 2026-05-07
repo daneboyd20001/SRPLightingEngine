@@ -15,14 +15,11 @@ static float3 lightSource = float3(sin(Time), cos(Time), 0);
 
 float3 GetSurfaceEmission(float3 p, float3 n)
 {
-    float t = 1;
-    return ((SDF(p + n * t) - SDF(p)) / t);
-
+    return float3(matrixNoise(p), matrixNoise(p + 3112.2), matrixNoise(p - 123.2));
 }
 
 float3 GetSurfaceColor(float3 p, float3 n)
 {
-    /*
     p /= 2;
     n = n * n;
     n /= n.x + n.y + n.z; //I hate normalizing a normal
@@ -30,10 +27,7 @@ float3 GetSurfaceColor(float3 p, float3 n)
     float3 yAxis = Col2.SampleLevel(sampler_Col2, p.zx, 0) * n.y;
     float3 zAxis = Col3.SampleLevel(sampler_Col3, p.xy, 0) * n.z;
     return (xAxis + yAxis + zAxis);
-    */
-    
-    float t = 1;
-    return ((SDF(p + n * t) - SDF(p)) / t);
+    //return saturate(10 - (length(p)));
 }
 
 

@@ -126,28 +126,49 @@ void CSAmbientOcclusion(uint3 id : SV_DispatchThreadID)
     colorTex[id.xy] = float4(emission, 1);
 }
 
-static const float3 DKernel[64] =
+static const float3 DKernel[128] =
 {
-    RNGCosHemisphere(7739), RNGCosHemisphere(9220), RNGCosHemisphere(9470), RNGCosHemisphere(6106),
-    RNGCosHemisphere(5873), RNGCosHemisphere(3863), RNGCosHemisphere(226), RNGCosHemisphere(5962),
-    RNGCosHemisphere(8845), RNGCosHemisphere(9432), RNGCosHemisphere(1457), RNGCosHemisphere(3143),
-    RNGCosHemisphere(3468), RNGCosHemisphere(8272), RNGCosHemisphere(2376), RNGCosHemisphere(3661),
+    RNGCosHemisphere(0), RNGCosHemisphere(1), RNGCosHemisphere(2), RNGCosHemisphere(3),
+    RNGCosHemisphere(4), RNGCosHemisphere(5), RNGCosHemisphere(6), RNGCosHemisphere(7),
+    RNGCosHemisphere(8), RNGCosHemisphere(9), RNGCosHemisphere(10), RNGCosHemisphere(11),
+    RNGCosHemisphere(12), RNGCosHemisphere(13), RNGCosHemisphere(14), RNGCosHemisphere(15),
 
-    RNGCosHemisphere(8218), RNGCosHemisphere(6370), RNGCosHemisphere(9380), RNGCosHemisphere(6267),
-    RNGCosHemisphere(2011), RNGCosHemisphere(7921), RNGCosHemisphere(2606), RNGCosHemisphere(5927),
-    RNGCosHemisphere(9910), RNGCosHemisphere(9592), RNGCosHemisphere(2902), RNGCosHemisphere(4402),
-    RNGCosHemisphere(2566), RNGCosHemisphere(5800), RNGCosHemisphere(8204), RNGCosHemisphere(9847),
+    RNGCosHemisphere(16), RNGCosHemisphere(17), RNGCosHemisphere(18), RNGCosHemisphere(19),
+    RNGCosHemisphere(20), RNGCosHemisphere(21), RNGCosHemisphere(22), RNGCosHemisphere(23),
+    RNGCosHemisphere(24), RNGCosHemisphere(25), RNGCosHemisphere(26), RNGCosHemisphere(27),
+    RNGCosHemisphere(28), RNGCosHemisphere(29), RNGCosHemisphere(30), RNGCosHemisphere(31),
 
-    RNGCosHemisphere(4847), RNGCosHemisphere(5163), RNGCosHemisphere(9750), RNGCosHemisphere(2657),
-    RNGCosHemisphere(4712), RNGCosHemisphere(9761), RNGCosHemisphere(7876), RNGCosHemisphere(4786),
-    RNGCosHemisphere(2401), RNGCosHemisphere(7445), RNGCosHemisphere(570), RNGCosHemisphere(9884),
-    RNGCosHemisphere(7266), RNGCosHemisphere(3547), RNGCosHemisphere(846), RNGCosHemisphere(8421),
+    RNGCosHemisphere(32), RNGCosHemisphere(33), RNGCosHemisphere(34), RNGCosHemisphere(35),
+    RNGCosHemisphere(36), RNGCosHemisphere(37), RNGCosHemisphere(38), RNGCosHemisphere(39),
+    RNGCosHemisphere(40), RNGCosHemisphere(41), RNGCosHemisphere(42), RNGCosHemisphere(43),
+    RNGCosHemisphere(44), RNGCosHemisphere(45), RNGCosHemisphere(46), RNGCosHemisphere(47),
 
-    RNGCosHemisphere(505), RNGCosHemisphere(5166), RNGCosHemisphere(9409), RNGCosHemisphere(9347),
-    RNGCosHemisphere(5729), RNGCosHemisphere(1787), RNGCosHemisphere(2072), RNGCosHemisphere(6118),
-    RNGCosHemisphere(1817), RNGCosHemisphere(6576), RNGCosHemisphere(6057), RNGCosHemisphere(4667),
-    RNGCosHemisphere(7477), RNGCosHemisphere(3616), RNGCosHemisphere(1941), RNGCosHemisphere(9074),
+    RNGCosHemisphere(48), RNGCosHemisphere(49), RNGCosHemisphere(50), RNGCosHemisphere(51),
+    RNGCosHemisphere(52), RNGCosHemisphere(53), RNGCosHemisphere(54), RNGCosHemisphere(55),
+    RNGCosHemisphere(56), RNGCosHemisphere(57), RNGCosHemisphere(58), RNGCosHemisphere(59),
+    RNGCosHemisphere(60), RNGCosHemisphere(61), RNGCosHemisphere(62), RNGCosHemisphere(63),
+
+    RNGCosHemisphere(64), RNGCosHemisphere(65), RNGCosHemisphere(66), RNGCosHemisphere(67),
+    RNGCosHemisphere(68), RNGCosHemisphere(69), RNGCosHemisphere(70), RNGCosHemisphere(71),
+    RNGCosHemisphere(72), RNGCosHemisphere(73), RNGCosHemisphere(74), RNGCosHemisphere(75),
+    RNGCosHemisphere(76), RNGCosHemisphere(77), RNGCosHemisphere(78), RNGCosHemisphere(79),
+
+    RNGCosHemisphere(80), RNGCosHemisphere(81), RNGCosHemisphere(82), RNGCosHemisphere(83),
+    RNGCosHemisphere(84), RNGCosHemisphere(85), RNGCosHemisphere(86), RNGCosHemisphere(87),
+    RNGCosHemisphere(88), RNGCosHemisphere(89), RNGCosHemisphere(90), RNGCosHemisphere(91),
+    RNGCosHemisphere(92), RNGCosHemisphere(93), RNGCosHemisphere(94), RNGCosHemisphere(95),
+
+    RNGCosHemisphere(96), RNGCosHemisphere(97), RNGCosHemisphere(98), RNGCosHemisphere(99),
+    RNGCosHemisphere(100), RNGCosHemisphere(101), RNGCosHemisphere(102), RNGCosHemisphere(103),
+    RNGCosHemisphere(104), RNGCosHemisphere(105), RNGCosHemisphere(106), RNGCosHemisphere(107),
+    RNGCosHemisphere(108), RNGCosHemisphere(109), RNGCosHemisphere(110), RNGCosHemisphere(111),
+
+    RNGCosHemisphere(112), RNGCosHemisphere(113), RNGCosHemisphere(114), RNGCosHemisphere(115),
+    RNGCosHemisphere(116), RNGCosHemisphere(117), RNGCosHemisphere(118), RNGCosHemisphere(119),
+    RNGCosHemisphere(120), RNGCosHemisphere(121), RNGCosHemisphere(122), RNGCosHemisphere(123),
+    RNGCosHemisphere(124), RNGCosHemisphere(125), RNGCosHemisphere(126), RNGCosHemisphere(127),
 };
+
 //Diffuse only need 1 bounce
 [numthreads(8, 8, 1)]
 void CSDiffuseRay(uint3 id : SV_DispatchThreadID)
@@ -157,35 +178,45 @@ void CSDiffuseRay(uint3 id : SV_DispatchThreadID)
         return;
     
     float3 origin = hit.position;
-    float3x3 basis = GetBasis(origin);
+    float3x3 basis = GetBasis(hit.normal);
     float3 color = GetSurfaceColor(origin, GetNormal(origin));
     float3 finColor = float3(0, 0, 0);
     
+    //This should be Adjustable
+    float a = 32.0;
+    float b = 4.0;
+    float s = 2.0;
+    
     //Basically Copy Paste
-    int sampleCount = 64;
+    int sampleCount = b + (a - b) / (1 + (hit.depth * hit.depth / s / s));
+    //int sampleCount = a;
+    int hitCount = 0;
     for (int z = 0; z < sampleCount; z++)
     {
         float3 rayDir = mul(basis, DKernel[z]);
         
-        float cutoff = .01;
-        float dist = 4.0, distToScene = 0;
-        float3 pos = origin + rayDir; //Start far from the SDF, so you dont get stuck in it
-        for (int i = 0; i < 16; i++) //40 is enough to converge for most scenes
+        float cutoff = .1;
+        float dist = 1.0, distToScene = dist;
+        float3 pos = origin + rayDir * dist; //Start far from the SDF, so you dont get stuck in it
+        //Trying to make a tight loop
+        for (int i = 0; i < 28; i++)
         {
             pos = origin + rayDir * dist;
             distToScene = SDF(pos);
             dist += distToScene;
-        
-            if (abs(distToScene) < max(cutoff * dist, cutoff))
-                break;
-            if (dist > MaxClip)
+            
+            if (abs(distToScene) < cutoff)
                 break;
         }
-        finColor += CalculateLighting(pos, rayDir, GetNormal(pos), 1);
+        if (abs(distToScene) < cutoff)
+        {
+            finColor += CalculateLighting(pos, rayDir, hit.normal, dist);
+            hitCount += 1;
+        }
     }
     
-    finColor *= color / float(sampleCount);
+    finColor /= float(hitCount);
+    finColor /= (hit.depth * hit.depth + 1);
     finColor = finColor + colorTex[id.xy].rgb;
     colorTex[id.xy] = float4(finColor, 1.0);
-
 }

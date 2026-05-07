@@ -72,8 +72,7 @@ uint Hash(uint x)
 
 float UintToFloat(uint v)
 {
-    //Mantissa is 24 bits
-    return (v >> 8) * (1.0 / 16777216.0);
+    return (v >> 9) * (1.0f / 8388608.0f);
 }
 
 float3 SampleNoise(float3 p)
@@ -139,10 +138,10 @@ float3 RNGNorm(in float3 pos)
 
 float3 RNGHemisphere(uint seed)
 {
-    uint hash = Hash(seed);
     //Made this up, might be bad
-    float u = UintToFloat(hash);
-    float v = UintToFloat(Hash(hash + 541233));
+    float u = UintToFloat(Hash(seed));
+    
+    float v = UintToFloat(Hash(seed ^ 541233));
     
     float r = sqrt(1.0 - u * u);
     float theta = 2.0 * 3.14159 * v;
@@ -152,17 +151,15 @@ float3 RNGHemisphere(uint seed)
 
 float3 RNGCosHemisphere(uint seed)
 {
-    uint hash = Hash(seed);
     //Made this up, might be bad
-    float u = UintToFloat(hash);
-    float v = UintToFloat(Hash(hash));
+    float u = UintToFloat(Hash(seed));
+    float v = UintToFloat(Hash(seed ^ 13028472));
     
     float r = sqrt(u);
     float theta = 2.0 * 3.14159 * v;
     
     return float3(r * sin(theta), r * cos(theta), sqrt(1 - u));
 }
-
 
 float3x3 RNGMatrix(in float3 pos)
 {
