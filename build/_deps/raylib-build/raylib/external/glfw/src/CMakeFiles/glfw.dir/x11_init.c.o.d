@@ -3,8 +3,8 @@ _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/x11_init.c.o: \
  /usr/include/stdc-predef.h \
  /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/src/internal.h \
  /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/src/../include/GLFW/glfw3.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdint.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stddef.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
  /usr/include/bits/wordsize.h /usr/include/bits/timesize.h \
@@ -49,7 +49,7 @@ _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/x11_init.c.o: \
  /usr/include/X11/keysymdef.h /usr/include/X11/Xatom.h \
  /usr/include/X11/Xresource.h /usr/include/X11/Xcursor/Xcursor.h \
  /usr/include/stdio.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stdarg.h \
  /usr/include/bits/types/__fpos_t.h /usr/include/bits/types/__mbstate_t.h \
  /usr/include/bits/types/__fpos64_t.h /usr/include/bits/types/__FILE.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
@@ -103,14 +103,14 @@ _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/x11_init.c.o: \
  /usr/include/bits/waitstatus.h /usr/include/alloca.h \
  /usr/include/bits/stdlib-float.h /usr/include/string.h \
  /usr/include/strings.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/limits.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
  /usr/include/bits/local_lim.h /usr/include/bits/posix2_lim.h \
  /usr/include/locale.h /usr/include/bits/locale.h /usr/include/fcntl.h \
  /usr/include/bits/fcntl.h /usr/include/bits/fcntl-linux.h \
- /usr/include/bits/stat.h /usr/include/bits/struct_stat.h \
- /usr/include/errno.h /usr/include/bits/errno.h \
- /usr/include/linux/errno.h /usr/include/asm/errno.h \
- /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/assert.h
+ /usr/include/bits/cloexec.h /usr/include/bits/stat.h \
+ /usr/include/bits/struct_stat.h /usr/include/errno.h \
+ /usr/include/bits/errno.h /usr/include/linux/errno.h \
+ /usr/include/asm/errno.h /usr/include/asm-generic/errno.h \
+ /usr/include/asm-generic/errno-base.h /usr/include/assert.h

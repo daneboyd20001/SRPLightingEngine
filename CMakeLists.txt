@@ -35,7 +35,6 @@ FetchContent_MakeAvailable(rlimgui)
 
 add_executable(${PROJECT_NAME}
     src/core/main.cpp
-    src/ShaderLoading/shaderLoad.cpp
     src/core/movement.cpp
     src/GUI/gui.cpp
     ${imgui_SOURCE_DIR}/imgui.cpp

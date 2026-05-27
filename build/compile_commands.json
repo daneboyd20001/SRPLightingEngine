@@ -7,12 +7,6 @@
 },
 {
   "directory": "/home/hunter/Documents/Research-Project/SRPEngine/build",
-  "command": "/usr/sbin/c++ -DGRAPHICS_API_OPENGL_43 -DPLATFORM_DESKTOP -I/home/hunter/Documents/Research-Project/SRPEngine/include -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/imgui-src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/rlimgui-src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/include -std=gnu++17 -o CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/src/ShaderLoading/shaderLoad.cpp",
-  "file": "/home/hunter/Documents/Research-Project/SRPEngine/src/ShaderLoading/shaderLoad.cpp",
-  "output": "CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o"
-},
-{
-  "directory": "/home/hunter/Documents/Research-Project/SRPEngine/build",
   "command": "/usr/sbin/c++ -DGRAPHICS_API_OPENGL_43 -DPLATFORM_DESKTOP -I/home/hunter/Documents/Research-Project/SRPEngine/include -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/imgui-src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/rlimgui-src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src -I/home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/external/glfw/include -std=gnu++17 -o CMakeFiles/sdfengine.dir/src/core/movement.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/src/core/movement.cpp",
   "file": "/home/hunter/Documents/Research-Project/SRPEngine/src/core/movement.cpp",
   "output": "CMakeFiles/sdfengine.dir/src/core/movement.cpp.o"

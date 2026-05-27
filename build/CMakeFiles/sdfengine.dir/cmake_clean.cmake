@@ -12,8 +12,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o.d"
   "CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o"
   "CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o.d"
-  "CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o"
-  "CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o.d"
   "CMakeFiles/sdfengine.dir/src/core/main.cpp.o"
   "CMakeFiles/sdfengine.dir/src/core/main.cpp.o.d"
   "CMakeFiles/sdfengine.dir/src/core/movement.cpp.o"

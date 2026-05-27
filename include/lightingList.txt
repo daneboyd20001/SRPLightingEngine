@@ -1,0 +1,7 @@
+Flat,
+Rim-Lighting,
+Lambertian,
+Fog,
+Anti-Fog,
+Dane Lighting,
+Purple Stripes

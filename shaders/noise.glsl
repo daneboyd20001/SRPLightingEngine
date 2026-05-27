@@ -1,54 +1,47 @@
 uniform mat4 CamToWorld;
+uniform vec4 ScreenSize;
+
 uniform float time;
 uniform float lampDist;
 uniform float lampStrength;
-uniform float fov;
+uniform float FOV_Tan;
 uniform float minDist = 0.001;
 uniform float scalarDist;
-uniform vec3 camPos;
-uniform vec4 ScreenSize;
+uniform float quality = 1.0;
+uniform float MinClip = 0.001;
+uniform float MaxClip = 100.0;
+
 uniform int activeSDF;
 uniform int activeLighting;
-uniform bool isAOActive;
 
-const int MAX_STEPS = 800;
+const int MAX_STEPS = 400;
 const float PI = 3.14159;
-const int SDF_Frac1 = 2;
 
 struct rayHit {
-  vec4 posDist;
-};
-
-struct Light {
-  vec3 pos, color;
-  float intensity, range;
-};
-
-struct SDFObj {
+  int pixelID;
   vec3 position;
-  vec3 scale;
-  vec3 rotation;
-
-  uint type;
-  vec2 param;
+  vec3 normal;
+  float depth;
 };
+
+rayHit hit;
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
-layout(rgba8, binding = 0) uniform image2D Result;
-
-layout(std430, binding = 0) buffer HitBufferRW
-{
-    rayHit hitBufferRW[];
-};
-
-layout(std430, binding = 1) readonly buffer HitBuffer
-{
-    rayHit hitBuffer[];
-};
+layout(rgba32f, binding = 0) restrict writeonly uniform image2D Result;
 
 vec3 slerp(vec3 p1, vec3 p2, float t) {
   return cos((1 - t) * PI / 2) * p1 + sin(t * PI / 2) * p2;
+}
+
+vec3 GetViewDir(ivec2 id)
+{
+    //normalized [-1,1]
+    vec2 uv = (vec2(id)) * ScreenSize.zw * 2.0 - 1.0;
+    uv.x *= ScreenSize.x * ScreenSize.w;
+    //Sampling a Sphere
+    vec3 rayDir = normalize(vec3(uv * FOV_Tan, 1.0));
+    return rayDir;
 }
 
 float fade(float t) {
@@ -163,16 +156,6 @@ float Perlin(vec3 pos) {
 
   return nxyz;
 }
-
-/*
-float SampleNoise3D(vec3 pos) {
-  float noiseX = texture(noiseTex, pos.yz * 0.1).r;
-  float noiseY = texture(noiseTex, pos.xz * 0.1).r;
-  float noiseZ = texture(noiseTex, pos.xy * 0.1).r;
-
-  return (noiseX + noiseY + noiseZ) * .3333333;
-}
-*/
 
 vec3 RNGVec(in vec3 pos) {
   vec3 hashx = vec3(971.23, 231.67, 753.91);

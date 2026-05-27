@@ -1,45 +1,35 @@
 void main() {
   ivec2 id = ivec2(gl_GlobalInvocationID.xy);
 
-  // Stop threads that are outside the screen boundaries
-    if (id.x >= int(ScreenSize.x) || id.y >= int(ScreenSize.y)) return;
+  vec3 rayDir = GetViewDir(id);
+  vec3 camPos = CamToWorld[3].xyz;
 
-  // normalized [-1,1]
-  vec2 uv = (vec2(gl_GlobalInvocationID.xy)) / ScreenSize.xy * 2.0 - 1.0;
-  uv.x *= ScreenSize.z;
-  // Sampling a Sphere
-  vec3 rayDir = normalize(vec3(uv.x * fov, uv.y * fov, 1.0));
-  rayDir = mat3(CamToWorld) * rayDir;
+    //Cone tracing, how large is pixel relative to screen
+    float cutoff = .001 * quality;
+    float dist = MinClip, distToScene;
+    vec3 pos = camPos + rayDir * dist;
+    for (int i = 0; i < MAX_STEPS; i++)
+    {
+        distToScene = SDF(pos) * quality;
+        dist += distToScene;
+        //This should converge slightly better
+        pos = rayDir * dist + camPos;
 
-  int i = 0;
-  float dist = 0;
-  float distToScene = 0;
-
-  vec3 pos = camPos + rayDir * minDist;
-  for (i = 0; i < MAX_STEPS; i++) {
-    distToScene = SDF(pos) * scalarDist;
-
-    pos += rayDir * distToScene;
-    dist += max(distToScene, 0);
-
-    if (abs(distToScene) < max(minDist * dist, minDist))
-      break;
-    if (abs(dist) > 200) {
-      dist = 100000;
-      break;
+        //use ABS to better converge for fractal geometries
+        if (abs(distToScene) < max(cutoff * dist, cutoff))
+            break;
+        if (dist > MaxClip)
+            break;
     }
-  }
-  dist = abs(dist);
 
-  rayHit hitData;
-  hitData.posDist = vec4(pos, dist);
-  hitBufferRW[id.x + id.y * int(ScreenSize.x)] = hitData;
+    hit.normal = GetNormal(pos);
+    hit.depth = dist;
+    hit.pixelID = id.x + id.y * int(ScreenSize.x);
+    hit.position = pos;
 
-  vec3 color = Lighting();
-  imageStore(Result, id, vec4(color, 1.0));
+    vec4 pixelColor = vec4(0.0, 0.0, 0.0, 1.0); // The color output if the ray hits nothing.
+    if (dist < MaxClip)
+      pixelColor = vec4(Lighting(dist, id), 1.0); // If the ray hits something.
 
-  memoryBarrierImage();
-
-  if (isAOActive)
-    AmbientOcclusion();
+    imageStore(Result, id, pixelColor);
 }

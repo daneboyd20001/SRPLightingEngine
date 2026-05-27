@@ -390,30 +390,6 @@ src/GUI/gui.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.s
 .PHONY : src/GUI/gui.cpp.s
 
-src/ShaderLoading/shaderLoad.o: src/ShaderLoading/shaderLoad.cpp.o
-.PHONY : src/ShaderLoading/shaderLoad.o
-
-# target to build an object file
-src/ShaderLoading/shaderLoad.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o
-.PHONY : src/ShaderLoading/shaderLoad.cpp.o
-
-src/ShaderLoading/shaderLoad.i: src/ShaderLoading/shaderLoad.cpp.i
-.PHONY : src/ShaderLoading/shaderLoad.i
-
-# target to preprocess a source file
-src/ShaderLoading/shaderLoad.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.i
-.PHONY : src/ShaderLoading/shaderLoad.cpp.i
-
-src/ShaderLoading/shaderLoad.s: src/ShaderLoading/shaderLoad.cpp.s
-.PHONY : src/ShaderLoading/shaderLoad.s
-
-# target to generate assembly for a file
-src/ShaderLoading/shaderLoad.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.s
-.PHONY : src/ShaderLoading/shaderLoad.cpp.s
-
 src/core/main.o: src/core/main.cpp.o
 .PHONY : src/core/main.o
 
@@ -499,9 +475,6 @@ help:
 	@echo "... src/GUI/gui.o"
 	@echo "... src/GUI/gui.i"
 	@echo "... src/GUI/gui.s"
-	@echo "... src/ShaderLoading/shaderLoad.o"
-	@echo "... src/ShaderLoading/shaderLoad.i"
-	@echo "... src/ShaderLoading/shaderLoad.s"
 	@echo "... src/core/main.o"
 	@echo "... src/core/main.i"
 	@echo "... src/core/main.s"

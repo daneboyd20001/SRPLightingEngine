@@ -2,8 +2,8 @@ _deps/raylib-build/raylib/CMakeFiles/raylib.dir/rtext.c.o: \
  /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/rtext.c \
  /usr/include/stdc-predef.h \
  /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/raylib.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdarg.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stdbool.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stdarg.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stdbool.h \
  /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/config.h \
  /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/utils.h \
  /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/raylib-src/src/rlgl.h \
@@ -12,7 +12,7 @@ _deps/raylib-build/raylib/CMakeFiles/raylib.dir/rtext.c.o: \
  /usr/include/bits/wordsize.h /usr/include/bits/timesize.h \
  /usr/include/sys/cdefs.h /usr/include/bits/long-double.h \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/stddef.h \
+ /usr/lib/gcc/x86_64-pc-linux-gnu/16.1.1/include/stddef.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
  /usr/include/bits/floatn.h /usr/include/bits/floatn-common.h \
  /usr/include/sys/types.h /usr/include/bits/types.h \

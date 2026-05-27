@@ -170,12 +170,12 @@ CMakeFiles/sdfengine.dir/all: _deps/raylib-build/raylib/CMakeFiles/raylib.dir/al
 CMakeFiles/sdfengine.dir/all: _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=32,33,34,35,36,37,38,39,40,41 "Built target sdfengine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=32,33,34,35,36,37,38,39,40 "Built target sdfengine"
 .PHONY : CMakeFiles/sdfengine.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/sdfengine.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 41
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 40
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/sdfengine.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles 0
 .PHONY : CMakeFiles/sdfengine.dir/rule
@@ -187,7 +187,7 @@ sdfengine: CMakeFiles/sdfengine.dir/rule
 # codegen rule for target.
 CMakeFiles/sdfengine.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sdfengine.dir/build.make CMakeFiles/sdfengine.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=32,33,34,35,36,37,38,39,40,41 "Finished codegen for target sdfengine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=32,33,34,35,36,37,38,39,40 "Finished codegen for target sdfengine"
 .PHONY : CMakeFiles/sdfengine.dir/codegen
 
 # clean rule for target.
@@ -298,7 +298,7 @@ _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/glfw.dir/clean:
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/all:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=42 "Built target update_mappings"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=41 "Built target update_mappings"
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/all
 
 # Build rule for subdir invocation for target.
@@ -315,7 +315,7 @@ update_mappings: _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_m
 # codegen rule for target.
 _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/build.make _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=42 "Finished codegen for target update_mappings"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=41 "Finished codegen for target update_mappings"
 .PHONY : _deps/raylib-build/raylib/external/glfw/src/CMakeFiles/update_mappings.dir/codegen
 
 # clean rule for target.

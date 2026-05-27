@@ -86,24 +86,10 @@ CMakeFiles/sdfengine.dir/src/core/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/sdfengine.dir/src/core/main.cpp.s"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hunter/Documents/Research-Project/SRPEngine/src/core/main.cpp -o CMakeFiles/sdfengine.dir/src/core/main.cpp.s
 
-CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o: CMakeFiles/sdfengine.dir/flags.make
-CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o: /home/hunter/Documents/Research-Project/SRPEngine/src/ShaderLoading/shaderLoad.cpp
-CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o: CMakeFiles/sdfengine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o -MF CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o.d -o CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/src/ShaderLoading/shaderLoad.cpp
-
-CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/hunter/Documents/Research-Project/SRPEngine/src/ShaderLoading/shaderLoad.cpp > CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.i
-
-CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/hunter/Documents/Research-Project/SRPEngine/src/ShaderLoading/shaderLoad.cpp -o CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.s
-
 CMakeFiles/sdfengine.dir/src/core/movement.cpp.o: CMakeFiles/sdfengine.dir/flags.make
 CMakeFiles/sdfengine.dir/src/core/movement.cpp.o: /home/hunter/Documents/Research-Project/SRPEngine/src/core/movement.cpp
 CMakeFiles/sdfengine.dir/src/core/movement.cpp.o: CMakeFiles/sdfengine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/sdfengine.dir/src/core/movement.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/sdfengine.dir/src/core/movement.cpp.o"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sdfengine.dir/src/core/movement.cpp.o -MF CMakeFiles/sdfengine.dir/src/core/movement.cpp.o.d -o CMakeFiles/sdfengine.dir/src/core/movement.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/src/core/movement.cpp
 
 CMakeFiles/sdfengine.dir/src/core/movement.cpp.i: cmake_force
@@ -117,7 +103,7 @@ CMakeFiles/sdfengine.dir/src/core/movement.cpp.s: cmake_force
 CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o: CMakeFiles/sdfengine.dir/flags.make
 CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o: /home/hunter/Documents/Research-Project/SRPEngine/src/GUI/gui.cpp
 CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o: CMakeFiles/sdfengine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o -MF CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o.d -o CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/src/GUI/gui.cpp
 
 CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.i: cmake_force
@@ -131,7 +117,7 @@ CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.s: cmake_force
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o: CMakeFiles/sdfengine.dir/flags.make
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o: _deps/imgui-src/imgui.cpp
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o: CMakeFiles/sdfengine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o -MF CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o.d -o CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/imgui-src/imgui.cpp
 
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.i: cmake_force
@@ -145,7 +131,7 @@ CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.s: cmake_force
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.o: CMakeFiles/sdfengine.dir/flags.make
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.o: _deps/imgui-src/imgui_draw.cpp
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.o: CMakeFiles/sdfengine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.o"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.o -MF CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.o.d -o CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/imgui-src/imgui_draw.cpp
 
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.i: cmake_force
@@ -159,7 +145,7 @@ CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_draw.cpp.s: cmake_force
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.o: CMakeFiles/sdfengine.dir/flags.make
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.o: _deps/imgui-src/imgui_tables.cpp
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.o: CMakeFiles/sdfengine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.o"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.o -MF CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.o.d -o CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/imgui-src/imgui_tables.cpp
 
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.i: cmake_force
@@ -173,7 +159,7 @@ CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_tables.cpp.s: cmake_force
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.o: CMakeFiles/sdfengine.dir/flags.make
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.o: _deps/imgui-src/imgui_widgets.cpp
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.o: CMakeFiles/sdfengine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.o"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.o -MF CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.o.d -o CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/imgui-src/imgui_widgets.cpp
 
 CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.i: cmake_force
@@ -187,7 +173,7 @@ CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui_widgets.cpp.s: cmake_force
 CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o: CMakeFiles/sdfengine.dir/flags.make
 CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o: _deps/rlimgui-src/rlImGui.cpp
 CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o: CMakeFiles/sdfengine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o"
 	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o -MF CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o.d -o CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.o -c /home/hunter/Documents/Research-Project/SRPEngine/build/_deps/rlimgui-src/rlImGui.cpp
 
 CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.i: cmake_force
@@ -201,7 +187,6 @@ CMakeFiles/sdfengine.dir/_deps/rlimgui-src/rlImGui.cpp.s: cmake_force
 # Object files for target sdfengine
 sdfengine_OBJECTS = \
 "CMakeFiles/sdfengine.dir/src/core/main.cpp.o" \
-"CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o" \
 "CMakeFiles/sdfengine.dir/src/core/movement.cpp.o" \
 "CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o" \
 "CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o" \
@@ -214,7 +199,6 @@ sdfengine_OBJECTS = \
 sdfengine_EXTERNAL_OBJECTS =
 
 sdfengine: CMakeFiles/sdfengine.dir/src/core/main.cpp.o
-sdfengine: CMakeFiles/sdfengine.dir/src/ShaderLoading/shaderLoad.cpp.o
 sdfengine: CMakeFiles/sdfengine.dir/src/core/movement.cpp.o
 sdfengine: CMakeFiles/sdfengine.dir/src/GUI/gui.cpp.o
 sdfengine: CMakeFiles/sdfengine.dir/_deps/imgui-src/imgui.cpp.o
@@ -231,7 +215,7 @@ sdfengine: /usr/lib/libGLU.so
 sdfengine: /usr/lib/librt.a
 sdfengine: /usr/lib/libm.so
 sdfengine: CMakeFiles/sdfengine.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable sdfengine"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/hunter/Documents/Research-Project/SRPEngine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable sdfengine"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/sdfengine.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
