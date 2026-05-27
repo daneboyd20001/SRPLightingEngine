@@ -6,7 +6,7 @@ A custom SDF (signed distance field) engine written in C++ and GLSL on the Rayli
 
 - ### Simplex
 
-  - # [GLSL Learning](https://www.shader-learn.com/learn/noise/noise-functions)
+  - #### [GLSL Learning](https://www.shader-learn.com/learn/noise/noise-functions)
 
 ## Build Instructions
 
