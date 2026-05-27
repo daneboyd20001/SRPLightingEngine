@@ -15,6 +15,8 @@ A custom SDF (signed distance field) engine written in C++ and GLSL on the Rayli
 This project uses CMake. To compile and build, create a directory named build in the root of the project, navigate into it, and execute the following commands:
 
 ```
+Root of the project folder
+mkdir build
 cd build
 cmake ..
 make
