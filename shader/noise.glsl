@@ -1,5 +1,8 @@
-uniform mat4 CamToWorld;
 uniform vec4 ScreenSize;
+uniform vec3 camPos;
+uniform vec3 camForward;
+uniform vec3 camRight;
+uniform vec3 camUp;
 
 uniform float time;
 uniform float lampDist;
@@ -37,10 +40,10 @@ vec3 slerp(vec3 p1, vec3 p2, float t) {
 vec3 GetViewDir(ivec2 id)
 {
     //normalized [-1,1]
-    vec2 uv = (vec2(id)) * ScreenSize.zw * 2.0 - 1.0;
-    uv.x *= ScreenSize.x * ScreenSize.w;
+    vec2 uv = (vec2(id) / ScreenSize.xy) * 2.0 - 1.0;
+    uv.x *= ScreenSize.x / ScreenSize.y;
     //Sampling a Sphere
-    vec3 rayDir = normalize(vec3(uv * FOV_Tan, 1.0));
+    vec3 rayDir = normalize(uv.x * camRight * FOV_Tan + uv.y * camUp * FOV_Tan + camForward);
     return rayDir;
 }
 

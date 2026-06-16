@@ -2,7 +2,6 @@ void main() {
   ivec2 id = ivec2(gl_GlobalInvocationID.xy);
 
   vec3 rayDir = GetViewDir(id);
-  vec3 camPos = CamToWorld[3].xyz;
 
     //Cone tracing, how large is pixel relative to screen
     float cutoff = .001 * quality;

@@ -5,6 +5,9 @@
 
 class Controller {
 public:
+  Controller() = default;
+  ~Controller() = default;
+
   Vector3 pos;
 
   Quaternion rotation;
@@ -39,7 +42,7 @@ public:
       Quaternion yaw =
           QuaternionFromAxisAngle({0.0f, 1.0f, 0.0f}, mouseDelta.x * sens);
       Quaternion pitch =
-          QuaternionFromAxisAngle({1.0f, 0.0f, 0.0f}, mouseDelta.y * sens);
+          QuaternionFromAxisAngle({1.0f, 0.0f, 0.0f}, -mouseDelta.y * sens);
 
       // Flip this to get spaceship effect. But, roll gets weird because of
       // it.
@@ -47,13 +50,14 @@ public:
       rotation = QuaternionMultiply(rotation, pitch);
 
       rotation = QuaternionNormalize(rotation);
+
+      forward = Vector3RotateByQuaternion({0.0f, 0.0f, 1.0f}, rotation);
+      right = Vector3RotateByQuaternion({1.0f, 0.0f, 0.0f}, rotation);
+      up = Vector3RotateByQuaternion({0.0f, 1.0f, 0.0f}, rotation);
     }
   }
 
   Vector3 UpdateMove() {
-    forward = Vector3RotateByQuaternion({0.0f, 0.0f, 1.0f}, rotation);
-    right = Vector3RotateByQuaternion({1.0f, 0.0f, 0.0f}, rotation);
-    up = Vector3RotateByQuaternion({0.0f, 1.0f, 0.0f}, rotation);
 
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) {
       speed = 5.0f * GetFrameTime();
@@ -69,13 +73,11 @@ public:
       if (IsKeyDown(KEY_A))
         pos = Vector3Subtract(pos, Vector3Scale(right, speed));
       if (IsKeyDown(KEY_SPACE))
-        pos = Vector3Add(pos, Vector3Scale(up, speed));
-      if (IsKeyDown(KEY_C))
         pos = Vector3Subtract(pos, Vector3Scale(up, speed));
+      if (IsKeyDown(KEY_C))
+        pos = Vector3Add(pos, Vector3Scale(up, speed));
     }
 
     return pos;
   }
-  Controller() = default;
-  ~Controller() = default;
 };

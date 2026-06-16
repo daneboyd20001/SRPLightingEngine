@@ -12,6 +12,18 @@ using namespace std;
 
 class ShaderLogic {
 public:
+  ShaderLogic() = default;
+  ShaderLogic(const ShaderLogic &) = delete;
+  ShaderLogic &operator=(const ShaderLogic &) = delete;
+  ~ShaderLogic() {
+    if (computeProgram != 0) {
+      rlUnloadShaderProgram(computeProgram);
+    }
+    if (computeShader != 0) {
+      rlUnloadShader(computeShader);
+    }
+  }
+
   unsigned int computeShader = 0;
   unsigned int computeProgram = 0;
 
@@ -37,7 +49,7 @@ public:
   }
 
   void load() {
-    resolutionLoc = rlGetLocationUniform(computeProgram, "resolution");
+    resolutionLoc = rlGetLocationUniform(computeProgram, "ScreenSize");
     timeLoc = rlGetLocationUniform(computeProgram, "time");
     camPosLoc = rlGetLocationUniform(computeProgram, "camPos");
     forwardLoc = rlGetLocationUniform(computeProgram, "camForward");
@@ -47,18 +59,18 @@ public:
     activeLightingLoc = rlGetLocationUniform(computeProgram, "activeLighting");
     lampDistLoc = rlGetLocationUniform(computeProgram, "lampDist");
     minDistLoc = rlGetLocationUniform(computeProgram, "minDist");
-    fovLoc = rlGetLocationUniform(computeProgram, "fov");
+    fovLoc = rlGetLocationUniform(computeProgram, "FOV_Tan");
     scalarDistLoc = rlGetLocationUniform(computeProgram, "scalarDist");
     lampStrLoc = rlGetLocationUniform(computeProgram, "lampStrength");
   }
 
   void setShader(Controller &cam, int currentSDF, int currentLight) {
-    float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+    float resolution[4] = {(float)GetScreenWidth(), (float)GetScreenHeight(),
+                           0.0f, 0.0f};
     float time = (float)GetTime();
+    float fovTan = tan(cam.fov * 0.5f);
 
-    rlEnableShader(computeProgram);
-
-    rlSetUniform(resolutionLoc, resolution, SHADER_UNIFORM_VEC2, 1);
+    rlSetUniform(resolutionLoc, resolution, SHADER_UNIFORM_VEC4, 1);
     rlSetUniform(timeLoc, &time, SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(camPosLoc, &cam.pos, SHADER_UNIFORM_VEC3, 1);
     rlSetUniform(forwardLoc, &cam.forward, SHADER_UNIFORM_VEC3, 1);
@@ -68,19 +80,7 @@ public:
     rlSetUniform(activeLightingLoc, &currentLight, SHADER_UNIFORM_INT, 1);
     rlSetUniform(minDistLoc, &cam.minDist, SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(scalarDistLoc, &cam.scalarDist, SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(fovLoc, &cam.fov, SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(fovLoc, &fovTan, SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(lampStrLoc, &cam.lampStr, SHADER_UNIFORM_FLOAT, 1);
-
-    rlDisableShader();
-  }
-
-  ShaderLogic() = default;
-  ~ShaderLogic() {
-    if (computeProgram != 0) {
-      rlUnloadShaderProgram(computeProgram);
-    }
-    if (computeShader != 0) {
-      rlUnloadShader(computeShader);
-    }
   }
 };

@@ -211,7 +211,7 @@ float SDF6(vec3 p) {
   return (time + e * R) * 0.1;
 }
 
-// Cache Perlin
+// TODO : Cache Perlin
 float NoiseSDF(vec3 p) {
   float dist = 0;
 

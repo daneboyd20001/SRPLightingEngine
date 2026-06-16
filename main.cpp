@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "header/Controller.hpp"
 #include "header/GUI.hpp"
@@ -15,9 +16,22 @@
 using namespace std;
 using namespace ImGui;
 
+vector<string> DropBoxNames(string filename) {
+  vector<string> names;
+  ifstream f(filename);
+  if (!f.is_open())
+    cerr << "Error opening " << filename << endl;
+
+  string s;
+  while (getline(f, s)) {
+    names.push_back(s);
+  }
+  f.close();
+  return names;
+}
+
 int main() {
   InitWindow(1920, 1080, "SDF Engine");
-  SetTargetFPS(200);
 
   rlImGuiSetup(true);
 
@@ -25,18 +39,13 @@ int main() {
   Controller cam;
   GUI gui;
 
-  // TODO : Change this into maybe a .txt file of names?
-  const char *sdfNames[] = {
-      "Gyroid Torus",  "Sphere",    "Plane", "Cross", "Weird Triangle",
-      "Twisty Sphere", "Danes SDF", "SDF 1", "SDF 2", "SDF 3",
-      "SDF 4",         "SDF 5",     "SDF 6", "AABB",  "NoiseSDF",
-      "orbitSDF",      "hunterSDF"};
-  int sdfCount = sizeof(sdfNames) / sizeof(sdfNames[0]);
+  // TODO : Hot reloader
+  vector<string> sdfNames = DropBoxNames("../sdf-names.txt");
+  int sdfCount = sdfNames.size();
   int currentSDF = 0;
 
-  const char *lightingNames[] = {"Flat", "Rim-Lighting", "Lambertian",
-                                 "Fog",  "Anti-Fog",     "Dane Lighting"};
-  int lightingCount = sizeof(lightingNames) / sizeof(lightingNames[0]);
+  vector<string> lightingNames = DropBoxNames("../shader-names.txt");
+  int lightingCount = lightingNames.size();
   int currentLight = 0;
 
   string comCode = "#version 430 core\n" +
@@ -56,45 +65,45 @@ int main() {
       rlLoadShaderProgramCompute(shaderLogic.computeShader);
   UnloadFileText(sdfCode);
 
-  RenderTexture2D target =
-      LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+  Texture2D targetFloat = {0};
+  targetFloat.id = rlLoadTexture(NULL, GetScreenWidth(), GetScreenHeight(),
+                                 PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, 1);
+  targetFloat.width = GetScreenWidth();
+  targetFloat.height = GetScreenHeight();
+  targetFloat.format = PIXELFORMAT_UNCOMPRESSED_R32G32B32A32;
+  targetFloat.mipmaps = 1;
 
   shaderLogic.load();
 
   cam.Init(0.0f, 0.0f, -5.0f);
 
   while (!WindowShouldClose()) {
-
-    shaderLogic.setShader(cam, currentSDF, currentLight);
-
     cam.UpdateMouse();
     cam.UpdateMove();
 
     rlEnableShader(shaderLogic.computeProgram);
-    rlBindImageTexture(target.texture.id, 0, target.texture.format, false);
-    rlComputeShaderDispatch(GetScreenWidth() / 16, GetScreenHeight() / 16, 1);
+    shaderLogic.setShader(cam, currentSDF, currentLight);
+    rlBindImageTexture(targetFloat.id, 0, targetFloat.format, false);
+    rlComputeShaderDispatch(GetScreenWidth() / 8, GetScreenHeight() / 8, 1);
     rlDisableShader();
 
     BeginDrawing();
-    ClearBackground(BLACK);
+    ClearBackground(RAYWHITE);
 
-    DrawTexture(target.texture, 0, 0, WHITE);
-
-    DrawText(TextFormat("FPS: %i", GetFPS()), 10, 10, 20, DARKGREEN);
-    DrawText(TextFormat("Frametime: %f", GetFrameTime()), 10, 30, 20,
-             DARKGREEN);
+    DrawTexture(targetFloat, 0, 0, WHITE);
 
     rlImGuiBegin();
     SetNextWindowPos({70, 50}, ImGuiCond_Once);
-    Begin("Controls");
+    Begin("Settings");
 
+    gui.showFPS();
     gui.sdfSelection(sdfNames, currentSDF, sdfCount);
     gui.lightingSelection(lightingNames, currentLight, lightingCount);
 
     End();
 
-    SetNextWindowPos({70, 250}, ImGuiCond_Once);
-    Begin("Camera Controls");
+    SetNextWindowPos({70, 175}, ImGuiCond_Once);
+    Begin("Camera");
 
     gui.resetButton(cam);
     gui.fovSlider(cam);
@@ -102,6 +111,7 @@ int main() {
     gui.lampStrSlider(cam);
     gui.scalarDistSlider(cam);
     gui.minDistSlider(cam);
+    gui.camPos(cam);
 
     End();
     rlImGuiEnd();
@@ -111,7 +121,7 @@ int main() {
 
   rlUnloadShader(shaderLogic.computeShader);
   rlUnloadShader(shaderLogic.computeProgram);
-  UnloadTexture(target.texture);
+  rlUnloadTexture(targetFloat.id);
   rlImGuiShutdown();
   CloseWindow();
   return 0;
