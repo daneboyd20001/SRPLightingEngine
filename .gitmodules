@@ -1,0 +1,3 @@
+[submodule "include/thirdparty/raylib"]
+	path = include/thirdparty/raylib
+	url = git@github.com:raysan5/raylib.git

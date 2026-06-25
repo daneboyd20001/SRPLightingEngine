@@ -9,9 +9,9 @@
 #include <string>
 #include <vector>
 
-#include "header/Controller.hpp"
-#include "header/GUI.hpp"
-#include "header/ShaderLogic.hpp"
+#include "Controller.hpp"
+#include "GUI.hpp"
+#include "ShaderLogic.hpp"
 
 using namespace std;
 using namespace ImGui;
@@ -40,11 +40,11 @@ int main() {
   GUI gui;
 
   // TODO : Hot reloader
-  vector<string> sdfNames = DropBoxNames("../sdf-names.txt");
+  vector<string> sdfNames = DropBoxNames("../shader/sdf-names.txt");
   int sdfCount = sdfNames.size();
   int currentSDF = 0;
 
-  vector<string> lightingNames = DropBoxNames("../shader-names.txt");
+  vector<string> lightingNames = DropBoxNames("../shader/shader-names.txt");
   int lightingCount = lightingNames.size();
   int currentLight = 0;
 
