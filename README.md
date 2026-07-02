@@ -7,12 +7,6 @@ A custom SDF (signed distance field) engine written in C++ and GLSL on the Rayli
 ![preview](https://github.com/daneboyd20001/SRPLightingEngine/blob/main/include/gifs/noiseGif1.gif)
 ![preview](https://github.com/daneboyd20001/SRPLightingEngine/blob/main/include/gifs/noiseGif2.gif)
 
-## Resources Used
-
-- ### Simplex
-
-  - #### [GLSL Learning](https://www.shader-learn.com/learn/noise/noise-functions)
-
 ## Build Instructions
 ### Linux
 
