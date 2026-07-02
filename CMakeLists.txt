@@ -1,56 +1,40 @@
-cmake_minimum_required(VERSION 3.14)
-project(SDF_Engine)
+cmake_minimum_required(VERSION 3.14...4.3)
+project(sdf)
 
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD 17)
+set(OPENGL_VERSION
+    "4.3"
+    CACHE STRING "Force OpenGL 4.3 for Compute Shaders" FORCE)
 
-set(RAYLIB_VERSION 5.5)
-find_package(raylib ${RAYLIB_VERSION} QUIET)
-if(NOT raylib_FOUND)
-  include(FetchContent)
-  FetchContent_Declare(
-    raylib
-    DOWNLOAD_EXTRACT_TIMESTAMP OFF
-    URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
-  )
-  FetchContent_GetProperties(raylib)
-  if(NOT raylib_POPULATED)
-    set(FETCHCONTENT_QUIET NO)
-    FetchContent_MakeAvailable(raylib)
-    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-  endif()
-endif()
 include(FetchContent)
-
+FetchContent_Declare(
+  raylib
+  GIT_REPOSITORY https://github.com/raysan5/raylib.git
+  GIT_TAG 6.0)
 FetchContent_Declare(
   imgui
   GIT_REPOSITORY https://github.com/ocornut/imgui.git
-  GIT_TAG master
-)
-FetchContent_MakeAvailable(imgui)
-
+  GIT_TAG docking)
 FetchContent_Declare(
   rlimgui
   GIT_REPOSITORY https://github.com/raylib-extras/rlImGui.git
-  GIT_TAG main
-)
-FetchContent_MakeAvailable(rlimgui)
+  GIT_TAG Raylib_6_0)
 
-add_executable(${PROJECT_NAME}
-    src/main.cpp
-    src/shaderLoad.cpp
-    src/movement.cpp
-    src/gui.cpp
-    ${imgui_SOURCE_DIR}/imgui.cpp
-    ${imgui_SOURCE_DIR}/imgui_draw.cpp
-    ${imgui_SOURCE_DIR}/imgui_tables.cpp
-    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-    ${rlimgui_SOURCE_DIR}/rlImGui.cpp
-)
+FetchContent_MakeAvailable(raylib)
+FetchContent_MakeAvailable(imgui)
+FetchContent_MakeAvailable(rlImGui)
+
+set(SOURCES main.cpp include/shader-logic.hpp include/gui.hpp)
+
+set(IMGUI
+    ${imgui_SOURCE_DIR}/imgui.cpp ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp ${imgui_SOURCE_DIR}/imgui_widgets.cpp)
+
+add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI}
+                               ${rlimgui_SOURCE_DIR}/rlImGui.cpp)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
-
-target_include_directories(${PROJECT_NAME} PRIVATE
-    ${rlimgui_SOURCE_DIR}
-    ${imgui_SOURCE_DIR}
-)
+target_include_directories(
+  ${PROJECT_NAME} PRIVATE ${rlimgui_SOURCE_DIR} ${imgui_SOURCE_DIR}
+                          ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -1,152 +1,3 @@
-uniform vec2 resolution;
-uniform float time;
-uniform vec3 camPos;
-uniform vec3 camForward;
-uniform vec3 camRight;
-uniform vec3 camUp;
-uniform int activeSDF;
-uniform int activeLighting;
-uniform float lampDist;
-uniform sampler2D noiseTex;
-uniform float lampStrength;
-uniform float fov;
-uniform float minDist = 0.001;
-uniform float scalarDist;
-
-const int MAX_STEPS = 800;
-const float PI = 3.14159;
-const int SDF_Frac1 = 2;
-
-struct rayHit {
-  vec4 posDist;
-};
-
-struct Light {
-  vec3 pos, color;
-  float intensity, range;
-};
-
-struct SDFObj {
-  vec3 position;
-  vec3 scale;
-  vec3 rotation;
-
-  uint type;
-  vec2 param;
-};
-
-vec3 slerp(vec3 p1, vec3 p2, float t) {
-  return cos((1 - t) * PI / 2) * p1 + sin(t * PI / 2) * p2;
-}
-
-float fade(float t) {
-  // return t;
-  // return t * t * (3 - 2 * t);
-  return t * t * t * (t * (t * 6 - 15) + 10);
-}
-
-float RNGF(in vec3 pos) {
-  vec3 hash = vec3(1993.7, 127.89, 77.41);
-  float ret = dot(hash, pos);
-  return fract(sin(ret) * 314159.865);
-}
-
-vec3 RNGNorm(in vec3 pos) {
-  vec3 hashx = vec3(971.23, 231.67, 753.91);
-  vec3 hashy = vec3(421.38, 882.19, 1193.57);
-
-  float u = fract(sin(dot(pos, hashx)) * 4375.5453);
-  float v = fract(sin(dot(pos, hashy)) * 4375.5453);
-
-  float theta = 2 * 3.14159 * u;
-  float z = 1.0 - 2.0 * v;
-  float r = sqrt(1 - z);
-
-  return vec3(r * cos(theta), r * sin(theta), v);
-}
-
-float valueNoise(vec3 pos) {
-  vec3 i = floor(pos);
-  vec3 f = fract(pos);
-
-  vec3 u = vec3(fade(f.x), fade(f.y), fade(f.z));
-
-  float g000 = RNGF(i + vec3(0, 0, 0));
-  float g100 = RNGF(i + vec3(1, 0, 0));
-  float g010 = RNGF(i + vec3(0, 1, 0));
-  float g110 = RNGF(i + vec3(1, 1, 0));
-  float g001 = RNGF(i + vec3(0, 0, 1));
-  float g101 = RNGF(i + vec3(1, 0, 1));
-  float g011 = RNGF(i + vec3(0, 1, 1));
-  float g111 = RNGF(i + vec3(1, 1, 1));
-
-  float nx00 = mix(g000, g100, u.x);
-  float nx10 = mix(g010, g110, u.x);
-  float nx01 = mix(g001, g101, u.x);
-  float nx11 = mix(g011, g111, u.x);
-
-  float nxy0 = mix(nx00, nx10, u.y);
-  float nxy1 = mix(nx01, nx11, u.y);
-
-  float nxyz = mix(nxy0, nxy1, u.z);
-
-  return nxyz;
-}
-
-float Perlin(vec3 pos) {
-  vec3 i = floor(pos);
-  vec3 f = fract(pos);
-
-  vec3 u = vec3(fade(f.x), fade(f.y), fade(f.z));
-
-  vec3 g000 = RNGNorm(i + vec3(0, 0, 0));
-  vec3 g100 = RNGNorm(i + vec3(1, 0, 0));
-  vec3 g010 = RNGNorm(i + vec3(0, 1, 0));
-  vec3 g110 = RNGNorm(i + vec3(1, 1, 0));
-  vec3 g001 = RNGNorm(i + vec3(0, 0, 1));
-  vec3 g101 = RNGNorm(i + vec3(1, 0, 1));
-  vec3 g011 = RNGNorm(i + vec3(0, 1, 1));
-  vec3 g111 = RNGNorm(i + vec3(1, 1, 1));
-
-  vec3 p000 = f - vec3(0, 0, 0);
-  vec3 p100 = f - vec3(1, 0, 0);
-  vec3 p010 = f - vec3(0, 1, 0);
-  vec3 p110 = f - vec3(1, 1, 0);
-  vec3 p001 = f - vec3(0, 0, 1);
-  vec3 p101 = f - vec3(1, 0, 1);
-  vec3 p011 = f - vec3(0, 1, 1);
-  vec3 p111 = f - vec3(1, 1, 1);
-
-  float n000 = dot(g000, p000);
-  float n100 = dot(g100, p100);
-  float n010 = dot(g010, p010);
-  float n110 = dot(g110, p110);
-  float n001 = dot(g001, p001);
-  float n101 = dot(g101, p101);
-  float n011 = dot(g011, p011);
-  float n111 = dot(g111, p111);
-
-  float nx00 = mix(n000, n100, u.x); // lerp = mix.
-  float nx10 = mix(n010, n110, u.x);
-  float nx01 = mix(n001, n101, u.x);
-  float nx11 = mix(n011, n111, u.x);
-
-  float nxy0 = mix(nx00, nx10, u.y);
-  float nxy1 = mix(nx01, nx11, u.y);
-
-  float nxyz = mix(nxy0, nxy1, u.z);
-
-  return nxyz;
-}
-
-float SampleNoise3D(vec3 pos) {
-  float noiseX = texture(noiseTex, pos.yz * 0.1).r;
-  float noiseY = texture(noiseTex, pos.xz * 0.1).r;
-  float noiseZ = texture(noiseTex, pos.xy * 0.1).r;
-
-  return (noiseX + noiseY + noiseZ) * .3333333;
-}
-
 float SphereSDF(vec3 p) { return length(p) - 1.0; }
 float PlaneSDF(vec3 p) { return length(p.xy) - 1.0; }
 float AABB(vec3 p) {
@@ -360,29 +211,21 @@ float SDF6(vec3 p) {
   return (time + e * R) * 0.1;
 }
 
+// TODO : Cache Perlin
 float NoiseSDF(vec3 p) {
   float dist = 0;
 
-  float scale = 8;
+  float scale = 64;
   float s = scale;
 
-  for (int i = 0; i < 4; i++) {
-    scale = s / float(i);
-    dist += valueNoise(p / s) * s;
-  }
-  dist /= 3;
-
-  float temp = dist;
-
-  s = 4;
-  scale = s;
-  for (int i = 0; i < 4; i++) {
-    dist += Perlin((p + 154) / scale) * scale;
-    scale /= 2;
+  for (int i = 0; i < 7; i++) {
+    s /= 2;
+    dist += Perlin(p / s) * s;
   }
 
-  return (temp + dist) / 4;
+  return dist / 4;
 }
+
 
 float orbitSDF(vec3 p, float time) {
 
@@ -412,7 +255,7 @@ float orbitSDF(vec3 p, float time) {
 }
 
 float hunterSDF(vec3 p) {
-  float r = 2 - cos(p.x) + cos(p.y) + cos(p.z);
+  float r = cos(p.x) + cos(p.y) + cos(p.z)- 0.1;
   return r;
 }
 

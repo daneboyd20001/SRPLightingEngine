@@ -1,0 +1,697 @@
+#version 430 core
+uniform vec4 ScreenSize;
+uniform vec3 camPos;
+uniform vec3 camForward;
+uniform vec3 camRight;
+uniform vec3 camUp;
+
+uniform float time;
+uniform float lampDist;
+uniform float lampStrength;
+uniform float FOV_Tan;
+uniform float minDist = 0.001;
+uniform float scalarDist;
+uniform float quality = 1.0;
+uniform float MinClip = 0.001;
+uniform float MaxClip = 100.0;
+
+uniform int activeSDF;
+uniform int activeLighting;
+
+const int MAX_STEPS = 400;
+const float PI = 3.14159;
+
+struct rayHit {
+  int pixelID;
+  vec3 position;
+  vec3 normal;
+  float depth;
+};
+
+rayHit hit;
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+
+layout(rgba32f, binding = 0) restrict writeonly uniform image2D Result;
+
+vec3 slerp(vec3 p1, vec3 p2, float t) {
+  return cos((1 - t) * PI / 2) * p1 + sin(t * PI / 2) * p2;
+}
+
+vec3 GetViewDir(ivec2 id)
+{
+    //normalized [-1,1]
+    vec2 uv = (vec2(id) / ScreenSize.xy) * 2.0 - 1.0;
+    uv.x *= ScreenSize.x / ScreenSize.y;
+    //Sampling a Sphere
+    vec3 rayDir = normalize(uv.x * camRight * FOV_Tan + uv.y * camUp * FOV_Tan + camForward);
+    return rayDir;
+}
+
+float fade(float t) {
+  // return t;
+  // return t * t * (3 - 2 * t);
+  return t * t * t * (t * (t * 6 - 15) + 10);
+}
+
+float RNGF(in vec3 pos) {
+  vec3 hash = vec3(1993.7, 127.89, 77.41);
+  float ret = dot(hash, pos);
+  return fract(sin(ret) * 314159.865);
+}
+
+vec3 RNGNorm(in vec3 pos) {
+  vec3 hashx = vec3(971.23, 231.67, 753.91);
+  vec3 hashy = vec3(421.38, 882.19, 1193.57);
+
+  float u = fract(sin(dot(pos, hashx)) * 4375.5453);
+  float v = fract(sin(dot(pos, hashy)) * 4375.5453);
+
+  float theta = 2 * 3.14159 * u;
+  float z = 1.0 - 2.0 * v;
+  float r = sqrt(1 - z);
+
+  return vec3(r * cos(theta), r * sin(theta), v);
+}
+
+float valueNoise(vec3 pos) {
+  vec3 i = floor(pos);
+  vec3 f = fract(pos);
+
+  vec3 u = vec3(fade(f.x), fade(f.y), fade(f.z));
+
+  float g000 = RNGF(i + vec3(0, 0, 0));
+  float g100 = RNGF(i + vec3(1, 0, 0));
+  float g010 = RNGF(i + vec3(0, 1, 0));
+  float g110 = RNGF(i + vec3(1, 1, 0));
+  float g001 = RNGF(i + vec3(0, 0, 1));
+  float g101 = RNGF(i + vec3(1, 0, 1));
+  float g011 = RNGF(i + vec3(0, 1, 1));
+  float g111 = RNGF(i + vec3(1, 1, 1));
+
+  float nx00 = mix(g000, g100, u.x);
+  float nx10 = mix(g010, g110, u.x);
+  float nx01 = mix(g001, g101, u.x);
+  float nx11 = mix(g011, g111, u.x);
+
+  float nxy0 = mix(nx00, nx10, u.y);
+  float nxy1 = mix(nx01, nx11, u.y);
+
+  float nxyz = mix(nxy0, nxy1, u.z);
+
+  return nxyz;
+}
+
+/*
+float noiseFUNCY(vec3 p)
+{
+  float zAxis = texture(noiseTex, p.xy / 512).r;
+  float yAxis = texture(noiseTex, p.yz / 512).r;
+  float xAxis = texture(noiseTex, p.zx / 512).r;
+
+  float ret = zAxis + yAxis + xAxis;
+
+  return ret / 3;
+}
+*/
+
+float Perlin(vec3 pos) {
+  vec3 i = floor(pos);
+  vec3 f = fract(pos);
+
+  vec3 u = vec3(fade(f.x), fade(f.y), fade(f.z));
+
+  vec3 g000 = RNGNorm(i + vec3(0, 0, 0));
+  vec3 g100 = RNGNorm(i + vec3(1, 0, 0));
+  vec3 g010 = RNGNorm(i + vec3(0, 1, 0));
+  vec3 g110 = RNGNorm(i + vec3(1, 1, 0));
+  vec3 g001 = RNGNorm(i + vec3(0, 0, 1));
+  vec3 g101 = RNGNorm(i + vec3(1, 0, 1));
+  vec3 g011 = RNGNorm(i + vec3(0, 1, 1));
+  vec3 g111 = RNGNorm(i + vec3(1, 1, 1));
+
+  vec3 p000 = f - vec3(0, 0, 0);
+  vec3 p100 = f - vec3(1, 0, 0);
+  vec3 p010 = f - vec3(0, 1, 0);
+  vec3 p110 = f - vec3(1, 1, 0);
+  vec3 p001 = f - vec3(0, 0, 1);
+  vec3 p101 = f - vec3(1, 0, 1);
+  vec3 p011 = f - vec3(0, 1, 1);
+  vec3 p111 = f - vec3(1, 1, 1);
+
+  float n000 = dot(g000, p000);
+  float n100 = dot(g100, p100);
+  float n010 = dot(g010, p010);
+  float n110 = dot(g110, p110);
+  float n001 = dot(g001, p001);
+  float n101 = dot(g101, p101);
+  float n011 = dot(g011, p011);
+  float n111 = dot(g111, p111);
+
+  float nx00 = mix(n000, n100, u.x); // lerp = mix.
+  float nx10 = mix(n010, n110, u.x);
+  float nx01 = mix(n001, n101, u.x);
+  float nx11 = mix(n011, n111, u.x);
+
+  float nxy0 = mix(nx00, nx10, u.y);
+  float nxy1 = mix(nx01, nx11, u.y);
+
+  float nxyz = mix(nxy0, nxy1, u.z);
+
+  return nxyz;
+}
+
+vec3 RNGVec(in vec3 pos) {
+  vec3 hashx = vec3(971.23, 231.67, 753.91);
+  vec3 hashy = vec3(421.38, 882.19, 1193.57);
+  vec3 hashz = vec3(362.15, 442.51, 953.15);
+
+  float u = fract(sin(dot(pos, hashx)) * 4375.5453);
+  float v = fract(sin(dot(pos, hashy)) * 4375.5453);
+  float w = fract(sin(dot(pos, hashz)) * 4375.5453);
+
+  return vec3(u, v, w);
+}
+
+mat3 RNGMatrix(in vec3 pos)
+{
+    mat3 primeMat = mat3(
+    17.23, 53.87, 101.41,
+    197.19, 263.56, 347.92,
+    419.77, 521.33, 607.11);
+    mat2x3 rand;
+    rand[0] = primeMat * pos;
+    rand[1] = primeMat * pos + 752;
+
+    rand = mat2x3(sin(rand[0]), sin(rand[1]));
+    rand *= 564.53;
+    rand[0] = fract(rand[0] * 564.53) * 2 - 1;
+    rand[1] = fract(rand[1] * 564.53) * 2 - 1;
+
+    return mat3(rand[0].x, rand[0].y, rand[0].z,
+        rand[0].y, rand[1].x, rand[1].y,
+        rand[0].z, rand[1].y, rand[1].z);
+}
+
+float matrixNoise(vec3 pos)
+{
+    vec3 f = fract(pos); // frac = fract.
+    vec3 i = floor(pos);
+
+    float dots[8];
+
+    vec3 u = f * f * f * (f * (f * 6 - 15) + 10);
+    //vec3 u = f * f * (3.0 - 2.0 * f);
+
+    mat3 m;
+    vec3 n;
+
+    for (int x = 0; x < 2; x++)
+    {
+        for (int y = 0; y < 2; y++)
+        {
+            for (int z = 0; z < 2; z++)
+            {
+                //creates a random symetrical matrix
+                m = RNGMatrix(i + vec3(x, y, z));
+                //dots our local positition value with a matrix transformed
+                n = RNGNorm(i + vec3(x, y, z));
+
+                dots[x + y * 2 + z * 4] = dot(n, m * (pos - i  - vec3(x, y, z)));
+            }
+        }
+    }
+
+    dots[0] = mix(dots[0], dots[1], u.x);
+    dots[1] = mix(dots[2], dots[3], u.x);
+    dots[2] = mix(dots[4], dots[5], u.x);
+    dots[3] = mix(dots[6], dots[7], u.x);
+
+    dots[0] = mix(dots[0], dots[1], u.y);
+    dots[1] = mix(dots[2], dots[3], u.y);
+
+    dots[0] = mix(dots[0], dots[1], u.z);
+
+    return dots[0];
+}
+
+float SphereSDF(vec3 p) { return length(p) - 1.0; }
+float PlaneSDF(vec3 p) { return length(p.xy) - 1.0; }
+float AABB(vec3 p) {
+  p = abs(p) - 1;
+  return max(max(p.x, p.y), p.z);
+}
+
+float CrossSDF(vec3 p) {
+  float s = 0.2;
+  float da = max(abs(p.x), abs(p.y));
+  float db = max(abs(p.y), abs(p.z));
+  float dc = max(abs(p.z), abs(p.x));
+  return min(da, min(db, dc)) - s;
+}
+
+float GyroidTorus(vec3 p) {
+  float tileSize = 40.0;
+  p = mod(p + 40.0, tileSize) - 0.5 * tileSize;
+  float rt = 15.0;
+  float rg = 8.0;
+  float ws = clamp(sin(time / 10.0) * 0.5 + 0.5, 0.05, 0.95);
+  p.xz = vec2(rt * atan(p.z, -p.x), length(p.xz) - rt);
+  p.yz = vec2(rg * atan(p.z, -p.y), length(p.yz) - rg);
+  return 0.6 * max(abs(dot(sin(p), cos(p.yzx))) - ws, abs(p.z) - 0.5 * PI);
+}
+
+float TwistySphere(vec3 p) {
+  float angle = p.y * 2.0;
+  float c = cos(angle);
+  float s = sin(angle);
+  vec3 q = vec3(c * p.x - s * p.z, p.y, s * p.x + c * p.z);
+  return length(q) -
+         (1.0 + 0.3 * sin(5.0 * q.x) * sin(5.0 * q.y) * sin(5.0 * q.z));
+}
+
+float DanesSDF(vec3 p0) {
+  vec4 p = vec4(p0, 1.0);
+  vec3 cVal = vec3(1.0, 1.0, 1.0);
+  float scale = 1.0;
+  for (int i = 0; i < 12; i++) {
+    p.xyz = 2.0 * clamp(p.xyz, -cVal, cVal) - p.xyz;
+    p *= max(0.1, 2.0 / dot(p.xyz, p.xyz));
+    p.xyz = p.xyz * scale;
+    p.w *= abs(scale);
+  }
+  return (2.0 - (length(p.xyz / p.w))) * 0.2;
+}
+
+float WierdTriangleSDF(vec3 p) {
+  vec4 p0 = vec4(p, 1.0);
+  for (int i = 0; i < 8; i++) {
+    p0.xyz = mod(p.xyz - 1.0, 2.0) - 1.0;
+    p0 *= 1.4 / dot(p.xyz, p.xyz);
+  }
+
+  return length(p0.xyz / p0.w) / .25;
+}
+
+float cubeSDF(vec4 cube, vec3 pos) {
+  vec3 d = cube.xyz - pos;
+  return max(max(abs(d.x) - cube.w, abs(d.y) - cube.w), abs(d.z) - cube.w);
+}
+
+float SDF1(vec3 p) {
+  // m = 0; // default material
+
+  vec3 mp = mod(p, 0.1); // periodic tiling
+  mp.y = p.y + sin(p.x * 2.0 + time) * 0.25 + sin(p.z * 2.5 + time) * 0.25;
+
+  float PI = 3.14159265;
+
+  // first cube SDF
+  vec3 pos1 = vec3(
+      mp.x, mp.y + (sin(p.z * PI * 10.0) * sin(p.x * PI * 10.0)) * 0.025, 0.05);
+  float s1 = cubeSDF(vec4(0.05, 0.05, 0.05, 0.025), pos1);
+
+  // second cube SDF
+  vec3 pos2 =
+      vec3(0.05, mp.y + (sin(p.x * PI * 10.0) * -sin(p.z * PI * 10.0)) * 0.025,
+           mp.z);
+  float s2 = cubeSDF(vec4(0.05, 0.05, 0.05, 0.025), pos2);
+
+  // m = (s1 < s2) ? 0 : 1;
+
+  return min(s1, s2);
+}
+
+float SDF2(vec3 p0) {
+  p0 /= 10;
+  p0.xyz = fract((p0.xyz - 1.0) * 0.5) * 2.0 - 1.0;
+
+  vec4 p = vec4(p0, 1.0);
+  p = abs(p);
+
+  if (p.x < p.z)
+    p.xz = p.zx;
+  if (p.z < p.y)
+    p.zy = p.yz;
+  if (p.y < p.x)
+    p.yx = p.xy;
+
+  for (int i = 0; i < 10; i++) {
+    if (p.x < p.z)
+      p.xz = p.zx;
+    if (p.z < p.y)
+      p.zy = p.yz;
+    if (p.y < p.x)
+      p.yx = p.xy;
+
+    p.xyz = abs(p.xyz);
+    float dotVal = dot(p.xyz, p.xyz);
+    p.xyz *= 1.6 / clamp(dotVal, 0.6, 1.0);
+    p.xyz -= vec3(0.7, 1.8, 0.5);
+    p.xyz *= 1.2;
+  }
+
+  float m = 1.5;
+  p.xyz -= clamp(p.xyz, -m, m);
+
+  return (length(p.xyz) / p.w) / 100.0;
+}
+
+float SDF3(vec3 p) {
+  const float TAUg = atan(1.0) * 8.0;
+
+  for (int i = 0; i < 4; i++) {
+    // p.xy = pmodg(p.xy, 10.)
+    float ang_xy = atan(p.y, p.x);
+    float seg_xy = TAUg / 10.0;
+    float a_xy = (ang_xy - seg_xy * floor(ang_xy / seg_xy)) - 0.5 * seg_xy;
+    float r_xy = length(p.xy);
+    p.xy = r_xy * vec2(sin(a_xy), cos(a_xy));
+
+    p.y -= 2.0;
+
+    // p.yz = pmodg(p.yz, 12.)
+    float ang_yz = atan(p.z, p.y);
+    float seg_yz = TAUg / 12.0;
+    float a_yz = (ang_yz - seg_yz * floor(ang_yz / seg_yz)) - 0.5 * seg_yz;
+    float r_yz = length(p.yz);
+    p.yz = r_yz * vec2(sin(a_yz), cos(a_yz));
+
+    p.z -= 10.0;
+  }
+
+  vec3 n = normalize(vec3(13.0, 1.0, 7.0));
+  return dot(abs(p), n) - 0.7;
+}
+
+float SDF4(vec3 p0) {
+  p0 /= 6.0;
+  vec4 p = vec4(p0, 1.0);
+  vec3 cVal = vec3(1.0, 1.0, 1.0);
+  float scale = 1.0;
+  for (int i = 0; i < 12; i++) {
+    p.xyz = 2.0 * clamp(p.xyz, -cVal, cVal) - p.xyz;
+    p *= max(0.1, 2.0 / dot(p.xyz, p.xyz));
+    p.xyz = p.xyz * scale;
+    p.w *= abs(scale);
+  }
+  return ((length(p.xyz / p.w)));
+}
+
+float SDF5(vec3 p, float time) {
+  vec2 xy = p.xy;
+  vec2 xz = p.xz;
+
+  float angleOffset = time * 0.2;
+  float scaleBase = 0.95;
+  float timeSin = sin(time / 1000.0) * 0.1;
+
+  for (int i = 0; i < 5; i++) {
+    float t = time + float(i);
+    float aXY = angleOffset + float(i) * 0.5;
+    float aXZ = timeSin + float(i) * 0.1;
+
+    float cXY = cos(aXY);
+    float sXY = sin(aXY);
+    float cXZ = cos(aXZ);
+    float sXZ = sin(aXZ);
+
+    xy = vec2(xy.x * cXY - xy.y * sXY, xy.x * sXY + xy.y * cXY);
+    xz = vec2(xz.x * cXZ - xz.y * sXZ, xz.x * sXZ + xz.y * cXZ);
+
+    xy = abs(xy) - 0.1;
+
+    xy += 0.05 * sin(vec2(xy.y, xy.x) * 5.0 + t);
+    xz += 0.03 * sin(vec2(xz.y, xz.x) * 7.0 + 1.3 * time + float(i));
+
+    float s = scaleBase + 0.1 * sin(t);
+    xy *= s;
+    xz *= s;
+  }
+
+  return (length(xy) - 0.1) * 0.25 + 0.01 * sin(length(xz) * 10.0 + time);
+}
+
+float SDF6(vec3 p) {
+  float e;
+  float R = length(p) + 0.01;
+  float theta = atan(p.x, p.y);
+  float phi = asin(p.z / R);
+  p = vec3(log(R), theta, phi);
+  e = p.y - 1.5;
+
+  for (int S = 1; S < 256; S = S << 1) {
+    float fS = float(S);
+    e += sqrt(abs(dot(sin(p.xxx * fS), cos(p * fS)))) / fS;
+  }
+
+  return (time + e * R) * 0.1;
+}
+
+// TODO : Cache Perlin
+float NoiseSDF(vec3 p) {
+  float dist = 0;
+
+  float scale = 64;
+  float s = scale;
+
+  for (int i = 0; i < 7; i++) {
+    s /= 2;
+    dist += Perlin(p / s) * s;
+  }
+
+  return dist / 4;
+}
+
+
+float orbitSDF(vec3 p, float time) {
+
+  float e =
+      0.3; // Eccentricity, between -1 and 1, describes how elliptical it is.
+  float a1 = 10; // Orbit size.
+  float a2 = 13;
+
+  float tilt = (11 * PI) / 6; // Radians
+
+  float r1 = 1;
+  float r2 = 0.3;
+  float r3 = 0.5;
+
+  // float t = time - 0.8 * cos(time);
+  float t1 = (a1 * (1 - e * e)) / (1 + e * cos(time));
+  float t2 = (a2 * (1 - e * e)) / (1 + e * cos(time));
+
+  vec3 orbitr1 = vec3(t1 * cos(time), t1 * sin(time), t1 * cos(time));
+  vec3 orbitr2 = vec3(t2 * cos(time), t2 * sin(time), t2 * cos(time) * tilt);
+
+  float centerObj = length(p) - r1;
+  float obj1 = length(p - orbitr1) - r2;
+  float obj2 = length(p - orbitr2) - r3;
+
+  return min(centerObj, min(obj1, obj2));
+}
+
+float hunterSDF(vec3 p) {
+  float r = cos(p.x) + cos(p.y) + cos(p.z)- 0.1;
+  return r;
+}
+
+float SDF(vec3 p) {
+  switch (activeSDF) {
+  case 0:
+    return GyroidTorus(p);
+  case 1:
+    return SphereSDF(p);
+  case 2:
+    return PlaneSDF(p);
+  case 3:
+    return CrossSDF(p);
+  case 4:
+    return WierdTriangleSDF(p);
+  case 5:
+    return TwistySphere(p);
+  case 6:
+    return DanesSDF(p);
+  case 7:
+    return SDF1(p);
+  case 8:
+    return SDF2(p);
+  case 9:
+    return SDF3(p);
+  case 10:
+    return SDF4(p);
+  case 11:
+    return SDF5(p, time);
+  case 12:
+    return SDF6(p);
+  case 13:
+    return AABB(p);
+  case 14:
+    return NoiseSDF(p);
+  case 15:
+    return orbitSDF(p, time);
+  case 16:
+    return hunterSDF(p);
+  default:
+    return SDF2(p);
+  }
+}
+
+vec3 GetGradient(vec3 p) {
+  float eps = .02;
+
+  vec3 ex = vec3(eps, 0, 0);
+  vec3 ey = vec3(0, eps, 0);
+  vec3 ez = vec3(0, 0, eps);
+
+  vec3 diff = vec3(SDF(p + ex) - SDF(p - ex), SDF(p + ey) - SDF(p - ey),
+                   SDF(p + ez) - SDF(p - ez));
+
+  return diff / (eps * 2);
+}
+
+vec3 GetNormal(vec3 p) {
+  float eps = .1;
+
+  vec3 ex = vec3(eps, 0, 0);
+  vec3 ey = vec3(0, eps, 0);
+  vec3 ez = vec3(0, 0, eps);
+
+  vec3 diff = vec3(SDF(p + ex) - SDF(p - ex), SDF(p + ey) - SDF(p - ey),
+                   SDF(p + ez) - SDF(p - ez));
+
+  return normalize(diff);
+}
+
+vec3 GetTangent(vec3 p, float theta) {
+  hit.normal = GetNormal(p);
+  vec3 b1, b2;
+  if (hit.normal.z < -.99999999) {
+    b1 = vec3(0, -1, 0);
+    b2 = vec3(-1, 0, 0);
+  } else {
+    float a = 1.0f / (1.0f + hit.normal.z);
+    float b = -a * hit.normal.x * hit.normal.y;
+    b1 = vec3(1.0f - hit.normal.x * hit.normal.x * a, b, -hit.normal.x);
+    b2 = vec3(b, 1.0f - hit.normal.y * hit.normal.y * a, -hit.normal.y);
+  }
+  return b1 * sin(theta) + b2 * cos(theta);
+}
+
+mat3 GetHessian(vec3 p) {
+  float eps = .01;
+  vec3 ddx = (GetGradient(p + vec3(eps, 0, 0)) - GetGradient(p - vec3(eps, 0, 0))) / (2.0 * eps);
+  vec3 ddy = (GetGradient(p + vec3(0, eps, 0)) - GetGradient(p - vec3(0, eps, 0))) / (2.0 * eps);
+  vec3 ddz = (GetGradient(p + vec3(0, 0, eps)) - GetGradient(p - vec3(0, 0, eps))) / (2.0 * eps);
+
+  mat3 H;
+  H[0] = vec3(ddx.x, ddy.x, ddz.x);
+  H[1] = vec3(ddx.y, ddy.y, ddz.y);
+  H[2] = vec3(ddx.z, ddy.z, ddz.z);
+  return H;
+}
+
+float GetLaplacian(vec3 p) {
+  float eps = .01;
+  float diff = SDF(p + vec3(eps, 0, 0)) + SDF(p - vec3(eps, 0, 0)) +
+               SDF(p + vec3(0, eps, 0)) + SDF(p - vec3(0, eps, 0)) +
+               SDF(p + vec3(0, 0, eps)) + SDF(p - vec3(0, 0, eps));
+  return (diff - SDF(p) * 6) / (eps * eps);
+}
+
+vec3 GetSurfaceEmission(vec3 p) {
+  vec3 emission = vec3(1.0);
+
+  // Scale P by local Curvature
+  p = p * 1.0 / (1 + GetLaplacian(p));
+  vec3 col1 =
+      vec3(1, .45, .1) * sin(time / 11) + vec3(.1, .85, 1) * cos(time / 11);
+  vec3 col2 =
+      vec3(.1, .1, .9) * sin(time / 23) + vec3(.76, .1, 1) * cos(time / 23);
+
+  float t = (matrixNoise(p) + 1) / 2;
+  col1 *= t;
+  col2 *= (1 - t);
+  // return col1 + col2;
+  return GetGradient(p);
+}
+
+vec3 Lighting(float dist, ivec2 id) {
+  vec3 rayDir = GetViewDir(id);
+
+  vec3 emission = vec3(1.0);
+
+  switch (activeLighting) {
+  case 0: {
+    emission *= lampStrength / ((dist + 1) * (dist + 1));
+    break;
+  }
+  case 1: {
+    emission *= lampStrength / ((dist + 1) * (dist + 1));
+
+    float lambert = dot(hit.normal, -rayDir);
+    float rimLighting = 1.0 - lambert;
+    float fresnel = pow(1.0 - abs(dot(hit.normal, rayDir)), 4.0);
+
+    emission *= rimLighting + fresnel;
+    break;
+  }
+  case 2: {
+    emission *= lampStrength / ((dist + 1) * (dist + 1));
+
+    float lambert = max(dot(hit.normal, -rayDir), 0.0);
+
+    emission *= lambert * exp(-dist / lampStrength);
+    break;
+  }
+  case 3: {
+    emission *= exp(-dist / lampStrength);
+    break;
+  }
+  case 4: {
+    emission *= 1 - exp(-dist / lampStrength);
+    break;
+  }
+  default: {
+    emission *= lampStrength / ((dist + 1) * (dist + 1));
+    break;
+  }
+  }
+
+  return emission;
+}
+
+void main() {
+  ivec2 id = ivec2(gl_GlobalInvocationID.xy);
+
+  vec3 rayDir = GetViewDir(id);
+
+    //Cone tracing, how large is pixel relative to screen
+    float cutoff = .001 * quality;
+    float dist = MinClip, distToScene;
+    vec3 pos = camPos + rayDir * dist;
+    for (int i = 0; i < MAX_STEPS; i++)
+    {
+        distToScene = SDF(pos) * quality;
+        dist += distToScene;
+        //This should converge slightly better
+        pos = rayDir * dist + camPos;
+
+        //use ABS to better converge for fractal geometries
+        if (abs(distToScene) < max(cutoff * dist, cutoff))
+            break;
+        if (dist > MaxClip)
+            break;
+    }
+
+    hit.normal = GetNormal(pos);
+    hit.depth = dist;
+    hit.pixelID = id.x + id.y * int(ScreenSize.x);
+    hit.position = pos;
+
+    vec4 pixelColor = vec4(0.0, 0.0, 0.0, 1.0); // The color output if the ray hits nothing.
+    if (dist < MaxClip)
+      pixelColor = vec4(Lighting(dist, id), 1.0); // If the ray hits something.
+
+    imageStore(Result, id, pixelColor);
+}
