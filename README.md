@@ -17,5 +17,5 @@ mkdir build
 cd build
 cmake ..
 make
-./SDF_Engine
+./sdf
 ```
