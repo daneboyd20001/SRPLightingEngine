@@ -2,10 +2,10 @@
 
 A custom SDF (signed distance field) engine written in C++ and GLSL on the Raylib framework.
 
-![preview]()
-![preview]()
-![preview]()
-![preview]()
+![preview](https://github.com/daneboyd20001/SRPLightingEngine/blob/main/include/gifs/daneGif.gif)
+![preview](https://github.com/daneboyd20001/SRPLightingEngine/blob/main/include/gifs/gyroidGif.gif)
+![preview](https://github.com/daneboyd20001/SRPLightingEngine/blob/main/include/gifs/noiseGif1.gif)
+![preview](https://github.com/daneboyd20001/SRPLightingEngine/blob/main/include/gifs/noiseGif2.gif)
 
 ## Resources Used
 
