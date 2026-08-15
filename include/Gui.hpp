@@ -1,26 +1,16 @@
+#pragma once
+
 #include <bits/stdc++.h>
+
 #include <imgui.h>
-#include <raylib.h>
-#include <raymath.h>
-#include <rlImGui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+#include <Math.hpp>
 #include <vector>
 
-class gui {
+class Gui {
 private:
-  std::vector<std::string> sdfNames = read("../include/names/sdf-names.txt");
-  std::vector<std::string> lightNames =
-      read("../include/names/shader-names.txt");
-
-public:
-  gui(bool isDark) {
-    rlImGuiSetup(isDark);
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-  };
-  ~gui() { rlImGuiShutdown(); };
-
-  int currSDF = 0;
-  int currLight = 0;
-
   std::vector<std::string> read(std::string filename) {
     std::vector<std::string> names;
     std::ifstream f(filename);
@@ -34,11 +24,44 @@ public:
     return names;
   }
 
-  void General() {
+  std::vector<std::string> sdfNames = read("./assets/names/sdf-names.txt");
+  std::vector<std::string> lightNames = read("./assets/names/shader-names.txt");
+
+public:
+  Gui(GLFWwindow *window) {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+  };
+  ~Gui() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+  };
+
+  int currSDF = 0;
+  int currLight = 0;
+
+  void Start() {
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    ImGui::DockSpaceOverViewport(0, NULL,
+                                 ImGuiDockNodeFlags_PassthruCentralNode);
+  }
+  void End() {
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  }
+
+  void General(float frameTime) {
     ImGui::Begin("Settings");
 
-    ImGui::Text("FPS: %i", GetFPS());
-    ImGui::Text("FrameTime: %f", GetFrameTime());
+    ImGui::Text("FPS: %i", (int)(1.0f / frameTime));
+    ImGui::Text("FrameTime: %.6f", frameTime);
 
     if (ImGui::BeginCombo("Active Shape", sdfNames[currSDF].c_str())) {
       ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
@@ -74,23 +97,22 @@ public:
     ImGui::End();
   }
 
-  void CamSettings(Camera3D *cam, float *sens, float *lampStr,
-                   float *scalarDist, float *minDist) {
-    Vector3 pos = cam->position;
+  void CamSettings(Math::vec3 &pos, float &fov, float &sens, float &lampStr,
+                   float &scalarDist, float &minDist) {
     ImGui::Begin("Camera");
 
     if (ImGui::Button("Reset camera")) {
-      cam->position = ((Vector3){0.0f, 0.0f, -5.0f});
+      pos = {0.0f, 0.0f, -5.0f};
     }
 
     ImGui::Text("Position : ");
     ImGui::Text("x: %.2f, y: %.2f, z: %.2f", pos.x, pos.y, pos.z);
 
-    ImGui::SliderFloat("FOV", &cam->fovy, 10.0f, 120.0f);
-    ImGui::SliderFloat("Sensitivity", sens, 0.01f, 0.5f);
-    ImGui::SliderFloat("Lamp Strength", lampStr, 0.1f, 1000.0f);
-    ImGui::SliderFloat("Scalar Distance", scalarDist, 0.1f, 1.0f);
-    ImGui::SliderFloat("Min Distance", minDist, 0.0001f, 0.1f);
+    ImGui::SliderFloat("FOV", &fov, 10.0f, 120.0f);
+    ImGui::SliderFloat("Sensitivity", &sens, 0.01f, 0.5f);
+    ImGui::SliderFloat("Lamp Strength", &lampStr, 0.1f, 1000.0f);
+    ImGui::SliderFloat("Scalar Distance", &scalarDist, 0.1f, 1.0f);
+    ImGui::SliderFloat("Min Distance", &minDist, 0.0001f, 0.1f);
 
     ImGui::End();
   }

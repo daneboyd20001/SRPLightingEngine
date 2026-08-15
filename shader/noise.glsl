@@ -8,11 +8,11 @@ uniform float time;
 uniform float lampDist;
 uniform float lampStrength;
 uniform float FOV_Tan;
-uniform float minDist = 0.001;
+uniform float minDist;
 uniform float scalarDist;
-uniform float quality = 1.0;
-uniform float MinClip = 0.001;
-uniform float MaxClip = 100.0;
+uniform float quality;
+uniform float MinClip;
+uniform float MaxClip;
 
 uniform int activeSDF;
 uniform int activeLighting;
@@ -29,22 +29,22 @@ struct rayHit {
 
 rayHit hit;
 
-layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
-layout(rgba32f, binding = 0) restrict writeonly uniform image2D Result;
+layout(rgba32f, binding = 0) uniform image2D screen;
 
 vec3 slerp(vec3 p1, vec3 p2, float t) {
   return cos((1 - t) * PI / 2) * p1 + sin(t * PI / 2) * p2;
 }
 
-vec3 GetViewDir(ivec2 id)
-{
-    //normalized [-1,1]
-    vec2 uv = (vec2(id) / ScreenSize.xy) * 2.0 - 1.0;
-    uv.x *= ScreenSize.x / ScreenSize.y;
-    //Sampling a Sphere
-    vec3 rayDir = normalize(uv.x * camRight * FOV_Tan + uv.y * camUp * FOV_Tan + camForward);
-    return rayDir;
+vec3 GetViewDir(ivec2 id) {
+  // normalized [-1,1]
+  vec2 uv = (vec2(id) / ScreenSize.xy) * 2.0 - 1.0;
+  uv.x *= ScreenSize.x / ScreenSize.y;
+  // Sampling a Sphere
+  vec3 rayDir = normalize(uv.x * camRight * FOV_Tan + uv.y * camUp * FOV_Tan +
+                          camForward);
+  return rayDir;
 }
 
 float fade(float t) {
@@ -172,64 +172,56 @@ vec3 RNGVec(in vec3 pos) {
   return vec3(u, v, w);
 }
 
-mat3 RNGMatrix(in vec3 pos)
-{
-    mat3 primeMat = mat3(
-    17.23, 53.87, 101.41,
-    197.19, 263.56, 347.92,
-    419.77, 521.33, 607.11);
-    mat2x3 rand;
-    rand[0] = primeMat * pos;
-    rand[1] = primeMat * pos + 752;
+mat3 RNGMatrix(in vec3 pos) {
+  mat3 primeMat = mat3(17.23, 53.87, 101.41, 197.19, 263.56, 347.92, 419.77,
+                       521.33, 607.11);
+  mat2x3 rand;
+  rand[0] = primeMat * pos;
+  rand[1] = primeMat * pos + 752;
 
-    rand = mat2x3(sin(rand[0]), sin(rand[1]));
-    rand *= 564.53;
-    rand[0] = fract(rand[0] * 564.53) * 2 - 1;
-    rand[1] = fract(rand[1] * 564.53) * 2 - 1;
+  rand = mat2x3(sin(rand[0]), sin(rand[1]));
+  rand *= 564.53;
+  rand[0] = fract(rand[0] * 564.53) * 2 - 1;
+  rand[1] = fract(rand[1] * 564.53) * 2 - 1;
 
-    return mat3(rand[0].x, rand[0].y, rand[0].z,
-        rand[0].y, rand[1].x, rand[1].y,
-        rand[0].z, rand[1].y, rand[1].z);
+  return mat3(rand[0].x, rand[0].y, rand[0].z, rand[0].y, rand[1].x, rand[1].y,
+              rand[0].z, rand[1].y, rand[1].z);
 }
 
-float matrixNoise(vec3 pos)
-{
-    vec3 f = fract(pos); // frac = fract.
-    vec3 i = floor(pos);
+float matrixNoise(vec3 pos) {
+  vec3 f = fract(pos); // frac = fract.
+  vec3 i = floor(pos);
 
-    float dots[8];
+  float dots[8];
 
-    vec3 u = f * f * f * (f * (f * 6 - 15) + 10);
-    //vec3 u = f * f * (3.0 - 2.0 * f);
+  vec3 u = f * f * f * (f * (f * 6 - 15) + 10);
+  // vec3 u = f * f * (3.0 - 2.0 * f);
 
-    mat3 m;
-    vec3 n;
+  mat3 m;
+  vec3 n;
 
-    for (int x = 0; x < 2; x++)
-    {
-        for (int y = 0; y < 2; y++)
-        {
-            for (int z = 0; z < 2; z++)
-            {
-                //creates a random symetrical matrix
-                m = RNGMatrix(i + vec3(x, y, z));
-                //dots our local positition value with a matrix transformed
-                n = RNGNorm(i + vec3(x, y, z));
+  for (int x = 0; x < 2; x++) {
+    for (int y = 0; y < 2; y++) {
+      for (int z = 0; z < 2; z++) {
+        // creates a random symetrical matrix
+        m = RNGMatrix(i + vec3(x, y, z));
+        // dots our local positition value with a matrix transformed
+        n = RNGNorm(i + vec3(x, y, z));
 
-                dots[x + y * 2 + z * 4] = dot(n, m * (pos - i  - vec3(x, y, z)));
-            }
-        }
+        dots[x + y * 2 + z * 4] = dot(n, m * (pos - i - vec3(x, y, z)));
+      }
     }
+  }
 
-    dots[0] = mix(dots[0], dots[1], u.x);
-    dots[1] = mix(dots[2], dots[3], u.x);
-    dots[2] = mix(dots[4], dots[5], u.x);
-    dots[3] = mix(dots[6], dots[7], u.x);
+  dots[0] = mix(dots[0], dots[1], u.x);
+  dots[1] = mix(dots[2], dots[3], u.x);
+  dots[2] = mix(dots[4], dots[5], u.x);
+  dots[3] = mix(dots[6], dots[7], u.x);
 
-    dots[0] = mix(dots[0], dots[1], u.y);
-    dots[1] = mix(dots[2], dots[3], u.y);
+  dots[0] = mix(dots[0], dots[1], u.y);
+  dots[1] = mix(dots[2], dots[3], u.y);
 
-    dots[0] = mix(dots[0], dots[1], u.z);
+  dots[0] = mix(dots[0], dots[1], u.z);
 
-    return dots[0];
+  return dots[0];
 }
