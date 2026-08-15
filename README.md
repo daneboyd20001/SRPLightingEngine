@@ -1,27 +1,16 @@
 # SRPLightingEngine
 
-A custom SDF (signed distance field) engine written in C++ and GLSL on the Raylib framework.
+A custom SDF (signed distance field) engine written in C++ and GLSL using a custom math library, OpenGL graphics API, and ImGui library.
 
-![preview]()
-![preview]()
-![preview]()
-![preview]()
-
-## Resources Used
-
-- ### Simplex
-
-  - #### [GLSL Learning](https://www.shader-learn.com/learn/noise/noise-functions)
+![preview](./assets/screenshots/Gyroid.png)
+![preview](./assets/screenshots/SDF1.png)
+![preview](./assets/screenshots/SDF2.png)
+![preview](./assets/screenshots/Noise.png)
 
 ## Build Instructions
 ### Linux
 
-This project uses CMake. To compile and build, create a directory named build in the root of the project, navigate into it, and execute the following commands:
-
+This project uses CMake so make sure you have that installed and that you are in the root of the project. Run this command in the root of the project and it should do everything for you.
 ```
-mkdir build
-cd build
-cmake ..
-make
-./SDF_Engine
+./run.zsh
 ```
