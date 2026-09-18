@@ -62,7 +62,7 @@ void CSPrimaryRay(uint3 id : SV_DispatchThreadID)
     
     float3 normal = GetNormal(pos);
     depthTex[id.xy] = float4(normal, dist);
-    colorTex[id.xy] = float4(CalculateLighting(pos, rayDir, normal, dist), 1.0);
+    colorTex[id.xy] = float4(CalculateDirectHit(pos, rayDir, normal, dist), 1.0);
     rayHit hit;
     hit.depth = dist;
     hit.normal = normal;
@@ -126,7 +126,7 @@ void CSAmbientOcclusion(uint3 id : SV_DispatchThreadID)
     colorTex[id.xy] = float4(emission, 1);
 }
 
-static const float3 DKernel[128] =
+static const float3 DKernel[64] =
 {
     RNGCosHemisphere(0), RNGCosHemisphere(1), RNGCosHemisphere(2), RNGCosHemisphere(3),
     RNGCosHemisphere(4), RNGCosHemisphere(5), RNGCosHemisphere(6), RNGCosHemisphere(7),
@@ -147,26 +147,6 @@ static const float3 DKernel[128] =
     RNGCosHemisphere(52), RNGCosHemisphere(53), RNGCosHemisphere(54), RNGCosHemisphere(55),
     RNGCosHemisphere(56), RNGCosHemisphere(57), RNGCosHemisphere(58), RNGCosHemisphere(59),
     RNGCosHemisphere(60), RNGCosHemisphere(61), RNGCosHemisphere(62), RNGCosHemisphere(63),
-
-    RNGCosHemisphere(64), RNGCosHemisphere(65), RNGCosHemisphere(66), RNGCosHemisphere(67),
-    RNGCosHemisphere(68), RNGCosHemisphere(69), RNGCosHemisphere(70), RNGCosHemisphere(71),
-    RNGCosHemisphere(72), RNGCosHemisphere(73), RNGCosHemisphere(74), RNGCosHemisphere(75),
-    RNGCosHemisphere(76), RNGCosHemisphere(77), RNGCosHemisphere(78), RNGCosHemisphere(79),
-
-    RNGCosHemisphere(80), RNGCosHemisphere(81), RNGCosHemisphere(82), RNGCosHemisphere(83),
-    RNGCosHemisphere(84), RNGCosHemisphere(85), RNGCosHemisphere(86), RNGCosHemisphere(87),
-    RNGCosHemisphere(88), RNGCosHemisphere(89), RNGCosHemisphere(90), RNGCosHemisphere(91),
-    RNGCosHemisphere(92), RNGCosHemisphere(93), RNGCosHemisphere(94), RNGCosHemisphere(95),
-
-    RNGCosHemisphere(96), RNGCosHemisphere(97), RNGCosHemisphere(98), RNGCosHemisphere(99),
-    RNGCosHemisphere(100), RNGCosHemisphere(101), RNGCosHemisphere(102), RNGCosHemisphere(103),
-    RNGCosHemisphere(104), RNGCosHemisphere(105), RNGCosHemisphere(106), RNGCosHemisphere(107),
-    RNGCosHemisphere(108), RNGCosHemisphere(109), RNGCosHemisphere(110), RNGCosHemisphere(111),
-
-    RNGCosHemisphere(112), RNGCosHemisphere(113), RNGCosHemisphere(114), RNGCosHemisphere(115),
-    RNGCosHemisphere(116), RNGCosHemisphere(117), RNGCosHemisphere(118), RNGCosHemisphere(119),
-    RNGCosHemisphere(120), RNGCosHemisphere(121), RNGCosHemisphere(122), RNGCosHemisphere(123),
-    RNGCosHemisphere(124), RNGCosHemisphere(125), RNGCosHemisphere(126), RNGCosHemisphere(127),
 };
 
 //Diffuse only need 1 bounce
@@ -179,27 +159,28 @@ void CSDiffuseRay(uint3 id : SV_DispatchThreadID)
     
     float3 origin = hit.position;
     float3x3 basis = GetBasis(hit.normal);
-    float3 color = GetSurfaceColor(origin, GetNormal(origin));
+    float3 color = GetSurfaceEmission(origin, GetNormal(origin));
+    
     float3 finColor = float3(0, 0, 0);
     
     //This should be Adjustable
-    float a = 32.0;
-    float b = 4.0;
-    float s = 2.0;
+    const float maxSampleCount = 8.0;
+    const float minSampleCount = 4.0;
+    const float depthSampleFalloff = 12.0;
+    //int sampleCount = max(maxSampleCount - (hit.depth + RNGF(id.x + id.y * 2048) / 2.0) / depthSampleFalloff * maxSampleCount, minSampleCount);
+    //int sampleCount = b + (a - b)
+    int sampleCount = 64;
     
-    //Basically Copy Paste
-    int sampleCount = b + (a - b) / (1 + (hit.depth * hit.depth / s / s));
-    //int sampleCount = a;
     int hitCount = 0;
     for (int z = 0; z < sampleCount; z++)
     {
-        float3 rayDir = mul(basis, DKernel[z]);
-        
-        float cutoff = .1;
-        float dist = 1.0, distToScene = dist;
-        float3 pos = origin + rayDir * dist; //Start far from the SDF, so you dont get stuck in it
-        //Trying to make a tight loop
-        for (int i = 0; i < 28; i++)
+        float3 rayDir = mul(DKernel[z], basis);
+            
+        float cutoff = .05;
+        float dist = .5, distToScene;
+        float3 pos; //Start far from the SDF, so you dont get stuck in it
+            //Trying to make a tight loop
+        for (int i = 0; i < 32; i++)
         {
             pos = origin + rayDir * dist;
             distToScene = SDF(pos);
@@ -210,13 +191,14 @@ void CSDiffuseRay(uint3 id : SV_DispatchThreadID)
         }
         if (abs(distToScene) < cutoff)
         {
-            finColor += CalculateLighting(pos, rayDir, hit.normal, dist);
+            finColor += CalculateDiffuseLighting(pos, rayDir, hit.normal, dist);
             hitCount += 1;
         }
     }
     
     finColor /= float(hitCount);
     finColor /= (hit.depth * hit.depth + 1);
+    finColor *= 2.0; //Brightens the diffuse rays
     finColor = finColor + colorTex[id.xy].rgb;
     colorTex[id.xy] = float4(finColor, 1.0);
 }

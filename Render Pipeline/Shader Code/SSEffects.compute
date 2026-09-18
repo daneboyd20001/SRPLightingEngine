@@ -1,0 +1,20 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSRimLight
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> colorTex;
+Texture2D<float4> depthTex;
+
+[numthreads(8,8,1)]
+void CSRimLight (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    float depth = depthTex[id.xy];
+    uint2 a = uint2(1, 0);
+    float diff = max(depthTex[id.xy - a.xy] - depth, depthTex[id.xy + a.xy] - depth);
+    diff = max(diff, max(depthTex[id.xy - a.yx] - depth, depthTex[id.xy + a.yx] - depth));
+    
+    float3 color = colorTex[id.xy].rgb;
+    colorTex[id.xy] = float4(color);
+}

@@ -22,7 +22,7 @@ static const uint SDF_GyroidTorus = 4;
 
 float SphereSDF(in float3 p)
 {
-    return length(p) - 1;
+    return length(p) - .9;
 }
 float PlaneSDF(in float3 p)
 {
@@ -42,6 +42,14 @@ float Cross(float3 p)
     float db = max(abs(p.y), abs(p.z));
     float dc = max(abs(p.z), abs(p.x));
     return min(da, min(db, dc)) - s;
+}
+
+float Torus(float3 p)
+{
+    float smallRadius = 2.; // minor radius
+    float largeRadius = 5.2; // major radius
+
+    return length(float2(length(p.xz) - largeRadius, p.y)) - smallRadius;
 }
 
 float GyroidTorus(float3 p)
@@ -65,6 +73,16 @@ float GyroidTorus(float3 p)
 
 static const int SDF_Frac1 = 2;
 
+float cubeSDF(float4 cube, float3 pos)
+{
+    float3 d = cube.xyz - pos;
+    return max(max(abs(d.x) - cube.w, abs(d.y) - cube.w), abs(d.z) - cube.w);
+}
+float cubeSDF(float3 pos)
+{
+    float3 d = 1 - pos;
+    return max(max(abs(d.x) - 2, abs(d.y) - 2), abs(d.z) - 2);
+}
 float DanesSDF(float3 p0)
 {
     float4 p = float4(p0, 1);
@@ -79,14 +97,9 @@ float DanesSDF(float3 p0)
         p.w *= abs(scale);
     }
     
-    return (.75 - (length(p.xyz / p.w))) / 5.0;
+    return (.75 - length(p.xyz / p.w)) / 5.0;
 }
 
-float cubeSDF(float4 cube, float3 pos)
-{
-    float3 d = cube.xyz - pos;
-    return max(max(abs(d.x) - cube.w, abs(d.y) - cube.w), abs(d.z) - cube.w);
-}
 
 float SDF1(float3 p)
 {
@@ -324,45 +337,114 @@ float SDF7(float3 p)
     return (length(p.xz) - .5) / s;
 }
 
+float XOR(float d1, float d2)
+{
+    return max(min(d1, d2), min(-d1, -d2));
+
+}
+
 float NoiseSDF(float3 pos)
 {
     float dist = 0;
     
-    float s = 1;
+    float s = 16;
     float3 hashx = float3(971.23, 231.67, 753.91);
     float3 hashy = float3(421.38, 882.19, 1193.57);
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 10; i++)
     {
         dist += Perlin(pos / s + hashx) * s;
         hashx += hashy;
         s /= 2;
     }
     
-    return (dist) * 2;
+    return (dist) / 3.2;
 }
 
-float expSDF(float3 pos)
+float MagicSquareSquare(float3 p)
 {
-    float r = length(pos);
-    float theta = atan2(pos.y , pos.x);
-    float phi = acos(pos.z / r);
+    float error = 0;
     
-    //Spherical Encoding
-    float3 p = float3(log2(r), theta, phi);
-    float e = theta - 1.5;
-    
-    for (int i = 1; i < 256; i = i << 1)
-    {
-        e += sqrt(abs(dot(sin(p.xxx * i), cos(p * i)))) / i;
-    }
-    
-    return (Time + e * r);
+    float value = p.x + p.y + p.z;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    error = value;
 
+    value = p.x + p.y - p.z;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    value *= value;
+    error += value;
+    
+    value = p.x - p.y - p.z;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    value *= value;
+    error += value;
+    
+    value = p.x - p.y + p.z;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    value *= value;
+    error += value;
+    
+    value = p.x + p.z;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    value *= value;
+    error += value;
+    
+    value = p.x - p.z;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    value *= value;
+    error += value;
+    
+    value = p.x + p.y;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    value *= value;
+    error += value;
+    
+    value = p.x - p.y;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    value *= value;
+    error += value;
+    
+    value = p.x;
+    value = sqrt(abs(value));
+    value = frac(value);
+    value = 1 - 2 * abs(value - .5);
+    value *= value;
+    error += value;
+    
+    error = sqrt(error);
+    return error;
 }
+
+float3 LinearToLogSphere(float3 p0)
+{
+    float r = length(p0);
+    float theta = atan2(p0.x, p0.y);
+    float phi = acos(p0.z / r);
+
+    return float3(r, theta, phi);
+}
+
+
 
 float SDF(float3 p)
 {
-    return DanesSDF(p);
+    //return min(cubeSDF(p), cubeSDF(p + float3(6,0,0)));
+    return 2 - MagicSquareSquare(p);
 }
 
 
@@ -405,7 +487,7 @@ float3 GetTangent(float3 p, float theta)
 {
     float3 normal = GetNormal(p);
     float3 b1, b2;
-    if (normal.z < -.99999999)
+    if (normal.z < -.9999)
     {
         b1 = float3(0, -1, 0);
         b2 = float3(-1, 0, 0);
@@ -462,12 +544,18 @@ float GetGaussianCurvature(float3 p)
     return -determinant(mat) / len;
 }
 
-float3x3 GetBasis(float3 normal)
+//Artifacting happens at the bounaries
+float3x3 GetBasis(float3 N)
 {
-    float3 N = normal;
-    float3 H = (abs(N.z) < .999) ? float3(0, 0, 1) : float3(1, 0, 0);
-    float3 T = normalize(cross(H, N));
-    float3 B = cross(N, T);
-    return float3x3(T, B, N);
+    float3 H = abs(N.z) < 0.9
+        ? float3(0, 0, 1)
+        : float3(0, 0, 1);
+
+    float3 T0 = normalize(cross(H, N));
+    float3 B0 = cross(N, T0);
+    float3 T = T0;
+    float3 B = B0;
+
+    return float3x3(B, T, N);
 }
 #endif

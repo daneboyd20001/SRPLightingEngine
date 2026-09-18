@@ -69,6 +69,13 @@ uint Hash(uint x)
     x ^= x >> 16;
     return x;
 }
+uint Hash3(uint3 p)
+{
+    uint h = p.x * 0x8da6b343u;
+    h ^= p.y * 0xd8163841u;
+    h ^= p.z * 0xcb1ab31fu;
+    return Hash(h);
+}
 
 float UintToFloat(uint v)
 {
@@ -108,15 +115,13 @@ float RNGF(uint seed)
     return frac(sin(UintToFloat(seed)) * 314159.865);
 }
 
-float3 RNGVec(in float3 pos)
+float3 RNGVec(uint3 pos)
 {
-    float3 hashx = float3(971.23, 231.67, 753.91);
-    float3 hashy = float3(421.38, 882.19, 1193.57);
-    float3 hashz = float3(362.15, 442.51, 953.15);
+    uint h = Hash3(pos);
 	
-    float u = frac(sin(dot(pos, hashx)) * 4375.5453);
-    float v = frac(sin(dot(pos, hashy)) * 4375.5453);
-    float w = frac(sin(dot(pos, hashz)) * 4375.5453);
+    float u = ((h & 1023u) / 511.5) - 1.0;
+    float v = (((h >> 10) & 1023u) / 511.5) - 1.0;
+    float w = (((h >> 20) & 1023u) / 511.5) - 1.0;
 	
     return float3(u,v,w);
 }
@@ -140,11 +145,10 @@ float3 RNGHemisphere(uint seed)
 {
     //Made this up, might be bad
     float u = UintToFloat(Hash(seed));
-    
-    float v = UintToFloat(Hash(seed ^ 541233));
+    float v = UintToFloat(Hash(seed ^ 541233u));
     
     float r = sqrt(1.0 - u * u);
-    float theta = 2.0 * 3.14159 * v;
+    float theta = 6.28318530718 * v;
     
     return float3(r * cos(theta), r * sin(theta), u);
 }
@@ -153,10 +157,10 @@ float3 RNGCosHemisphere(uint seed)
 {
     //Made this up, might be bad
     float u = UintToFloat(Hash(seed));
-    float v = UintToFloat(Hash(seed ^ 13028472));
+    float v = UintToFloat(Hash(seed ^ 13028472u));
     
     float r = sqrt(u);
-    float theta = 2.0 * 3.14159 * v;
+    float theta = 6.28318530718 * v;
     
     return float3(r * sin(theta), r * cos(theta), sqrt(1 - u));
 }
@@ -199,19 +203,19 @@ float fade(float t)
 
 float valueNoise(float3 pos)
 {
-    float3 i = floor(pos);
+    uint3 i = floor(pos);
     float3 f = frac(pos);
 
     float3 u = float3(fade(f.x), fade(f.y), fade(f.z));
     
-    float g000 = RNGF(i + float3(0, 0, 0));
-    float g100 = RNGF(i + float3(1, 0, 0));
-    float g010 = RNGF(i + float3(0, 1, 0));
-    float g110 = RNGF(i + float3(1, 1, 0));
-    float g001 = RNGF(i + float3(0, 0, 1));
-    float g101 = RNGF(i + float3(1, 0, 1));
-    float g011 = RNGF(i + float3(0, 1, 1));
-    float g111 = RNGF(i + float3(1, 1, 1));
+    float g000 = RNGF(i + uint3(0, 0, 0));
+    float g100 = RNGF(i + uint3(1, 0, 0));
+    float g010 = RNGF(i + uint3(0, 1, 0));
+    float g110 = RNGF(i + uint3(1, 1, 0));
+    float g001 = RNGF(i + uint3(0, 0, 1));
+    float g101 = RNGF(i + uint3(1, 0, 1));
+    float g011 = RNGF(i + uint3(0, 1, 1));
+    float g111 = RNGF(i + uint3(1, 1, 1));
     
     float nx00 = lerp(g000, g100, u.x);
     float nx10 = lerp(g010, g110, u.x);
@@ -233,14 +237,14 @@ float Perlin(float3 pos)
 
     float3 u = float3(fade(f.x), fade(f.y), fade(f.z));
     
-    float3 g000 = RNGNorm(i + float3(0, 0, 0));
-    float3 g100 = RNGNorm(i + float3(1, 0, 0));
-    float3 g010 = RNGNorm(i + float3(0, 1, 0));
-    float3 g110 = RNGNorm(i + float3(1, 1, 0));
-    float3 g001 = RNGNorm(i + float3(0, 0, 1));
-    float3 g101 = RNGNorm(i + float3(1, 0, 1));
-    float3 g011 = RNGNorm(i + float3(0, 1, 1));
-    float3 g111 = RNGNorm(i + float3(1, 1, 1));
+    float3 g000 = RNGVec(i + float3(0, 0, 0));
+    float3 g100 = RNGVec(i + float3(1, 0, 0));
+    float3 g010 = RNGVec(i + float3(0, 1, 0));
+    float3 g110 = RNGVec(i + float3(1, 1, 0));
+    float3 g001 = RNGVec(i + float3(0, 0, 1));
+    float3 g101 = RNGVec(i + float3(1, 0, 1));
+    float3 g011 = RNGVec(i + float3(0, 1, 1));
+    float3 g111 = RNGVec(i + float3(1, 1, 1));
     
     float3 p000 = f - float3(0, 0, 0);
     float3 p100 = f - float3(1, 0, 0);
