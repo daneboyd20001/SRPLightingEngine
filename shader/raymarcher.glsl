@@ -1,5 +1,12 @@
+#version 460
+
+#include "common.glsl"
+#include "lighting.glsl"
+
 void main() {
   ivec2 id = ivec2(gl_GlobalInvocationID.xy);
+  if (any(greaterThanEqual(id, ivec2(ScreenSize.xy))))
+    return;
 
   vec3 rayDir = GetViewDir(id);
 

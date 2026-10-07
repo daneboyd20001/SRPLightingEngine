@@ -1,3 +1,5 @@
+#include "common.glsl"
+
 float SphereSDF(vec3 p) { return length(p) - 1.0; }
 float PlaneSDF(vec3 p) { return length(p.xy) - 1.0; }
 float AABB(vec3 p) {
@@ -226,7 +228,6 @@ float NoiseSDF(vec3 p) {
   return dist / 4;
 }
 
-
 float orbitSDF(vec3 p, float time) {
 
   float e =
@@ -255,7 +256,7 @@ float orbitSDF(vec3 p, float time) {
 }
 
 float hunterSDF(vec3 p) {
-  float r = cos(p.x) + cos(p.y) + cos(p.z)- 0.1;
+  float r = cos(p.x) + cos(p.y) + cos(p.z) - 0.1;
   return r;
 }
 

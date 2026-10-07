@@ -1,10 +1,11 @@
 #pragma once
 
 #include <cmath>
+#include <vector>
 
 #define PI 3.14159265
-#define RAD2DEG (PI / 180)
-#define DEG2RAD (180 / PI)
+#define RAD2DEG (180 / PI)
+#define DEG2RAD (PI / 180)
 
 namespace Math {
 struct vec2 {
@@ -96,7 +97,7 @@ struct mat4 {
 };
 
 struct quaternion {
-  float x, y, z, w;
+  float x = 0, y = 0, z = 0, w = 1;
 };
 
 inline float clamp(float n, float min, float max) {

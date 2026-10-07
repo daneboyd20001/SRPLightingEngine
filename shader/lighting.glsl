@@ -1,3 +1,6 @@
+#include "common.glsl"
+#include "sdfs.glsl"
+
 vec3 GetGradient(vec3 p) {
   float eps = .02;
 
@@ -41,9 +44,15 @@ vec3 GetTangent(vec3 p, float theta) {
 
 mat3 GetHessian(vec3 p) {
   float eps = .01;
-  vec3 ddx = (GetGradient(p + vec3(eps, 0, 0)) - GetGradient(p - vec3(eps, 0, 0))) / (2.0 * eps);
-  vec3 ddy = (GetGradient(p + vec3(0, eps, 0)) - GetGradient(p - vec3(0, eps, 0))) / (2.0 * eps);
-  vec3 ddz = (GetGradient(p + vec3(0, 0, eps)) - GetGradient(p - vec3(0, 0, eps))) / (2.0 * eps);
+  vec3 ddx =
+      (GetGradient(p + vec3(eps, 0, 0)) - GetGradient(p - vec3(eps, 0, 0))) /
+      (2.0 * eps);
+  vec3 ddy =
+      (GetGradient(p + vec3(0, eps, 0)) - GetGradient(p - vec3(0, eps, 0))) /
+      (2.0 * eps);
+  vec3 ddz =
+      (GetGradient(p + vec3(0, 0, eps)) - GetGradient(p - vec3(0, 0, eps))) /
+      (2.0 * eps);
 
   mat3 H;
   H[0] = vec3(ddx.x, ddy.x, ddz.x);
